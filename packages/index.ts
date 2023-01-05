@@ -1,1 +1,1 @@
-export { Salable as PricingTable } from './pricing-table/src/index';
+export { Salable as PricingTable } from './pricing-table/src';
