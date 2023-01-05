@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Salable/Javascript-SDK/compare/v1.0.0...v1.0.1) (2023-01-05)
+
+
+### Bug Fixes
+
+* resolved issue with sub-packages not version bumping ([1676260](https://github.com/Salable/Javascript-SDK/commit/16762607e6322b4c1901780cd4aa7eebecdb1b1a))
+
 # 1.0.0 (2023-01-05)
 
 ### Features
