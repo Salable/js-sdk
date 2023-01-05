@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/Salable/js-sdk/compare/v1.0.2...v1.0.3) (2023-01-05)
+
+
+### Bug Fixes
+
+* updating sub-packages version ([3157d28](https://github.com/Salable/js-sdk/commit/3157d28805f04193017eb967dabdf8488eaba443))
+
 ## [1.0.2](https://github.com/Salable/js-sdk/compare/v1.0.1...v1.0.2) (2023-01-05)
 
 ### Bug Fixes
