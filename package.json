@@ -64,12 +64,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Salable/Javascript-SDK.git"
+    "url": "git+https://github.com/Salable/js-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/Salable/Javascript-SDK/issues"
+    "url": "https://github.com/Salable/js-sdk/issues"
   },
-  "homepage": "https://github.com/Salable/Javascript-SDK#readme",
+  "homepage": "https://github.com/Salable/js-sdk#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
