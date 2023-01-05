@@ -1,0 +1,263 @@
+:root {
+  --salable-pricing-table-font: Helvetica;
+
+  --salable-plan-padding: 20px;
+  --salable-plan-width: 25%;
+  --salable-plan-heading-margin: 0 0 15px;
+  --salable-plan-heading-padding: 10px;
+  --salable-plan-heading-font-size: 25px;
+
+  --salable-feature-list-item-display: flex;
+  --salable-feature-list-item-justify-content: center;
+  --salable-feature-list-item-flex-direction: column;
+  --salable-feature-list-item-padding: 0 10px;
+  --salable-feature-list-item-font-size: 14px;
+  --salable-feature-list-item-icon-margin: 0 5px 0 0;
+  --salable-feature-list-item-text-align: center;
+
+  --salable-feature-list-item-label-margin-bottom: 3px;
+
+  --salable-feature-list-item-value-font-size: 16px;
+  --salable-feature-list-item-value-font-weight: bold;
+
+  --salable-button-border-style: none;
+  --salable-button-webkit-apperance: none;
+
+  --salable-button-padding: 16px 0;
+  --salable-button-line-height: 1;
+  --salable-button-background-colour-disabled: #e9e9ec;
+  --salable-button-colour-disabled: #4e5168;
+  --salable-button-border-colour-disabled: #bdbec6;
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+.salable-loading {
+  height: 220px;
+  width: 80px;
+  margin: auto;
+}
+.salable-pricing-table-container {
+  font-family: var(--salable-pricing-table-font);
+  color: var(--salable-pricing-table-colour);
+  max-width: 1200px;
+}
+.salable-plans-container {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  align-items: flex-end;
+  justify-content: center;
+}
+.salable-plans-container::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  right: 0;
+}
+.salable-plan-heading {
+  margin: var(--salable-plan-heading-margin);
+  padding: var(--salable-plan-heading-padding);
+  font-size: var(--salable-plan-heading-font-size);
+  text-align: center;
+  width: calc(100% - (var(--salable-plan-heading-padding) * 2) - 1px);
+  z-index: 1;
+}
+.salable-plans-interval-toggle {
+  display: flex;
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  background-color: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+.salable-plans-interval-toggle-label {
+  position: relative;
+  z-index: 1;
+  padding: 12px 20px;
+  font-size: 15px;
+  line-height: 1;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+}
+.salable-plans-interval-toggle-label:first-child {
+  margin-right: -1px;
+}
+.salable-plans-interval-toggle-active {
+  z-index: 2;
+}
+.salable-feature-list {
+  padding-left: 0;
+  list-style-type: none;
+  margin: 20px 0 40px;
+  position: relative;
+}
+.salable-global-cta-hidden .salable-feature-list {
+  margin-bottom: 20px;
+}
+.salable-feature-list::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: calc(100% + 20px);
+  right: 0;
+  top: 0;
+}
+.salable-global-cta-hidden .salable-feature-list::after {
+  height: 100%;
+}
+.salable-plan:last-child .salable-feature-list::after {
+  display: none;
+}
+.salable-feature-list-item {
+  display: var(--salable-feature-list-item-display);
+  justify-content: var(--salable-feature-list-item-justify-content);
+  flex-direction: var(--salable-feature-list-item-flex-direction);
+  text-align: var(--salable-feature-list-item-text-align);
+  padding: var(--salable-feature-list-item-padding);
+  font-size: var(--salable-feature-list-item-font-size);
+  height: 74px;
+  position: relative;
+  width: calc(100% - 20px);
+}
+.salable-feature-list-item::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: calc(100% - 40px);
+  bottom: 0;
+  left: 20px;
+}
+.salable-global-cta-hidden .salable-feature-list-item:last-of-type::after {
+  display: none;
+}
+.salable-feature-list-item-label {
+  margin-bottom: var(--salable-feature-list-item-label-margin-bottom);
+}
+.salable-feature-list-item-value {
+  font-size: var(--salable-feature-list-item-value-font-size);
+  font-weight: var(--salable-feature-list-item-value-font-weight);
+}
+.salable-feature-list-item-icon {
+  flex-shrink: 0;
+  margin: var(--salable-feature-list-item-icon-margin);
+}
+.salable-plan-button {
+  -webkit-appearance: var(--salable-button-webkit-apperance);
+  border-style: var(--salable-button-border-style);
+  background-color: var(--salable-button-background-colour);
+  color: var(--salable-button-colour);
+  padding: var(--salable-button-padding);
+  line-height: var(--salable-button-line-height);
+  cursor: pointer;
+  border-radius: 3px;
+  width: 100%;
+  font-size: 17px;
+  max-width: 220px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgb(0 16 163 / 10%);
+  font-weight: bold;
+  transition: 0.3s;
+}
+.salable-plan-button-disabled {
+  color: var(--salable-button-colour-disabled);
+  background-color: var(--salable-button-background-colour-disabled);
+  box-shadow: none;
+}
+.salable-plan-button-free svg {
+  height: 17px !important;
+}
+.salable-plan-button-span {
+  min-height: 17px;
+}
+.salable-plan-button-coming-soon {
+  border-width: 1px;
+  border-style: solid;
+  padding: 15px 0;
+}
+.salable-plan-button-coming-soon.salable-plan-button-disabled {
+  border-color: var(--salable-button-border-colour-disabled);
+  background-color: transparent;
+}
+.salable-plan-price {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+.salable-plan-price-interval {
+  font-weight: normal;
+  margin-left: 7px;
+}
+.salable-tooltip-holder {
+  position: relative;
+}
+.salable-tooltip {
+  position: absolute;
+  padding: 10px 15px;
+  width: max-content;
+  max-width: 270px;
+  border-radius: 5px;
+  font-size: 14px;
+  pointer-events: none;
+  visibility: hidden;
+  bottom: calc(100% + 10px);
+  transform: scale(0.9) translateX(-55%);
+  left: 50%;
+  opacity: 0;
+  transition: 0.3s;
+}
+.salable-tooltip::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  position: absolute;
+  bottom: -10px;
+  transform: translateX(-50%);
+  left: 50%;
+}
+.salable-tooltip-visible {
+  pointer-events: all;
+  visibility: visible;
+  transform: scale(1) translateX(-50%);
+  opacity: 1;
+}
+.salable-plan {
+  width: 100%;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+.salable-disabled {
+  cursor: not-allowed;
+}
+a.salable-disabled {
+  pointer-events: none;
+}
+@media only screen and (min-width: 700px) {
+  .salable-plan {
+    width: 50%;
+    /*max-width: 300px;*/
+    margin-bottom: 0;
+  }
+}
+@media only screen and (min-width: 1000px) {
+  .salable-plan {
+    width: 33.3333%;
+  }
+}
+@media only screen and (min-width: 1300px) {
+  .salable-plan {
+    width: 25%;
+  }
+}

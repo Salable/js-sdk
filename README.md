@@ -1,1 +1,1 @@
-# Web-SDK
+# @salable/js-sdk

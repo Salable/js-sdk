@@ -1,0 +1,78 @@
+{
+  "private": true,
+  "name": "@salable/js-sdk",
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "author": "Salable",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "commit": "cz",
+    "build": "rollup -c",
+    "preversion": "npm run build",
+    "postversion": "./scripts/post-version-handler.sh",
+    "pre-commit": "lint-staged",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.0",
+    "semantic-release": "^19.0.5",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.1",
+    "@types/node": "^18.11.9",
+    "rollup": "^3.2.5",
+    "rollup-plugin-cleaner": "^1.0.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "typescript": "^4.8.3",
+    "dotenv": "^16.0.3",
+    "@types/jest": "^29.0.3",
+    "jest": "^29.0.3",
+    "ts-jest": "^29.0.1",
+    "ts-node": "^9.0.0",
+    "eslint": "8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.9.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.37.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salable/Javascript-SDK.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Salable/Javascript-SDK/issues"
+  },
+  "homepage": "https://github.com/Salable/Javascript-SDK#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

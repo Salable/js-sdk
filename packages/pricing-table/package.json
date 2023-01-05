@@ -1,0 +1,14 @@
+{
+  "name": "@salable/pricing-table",
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "test:globalCoverage": "jest --coverage --passWithNoTests",
+    "test:coverage": "jest --coverage --changedSince=origin/main --passWithNoTests"
+  },
+  "author": "Salable",
+  "license": "MIT"
+}

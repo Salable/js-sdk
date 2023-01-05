@@ -1,0 +1,84 @@
+:root {
+  --salable-pricing-table-colour: #ffffff;
+
+  --salable-plan-heading-colour: #ffffff;
+  --salable-plan-heading-background-colour: #222542;
+
+  --salable-feature-list-border-right-color: #e9e9ec;
+
+  --salable-feature-list-item-border-right-color: #e9e9ec;
+  --salable-feature-list-item-label-color: #ffffff;
+
+  --salable-plan-price-interval-color: #ffffff;
+
+  --salable-button-background-colour: #2a40ff;
+  --salable-button-colour: #fff;
+  --salable-button-hover-background-colour: #0f23d9;
+  --salable-button-hover-colour: #fff;
+
+  --salable-button-coming-soon-background-colour: transparent;
+  --salable-button-coming-soon-colour: #2a40ff;
+  --salable-button-coming-soon-hover-background-colour: rgba(65, 84, 255, 0.15);
+  --salable-button-coming-soon-hover-border-colour: #2a40ff;
+  --salable-button-coming-soon-hover-colour: #2a40ff;
+
+  --salable-tooltip-background-colour: #3542ac;
+  --salable-tooltip-colour: #ffffff;
+}
+.salable-pricing-table-container {
+  color: var(--salable-pricing-table-colour);
+}
+.salable-plans-container::after {
+}
+.salable-plans-interval-toggle-label {
+  color: #ffffff;
+  border-color: #2a40ff;
+}
+.salable-plans-interval-toggle-active {
+  background-color: #efefff;
+  color: #2a40ff;
+  border-color: #2a40ff;
+}
+.salable-plan-heading {
+  color: var(--salable-plan-heading-colour);
+}
+.salable-feature-list::after {
+  background-color: var(--salable-feature-list-border-right-color);
+  opacity: 20%;
+}
+.salable-feature-list-item::after {
+  background-color: var(--salable-feature-list-item-border-right-color);
+  opacity: 20%;
+}
+.salable-feature-list-item-label {
+  color: var(--salable-feature-list-item-label-color);
+  opacity: 80%;
+}
+.salable-plan-price-interval {
+  color: var(--salable-plan-price-interval-color);
+  opacity: 80%;
+}
+.salable-plan-button:not(.salable-disabled) {
+  background-color: var(--salable-button-background-colour);
+  color: var(--salable-button-colour);
+}
+.salable-plan-button:not(.salable-disabled):hover {
+  background-color: var(--salable-button-hover-background-colour);
+  color: var(--salable-button-hover-colour);
+}
+.salable-plan-button-coming-soon:not(.salable-disabled) {
+  background-color: var(--salable-button-coming-soon-background-colour);
+  color: var(--salable-button-coming-soon-colour);
+}
+.salable-plan-button-coming-soon:not(.salable-disabled):hover {
+  background-color: var(--salable-button-coming-soon-hover-background-colour);
+  border-color: var(--salable-button-coming-soon-hover-border-colour);
+  color: var(--salable-button-coming-soon-hover-colour);
+}
+.salable-tooltip {
+  background-color: var(--salable-tooltip-background-colour);
+  color: var(--salable-tooltip-colour);
+}
+.salable-tooltip::after {
+  border-top: 10px solid var(--salable-tooltip-background-colour);
+}
