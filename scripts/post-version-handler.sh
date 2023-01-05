@@ -8,7 +8,7 @@ cd ./packages
 
 # 3. Loop over each package and update it's package.json version to be the same as root
 for d in */ ; do
-    sed -i '' 's/"version":.*/"version": "'$version'",/' $d/package.json
+    sed -i 's/"version":.*/"version": "'$version'",/' $d/package.json
 done
 
 # 4. cd back to the root directory
