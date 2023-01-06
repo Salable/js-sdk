@@ -35,16 +35,24 @@ jobs:
       - name: Set Tag Env Variable
         run: echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
+      - name: Install Packages
+        run: |
+          npm install &&
+          npm install -g aws-cdk
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{ secrets.CDK_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CDK_AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
       - name: Deploy Staging
         run: |
           export ENVIRONMENT=stg
           export REGION=eu-west-1
           cd ./cdn &&
-          npm install &&
-          cdk synth
-          export AWS_DEFAULT_REGION=eu-west-1 &&
-          export AWS_ACCESS_KEY_ID=$CDK_AWS_ACCESS_KEY_ID &&
-          export AWS_SECRET_ACCESS_KEY=$CDK_AWS_SECRET_ACCESS_KEY &&
+          cdk synth &&
           cdk bootstrap &&
           cdk deploy -- --require-approval never
           cd ../ &&
