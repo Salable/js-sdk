@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Salable/js-sdk/compare/v1.0.3...v1.1.0) (2023-01-06)
+
+
+### Features
+
+* added cdn ([c93d999](https://github.com/Salable/js-sdk/commit/c93d9995bde91f9d74df9efd0dd4714c08fb38c6))
+
 ## [1.0.3](https://github.com/Salable/js-sdk/compare/v1.0.2...v1.0.3) (2023-01-05)
 
 
