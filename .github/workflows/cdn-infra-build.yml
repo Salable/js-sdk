@@ -1,0 +1,57 @@
+name: CDN Infra Build
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "**"
+
+jobs:
+  cdnInfraBuild:
+    name: CDN Infra Build
+    environment: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+      CDK_AWS_ACCESS_KEY_ID: ${{ secrets.CDK_AWS_ACCESS_KEY_ID }}
+      CDK_AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_AWS_SECRET_ACCESS_KEY }}
+      CDN_DOMAIN: ${{ secrets.CDN_DOMAIN }}
+      ACCOUNT: ${{ secrets.ACCOUNT }}
+    container: sleavely/node-awscli:14.x
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Install Packages
+        run: |
+          npm install
+          npm install -g aws-cdk
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{ secrets.CDK_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CDK_AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-1"
+
+      - name: CDN Infra Build
+        run: |
+          export ENVIRONMENT=test
+          export REGION=eu-west-1
+          cd ./cdn
+          npm install
+          cdk synth
+
+      - name: Upload result for Infra Build step
+        uses: actions/upload-artifact@v3
+        with:
+          name: cdk.out
+          path: cdk.out/**

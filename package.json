@@ -19,6 +19,7 @@
     "prepare": "husky install",
     "commit": "cz",
     "build": "rollup -c",
+    "build:cdn": "cd cdn && npm run build && cd ..",
     "preversion": "npm run build",
     "postversion": "./scripts/post-version-handler.sh",
     "pre-commit": "lint-staged",
@@ -57,10 +58,12 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "@typescript-eslint/eslint-plugin": "^5.37.0"
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "rollup-plugin-copy": "^3.4.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "cdn"
   ],
   "repository": {
     "type": "git",
