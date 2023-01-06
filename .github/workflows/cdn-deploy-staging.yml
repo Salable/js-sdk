@@ -37,7 +37,7 @@ jobs:
 
       - name: Install Packages
         run: |
-          npm install &&
+          npm install
           npm install -g aws-cdk
 
       - name: Configure AWS credentials
@@ -51,11 +51,12 @@ jobs:
         run: |
           export ENVIRONMENT=stg
           export REGION=eu-west-1
-          cd ./cdn &&
-          cdk synth &&
-          cdk bootstrap &&
+          cd ./cdn
+          npm install
+          cdk synth
+          cdk bootstrap
           cdk deploy -- --require-approval never
-          cd ../ &&
-          npm run build &&
-          aws s3 sync ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1xkyuun2k8v7o/$RELEASE_VERSION &&
+          cd ../
+          npm run build
+          aws s3 sync ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1xkyuun2k8v7o/$RELEASE_VERSION
           aws s3 cp ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1xkyuun2k8v7o/latest --recursive
