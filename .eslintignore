@@ -1,1 +1,3 @@
 dist
+cdk.out
+**/*.d.ts

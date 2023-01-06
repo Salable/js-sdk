@@ -6,6 +6,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import json from 'rollup-plugin-json';
 import dotenv from 'dotenv';
 import packageJson from './package.json' assert { type: 'json' };
+import copy from 'rollup-plugin-copy';
 
 dotenv.config();
 
@@ -35,6 +36,15 @@ const config = {
     commonjs(),
     typescript({
       tsconfig: 'tsconfig.json',
+      tsconfigOverride: {
+        exclude: ['cdn/**'],
+      },
+    }),
+    copy({
+      targets: [
+        { src: 'packages/pricing-table/src/css', dest: 'dist' },
+        { src: 'packages/pricing-table/src/lottie', dest: 'dist' },
+      ],
     }),
   ],
 };

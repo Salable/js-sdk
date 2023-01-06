@@ -1,0 +1,20 @@
+{
+  "name": "@salable/cdn",
+  "version": "1.0.3",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "aws-cdk": "2.13.0"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.13.0",
+    "constructs": "^10.0.0",
+    "source-map-support": "^0.5.16",
+    "@types/node": "^18.11.9",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  }
+}

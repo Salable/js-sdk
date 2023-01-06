@@ -3,4 +3,7 @@
 node_modules
 coverage
 dist
+cdk.out
+.env
+
 !jest.config.js

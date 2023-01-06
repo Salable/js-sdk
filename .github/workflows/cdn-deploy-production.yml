@@ -1,0 +1,46 @@
+name: CDN Deploy Production
+
+on: workflow_dispatch
+
+jobs:
+  cdnDeployProduction:
+    name: CDN Deploy Production
+    container: sleavely/node-awscli:14.x
+    environment: Production
+    runs-on: ${{ matrix.os }}
+    env:
+      CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+      CDK_AWS_ACCESS_KEY_ID: ${{ secrets.CDK_AWS_ACCESS_KEY_ID }}
+      CDK_AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_AWS_SECRET_ACCESS_KEY }}
+      CDN_DOMAIN: ${{ secrets.CDN_DOMAIN }}
+      ACCOUNT: ${{ secrets.ACCOUNT }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set Tag Env Variable
+        run: echo "RELEASE_VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+      - name: Deploy Production
+        run: |
+          export ENVIRONMENT=prod
+          export REGION=eu-west-1
+          cd ./cdk &&
+          npm install &&
+          cdk synth
+          export AWS_DEFAULT_REGION=eu-west-1 &&
+          export AWS_ACCESS_KEY_ID=$CDK_AWS_ACCESS_KEY_ID &&
+          export AWS_SECRET_ACCESS_KEY=$CDK_AWS_SECRET_ACCESS_KEY &&
+          cdk bootstrap &&
+          cdk deploy -- --require-approval never
+          cd ../ &&
+          npm run build &&
+          aws s3 sync ./dist s3://BUCKET_NAME_FOR_PROD/$RELEASE_VERSION &&
+          aws s3 cp ./dist s3://BUCKET_NAME_FOR_PROD/latest --recursive
