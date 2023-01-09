@@ -59,7 +59,7 @@ jobs:
           npm install
           cdk synth
           cdk bootstrap
-          cdk deploy -- --require-approval never
+          cdk deploy --require-approval never
           cd ../
           npm run build
           aws s3 sync ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1xkyuun2k8v7o/$RELEASE_VERSION
