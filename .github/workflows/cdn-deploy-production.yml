@@ -55,5 +55,5 @@ jobs:
           cdk deploy --require-approval never
           cd ../
           npm run build
-          aws s3 sync ./dist s3://BUCKET_NAME_FOR_PROD/$RELEASE_VERSION
-          aws s3 cp ./dist s3://BUCKET_NAME_FOR_PROD/latest --recursive
+          aws s3 sync ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1brvw3xwlf626/$RELEASE_VERSION
+          aws s3 cp ./dist s3://salablecdncdkstack-salablejssdkcdnbucket5f068f22-1brvw3xwlf626/latest --recursive
