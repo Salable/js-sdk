@@ -21,6 +21,11 @@
     "outDir": "dist",
     "types": ["node"]
   },
-  "include": ["packages/**/*", "additional.d.ts", "packages/index.ts", "cdn"],
+  "include": [
+    "packages/**/*",
+    "./types/additional.d.ts",
+    "packages/index.ts",
+    "cdn"
+  ],
   "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out"]
 }
