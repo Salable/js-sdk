@@ -1,4 +1,4 @@
-export class PricingTable {
+export class SalablePricingTable {
   envConfig;
   checkoutConfig;
   initialisers;
