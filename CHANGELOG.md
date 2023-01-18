@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Salable/js-sdk/compare/v1.1.0...v1.2.0) (2023-01-18)
+
+
+### Features
+
+* updated package publishing and export name ([1248bee](https://github.com/Salable/js-sdk/commit/1248bee20f63110ad8a2f9534997d6bc552346c0))
+
 # [1.1.0](https://github.com/Salable/js-sdk/compare/v1.0.3...v1.1.0) (2023-01-06)
 
 
