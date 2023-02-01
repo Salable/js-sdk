@@ -1,5 +1,5 @@
-import { PricingTable } from './salable.js';
+import { SalablePricingTable } from './salable.js';
 
-window.PricingTable = PricingTable;
+window.SalablePricingTable = SalablePricingTable;
 
-export { PricingTable };
+export { SalablePricingTable };
