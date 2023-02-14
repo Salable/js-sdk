@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Salable/js-sdk/compare/v1.2.0...v1.3.0) (2023-02-14)
+
+
+### Features
+
+* change wording on usage based plans ([b504006](https://github.com/Salable/js-sdk/commit/b504006e31ba8ffa200bb5f69231a8684a0e5613))
+
 # [1.2.0](https://github.com/Salable/js-sdk/compare/v1.1.0...v1.2.0) (2023-01-18)
 
 ### Features
