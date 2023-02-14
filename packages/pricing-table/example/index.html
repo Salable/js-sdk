@@ -15,10 +15,10 @@
 
     <div id="pricing-table"></div>
     <script type="module">
-      import { Salable } from "https://cdn.salable.app/latest/index.js";
+      import { SalablePricingTable } from "https://cdn.salable.app/latest/index.js";
 
       (async () => {
-        const salable = new Salable(
+        const salable = new SalablePricingTable(
           {
             pricingTableNode: document.querySelector("#pricing-table"),
             productUuid: "{{YOUR_PRODUCT_UUID}}",

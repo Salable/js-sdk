@@ -550,7 +550,9 @@ class Initialisers {
           'span',
           `${classPrefix}-plan-price-interval`
         );
-        planPriceIntervalEl.innerText = `per ${plan.interval}`;
+        planPriceIntervalEl.innerText = `per ${
+          plan.licenseType !== 'metered' ? plan.interval : 'unit'
+        }`;
         planPriceEl.appendChild(planPriceIntervalEl);
       }
     }
