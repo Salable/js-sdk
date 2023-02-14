@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Salable/js-sdk/compare/v1.3.0...v1.3.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* per unit wording for usage plans ([014752b](https://github.com/Salable/js-sdk/commit/014752b90f44cd63fa7bdd8681ff232bf4e7edd5))
+
 # [1.3.0](https://github.com/Salable/js-sdk/compare/v1.2.0...v1.3.0) (2023-02-14)
 
 
