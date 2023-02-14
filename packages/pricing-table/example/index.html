@@ -15,19 +15,16 @@
 
     <div id="pricing-table"></div>
     <script type="module">
-      // import { Salable } from "https://cdn.salable.app/latest/index.js";
-      import { SalablePricingTable } from "./salable.js";
+      import { SalablePricingTable } from "https://cdn.salable.app/latest/index.js";
 
       (async () => {
         const salable = new SalablePricingTable(
           {
             pricingTableNode: document.querySelector("#pricing-table"),
-            // productUuid: "{{YOUR_PRODUCT_UUID}}",
-            productUuid: "19427d79-8921-4740-a000-2d51a09c1f13",
-            // apiKey: "{{YOUR_API_KEY}}",
-            apiKey: "4niPtMVJS652XBDXXzAkM9Vsu9WrsV0oSxBTrj5d",
+            productUuid: "{{YOUR_PRODUCT_UUID}}",
+            apiKey: "{{YOUR_API_KEY}}",
             globalPlanOptions: {
-              granteeId: "example-grantee-id-2-2",
+              granteeId: "example-grantee-id-123",
               cancelUrl: "https://example.com/cancel",
               contactUsLink: "https://example.com/contact",
             },
