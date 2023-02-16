@@ -1,48 +1,46 @@
 <html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Salable pricing table library</title>
-  <style>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salable pricing table library</title>
+    <style>
       #pricing-table {
-          width: 100%;
-          margin: 0 auto;
-          max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        max-width: 1200px;
       }
-  </style>
-</head>
-<body style="padding: 40px;">
+    </style>
+  </head>
+  <body style="padding: 40px">
+    <h1>Salable pricing table js library</h1>
 
-<h1>Salable pricing table js library</h1>
+    <div id="pricing-table"></div>
+    <script type="module">
+      // import { SalablePricingTable } from "https://cdn.salable.app/latest/index.js";
+      import { SalablePricingTable } from "./salable.js";
 
-<div id="pricing-table"></div>
-<script type="module">
-    import {Salable} from "https://cdn.salable.app/latest/index.js";
-
-    (async () => {
-        const salable = new Salable(
-            {
-                pricingTableNode: document.querySelector('#pricing-table'),
-                pricingTableUuid: '{{YOUR_PRICING_TABLE_UUID}}',
-                apiKey: '{{YOUR_API_KEY}}',
-                globalPlanOptions: {
-                    granteeId: 'example-grantee-id-123',
-                    cancelUrl: 'https://example.com/cancel',
-                    contactUsLink: "https://example.com/contact",
-                }
+      (async () => {
+        const salable = new SalablePricingTable(
+          {
+            pricingTableNode: document.querySelector("#pricing-table"),
+            pricingTableUuid: "d85282fc-0b55-478f-a89c-ac7250e55d4d",
+            // pricingTableUuid: '66aaf72f-b189-4e8f-b3dc-138886755eb0',
+            apiKey: "4niPtMVJS652XBDXXzAkM9Vsu9WrsV0oSxBTrj5d",
+            globalPlanOptions: {
+              granteeId: "example-grantee-id-123",
+              successUrl: "https://example.com/success",
+              cancelUrl: "https://example.com/cancel",
             },
-            {
-                member: 'example-member-123',
-                customer: {
-                    email: "customer@company.com"
-                }
-            }
-
+            theme: "light",
+          },
+          {
+            member: "example-member-123",
+            customer: {
+              email: "person@company.com",
+            },
+          }
         );
         await salable.init();
-    })();
-</script>
-
-
-</body>
-
+      })();
+    </script>
+  </body>
 </html>

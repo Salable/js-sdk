@@ -22,6 +22,8 @@
 
   --salable-button-border-style: none;
   --salable-button-webkit-apperance: none;
+  --salable-button-featured-button-background-colour: #00b860;
+  --salable-button-featured-button-hover-background-colour: #029750;
 
   --salable-button-padding: 16px 0;
   --salable-button-line-height: 1;
@@ -188,6 +190,14 @@ body {
   border-color: var(--salable-button-border-colour-disabled);
   background-color: transparent;
 }
+.salable-plan-button.salable-plan-button-featured:not(.salable-disabled) {
+  background-color: var(--salable-button-featured-button-background-colour);
+}
+.salable-plan-button.salable-plan-button-featured:not(.salable-disabled):hover {
+  background-color: var(
+    --salable-button-featured-button-hover-background-colour
+  );
+}
 .salable-plan-price {
   text-align: center;
   font-size: 20px;
@@ -238,6 +248,11 @@ body {
   margin-bottom: 40px;
   padding: 20px 0;
 }
+.salable-plan-featured {
+  width: calc(100% - 4px);
+  border: 2px solid;
+  border-radius: 8px;
+}
 .salable-disabled {
   cursor: not-allowed;
 }
@@ -250,14 +265,23 @@ a.salable-disabled {
     /*max-width: 300px;*/
     margin-bottom: 0;
   }
+  .salable-plan-featured {
+    width: calc(50% - 4px);
+  }
 }
 @media only screen and (min-width: 1000px) {
   .salable-plan {
     width: 33.3333%;
   }
+  .salable-plan-featured {
+    width: calc(33.3333% - 4px);
+  }
 }
 @media only screen and (min-width: 1300px) {
   .salable-plan {
     width: 25%;
+  }
+  .salable-plan-featured {
+    width: calc(25% - 4px);
   }
 }
