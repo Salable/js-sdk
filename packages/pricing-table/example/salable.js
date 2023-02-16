@@ -185,6 +185,10 @@ export class SalablePricingTable {
           '--salable-button-background-colour',
           data.mainButtonHexCode
         );
+        this.initialisers.setCssVariable(
+          '--salable-button-coming-soon-colour',
+          data.mainButtonHexCode
+        );
         const featuredPlan = {
           uuid: data.featuredPlanUuid,
           cta: {
@@ -260,6 +264,7 @@ export class SalablePricingTable {
               `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
             ),
             defaultCurrency,
+            featuredPlan,
           });
         }
 
@@ -696,21 +701,30 @@ class Initialisers {
           break;
       }
     };
-    const planCtaEl = this.createElWithClass(
-      'a',
-      `${classPrefix}-plan-button${
-        plan.planType === 'Coming soon'
-          ? ' salable-plan-button-coming-soon'
-          : ''
-      }`
-    );
+
+    const planCtaEl = this.createElWithClass('a', `${classPrefix}-plan-button`);
+
+    if (plan.planType === 'Coming soon') {
+      planCtaEl.classList.add('salable-plan-button-coming-soon');
+    }
+
     if (featuredPlan.uuid === plan.uuid) {
       planCtaEl.classList.add('salable-plan-button-featured');
       this.setCssVariable(
         '--salable-button-featured-button-background-colour',
         featuredPlan.cta.hexCode
       );
+      if (plan.planType === 'Coming soon') {
+        this.setCssVariables({
+          '--salable-button-coming-soon-colour': featuredPlan.cta.hexCode,
+          '--salable-button-featured-button-text-colour':
+            featuredPlan.cta.hexCode,
+          '--salable-button-featured-button-border-colour':
+            featuredPlan.cta.hexCode,
+        });
+      }
     }
+
     const planCtaText = (plan, envConfig, buttonTextDefaults) => {
       switch (true) {
         case envConfig.individualPlanOptions?.[plan?.uuid]?.cta?.text !==
@@ -885,7 +899,7 @@ class Initialisers {
     const buttonTextDefaults = {
       Standard: {
         free: 'Create license',
-        paid: 'Buy',
+        paid: 'Subscribe',
       },
       'Coming soon': 'Contact us',
       enterprise: 'Contact us',
@@ -894,6 +908,8 @@ class Initialisers {
     let planIndex = 0;
     for (const plan of plans) {
       const planEl = this.createPlan(classPrefix);
+
+      // console.log(featuredPlan);
 
       if (plan.uuid === featuredPlan.uuid) {
         planEl.classList.add('salable-plan-featured');
@@ -1063,5 +1079,12 @@ class Initialisers {
   setCssVariable(name, value) {
     const root = document.querySelector(':root');
     root.style.setProperty(name, value);
+  }
+
+  setCssVariables(variablesObj) {
+    if (typeof variablesObj !== 'object') return;
+    for (const key of Object.keys(variablesObj)) {
+      this.setCssVariable(key, variablesObj[key]);
+    }
   }
 }
