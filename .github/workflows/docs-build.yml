@@ -1,14 +1,15 @@
-name: eslint
+name: Docs Build
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    types: [opened, synchronize]
+    pull_request:
+      types: [opened, synchronize]
+    paths:
+      - "docs/**"
 
 jobs:
-  tests:
-    name: Run eslint
+  docs_build:
+    name: Docs Build
     timeout-minutes: 15
     runs-on: ${{ matrix.os }}
     strategy:
@@ -21,9 +22,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Fetch main branch
-        run: git fetch --no-tags --depth=1 origin main
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -35,5 +33,5 @@ jobs:
       - name: Install docs dependencies
         run: cd ./docs && npm ci
 
-      - name: eslint
-        run: npm run lint
+      - name: build
+        run: cd ./docs && npm run build
