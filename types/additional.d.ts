@@ -1,8 +1,8 @@
-import { SalablePricingTable } from "@/packages";
+import { Salable } from "@/packages";
 
 declare global {
   interface Window {
-    SalablePricingTable: typeof SalablePricingTable;
+    Salable: typeof Salable;
   }
 }
 
