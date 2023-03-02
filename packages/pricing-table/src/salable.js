@@ -55,18 +55,8 @@ export class SalablePricingTable {
       document.body.appendChild(bodyMovinScript);
 
       this.initialisers.createCssStyleSheetLink(
-        // `${this.initialisers.getCdnDomain()}/latest/css/main.css`,
-        `./css/main.css`,
+        `${this.initialisers.getCdnDomain()}/latest/css/main.css`,
         'SalableCssMain'
-      );
-      this.initialisers.createCssStyleSheetLink(
-        `./css/themes/${this.envConfig.theme ?? 'light'}.css`,
-        `SalableCss${
-          this.envConfig.theme
-            ? this.envConfig.theme[0].toUpperCase() +
-              this.envConfig.theme.substr(1)
-            : 'Light'
-        }`
       );
 
       const pricingTableContainerEl = this.initialisers.createElWithClass(
@@ -180,21 +170,41 @@ export class SalablePricingTable {
         let data = await response.json();
         if (this.envConfig.pricingTableUuid) {
           data = this.initialisers.getPricingTableFactory(data);
+          this.envConfig.theme = data.theme;
         }
-        this.initialisers.setCssVariable(
-          '--salable-button-background-colour',
-          data.mainButtonHexCode
+        this.initialisers.createCssStyleSheetLink(
+          `./css/themes/${this.envConfig.theme ?? 'light'}.css`,
+          `SalableCss${
+            this.envConfig.theme
+              ? this.envConfig.theme[0].toUpperCase() +
+                this.envConfig.theme.substr(1)
+              : 'Light'
+          }`
         );
-        this.initialisers.setCssVariable(
-          '--salable-button-coming-soon-colour',
-          data.mainButtonHexCode
-        );
-        const featuredPlan = {
-          uuid: data.featuredPlanUuid,
-          cta: {
-            hexCode: data.focusButtonHexCode,
-          },
-        };
+        if (this.envConfig.pricingTableUuid) {
+          const customThemeDefaultButton =
+            data.customTheme.elements.buttons.default;
+          this.initialisers.setCssVariables({
+            ...(customThemeDefaultButton.backgroundColor && {
+              '--salable-button-background-colour':
+                customThemeDefaultButton.backgroundColor,
+              // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
+              // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
+              // '--salable-button-coming-soon-hover-border-colour':
+              //   customThemeDefaultButton.backgroundColor,
+            }),
+            ...(customThemeDefaultButton.hover.backgroundColor && {
+              '--salable-button-hover-background-colour':
+                customThemeDefaultButton.hover.backgroundColor,
+              // '--salable-button-coming-soon-hover-background-colour':
+              //   customThemeDefaultButton.hover.backgroundColor + 15,
+            }),
+            ...(customThemeDefaultButton.color && {
+              '--salable-button-colour': customThemeDefaultButton.color,
+              '--salable-button-hover-colour': customThemeDefaultButton.color,
+            }),
+          });
+        }
         const defaultCurrency = data?.currencies?.find(
           (c) => c.defaultCurrency
         );
@@ -240,7 +250,8 @@ export class SalablePricingTable {
               `${classPrefix}-plans-container ${classPrefix}-plans-container-month`
             ),
             defaultCurrency,
-            featuredPlan,
+            featuredPlanUuid: data.featuredPlanUuid,
+            customTheme: data.customTheme,
           });
         }
 
@@ -264,7 +275,8 @@ export class SalablePricingTable {
               `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
             ),
             defaultCurrency,
-            featuredPlan,
+            featuredPlanUuid: data.featuredPlanUuid,
+            customTheme: data.customTheme,
           });
         }
 
@@ -679,7 +691,8 @@ class Initialisers {
     buttonTextDefaults,
     pricingTableContainerEl,
     interval,
-    featuredPlan,
+    featuredPlanUuid,
+    customTheme,
   }) {
     const defaultCallback = (planId, paddlePlanId, type) => {
       const checkoutConfig = this.checkoutConfig;
@@ -704,25 +717,48 @@ class Initialisers {
 
     const planCtaEl = this.createElWithClass('a', `${classPrefix}-plan-button`);
 
-    if (plan.planType === 'Coming soon') {
-      planCtaEl.classList.add('salable-plan-button-coming-soon');
-    }
+    // if (plan.planType === 'Coming soon') {
+    //   planCtaEl.classList.add('salable-plan-button-coming-soon');
+    // }
 
-    if (featuredPlan.uuid === plan.uuid) {
+    if (featuredPlanUuid === plan.uuid && this.envConfig.pricingTableUuid) {
       planCtaEl.classList.add('salable-plan-button-featured');
-      this.setCssVariable(
-        '--salable-button-featured-button-background-colour',
-        featuredPlan.cta.hexCode
-      );
-      if (plan.planType === 'Coming soon') {
-        this.setCssVariables({
-          '--salable-button-coming-soon-colour': featuredPlan.cta.hexCode,
+      this.setCssVariables({
+        ...(customTheme.elements.buttons.featured.backgroundColor && {
+          '--salable-button-featured-button-background-colour':
+            customTheme.elements.buttons.featured.backgroundColor,
+        }),
+        ...(customTheme.elements.buttons.featured.hover.backgroundColor && {
+          '--salable-button-featured-button-hover-background-colour':
+            customTheme.elements.buttons.featured.hover.backgroundColor,
+        }),
+        ...(customTheme.elements.buttons.featured.color && {
           '--salable-button-featured-button-text-colour':
-            featuredPlan.cta.hexCode,
-          '--salable-button-featured-button-border-colour':
-            featuredPlan.cta.hexCode,
-        });
-      }
+            customTheme.elements.buttons.featured.color,
+          '--salable-button-featured-button-hover-text-colour':
+            customTheme.elements.buttons.featured.color,
+        }),
+      });
+      // if (plan.planType === 'Coming soon') {
+      //   this.setCssVariables({
+      //     ...(customTheme.elements.buttons.featured.color && {
+      //       '--salable-button-featured-button-text-colour':
+      //         customTheme.elements.buttons.featured.color,
+      //     }),
+      //     ...(customTheme.elements.buttons.featured.backgroundColor && {
+      //       '--salable-button-featured-button-border-colour':
+      //         customTheme.elements.buttons.featured.backgroundColor,
+      //       '--salable-button-featured-colour':
+      //         customTheme.elements.buttons.featured.backgroundColor,
+      //       '--salable-button-featured-button-hover-border-colour':
+      //         customTheme.elements.buttons.featured.backgroundColor,
+      //     }),
+      //     ...(customTheme.elements.buttons.featured.hover.backgroundColor && {
+      //       '--salable-button-coming-soon-hover-background-colour':
+      //         customTheme.elements.buttons.featured.hover.backgroundColor + 15,
+      //     }),
+      //   });
+      // }
     }
 
     const planCtaText = (plan, envConfig, buttonTextDefaults) => {
@@ -828,7 +864,7 @@ class Initialisers {
                 }),
               }),
             }
-          ).catch((error) => {
+          ).catch(() => {
             // eslint-disable-next-line no-console
             console.error('Salable pricing table - error creating license');
           });
@@ -894,7 +930,8 @@ class Initialisers {
     envConfig,
     plansContainerEl,
     defaultCurrency,
-    featuredPlan,
+    featuredPlanUuid,
+    customTheme,
   }) {
     const buttonTextDefaults = {
       Standard: {
@@ -908,10 +945,7 @@ class Initialisers {
     let planIndex = 0;
     for (const plan of plans) {
       const planEl = this.createPlan(classPrefix);
-
-      // console.log(featuredPlan);
-
-      if (plan.uuid === featuredPlan.uuid) {
+      if (plan.uuid === featuredPlanUuid) {
         planEl.classList.add('salable-plan-featured');
       }
 
@@ -935,7 +969,8 @@ class Initialisers {
             buttonTextDefaults,
             pricingTableContainerEl,
             interval,
-            featuredPlan,
+            featuredPlanUuid,
+            customTheme,
           });
           if (this.envConfig.state === 'preview') {
             if (
@@ -1051,8 +1086,9 @@ class Initialisers {
   }
 
   getApiDomain() {
-    // return `https://api.salable.${this.envConfig.environment === "stg" ? "org" : "app"}`
-    return `https://atbe8wc0u7.execute-api.eu-west-2.amazonaws.com/dev`;
+    return `https://api.salable.${
+      this.envConfig.environment === 'stg' ? 'org' : 'app'
+    }`;
   }
 
   getCdnDomain() {

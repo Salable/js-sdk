@@ -24,11 +24,13 @@
   --salable-button-webkit-apperance: none;
   --salable-button-featured-button-background-colour: #00b860;
   --salable-button-featured-button-border-colour: #00b860;
-  --salable-button-featured-button-text-colour: #00b860;
+  --salable-button-featured-button-text-colour: #ffffff;
+  --salable-button-coming-soon-featured-button-text-colour: #00b860;
 
   --salable-button-featured-button-hover-background-colour: #029750;
   --salable-button-featured-button-hover-border-colour: #029750;
   --salable-button-featured-button-hover-text-colour: #029750;
+  --salable-button-coming-soon-featured-button-hover-background-colour: #00b86015;
 
   --salable-button-padding: 16px 0;
   --salable-button-line-height: 1;
@@ -199,6 +201,7 @@ body {
     .salable-plan-button-coming-soon
   ) {
   background-color: var(--salable-button-featured-button-background-colour);
+  color: var(--salable-button-featured-button-text-colour);
 }
 .salable-plan-button.salable-plan-button-featured:not(.salable-disabled):not(
     .salable-plan-button-coming-soon
@@ -211,13 +214,16 @@ body {
     .salable-disabled
   ) {
   border-color: var(--salable-button-featured-button-border-colour);
-  color: var(--salable-button-featured-button-text-colour);
+  color: var(--salable-button-coming-soon-featured-button-text-colour);
 }
 .salable-plan-button.salable-plan-button-featured.salable-plan-button-coming-soon:not(
     .salable-disabled
   ):hover {
   border-color: var(--salable-button-featured-button-hover-border-colour);
   color: var(--salable-button-featured-button-hover-text-colour);
+  background-color: var(
+    --salable-button-coming-soon-featured-button-hover-background-colour
+  );
 }
 .salable-plan-price {
   text-align: center;
@@ -265,9 +271,10 @@ body {
   opacity: 1;
 }
 .salable-plan {
-  width: 100%;
+  /*width: 100%;*/
   margin-bottom: 40px;
   padding: 20px 0;
+  width: 300px;
 }
 .salable-plan-featured {
   width: calc(100% - 4px);
@@ -282,7 +289,7 @@ a.salable-disabled {
 }
 @media only screen and (min-width: 700px) {
   .salable-plan {
-    width: 50%;
+    /*width: 50%;*/
     /*max-width: 300px;*/
     margin-bottom: 0;
   }
@@ -292,7 +299,7 @@ a.salable-disabled {
 }
 @media only screen and (min-width: 1000px) {
   .salable-plan {
-    width: 33.3333%;
+    /*width: 33.3333%;*/
   }
   .salable-plan-featured {
     width: calc(33.3333% - 4px);
@@ -300,9 +307,9 @@ a.salable-disabled {
 }
 @media only screen and (min-width: 1300px) {
   .salable-plan {
-    width: 25%;
+    /*width: 25%;*/
   }
   .salable-plan-featured {
-    width: calc(25% - 4px);
+    width: calc(300px - 4px);
   }
 }
