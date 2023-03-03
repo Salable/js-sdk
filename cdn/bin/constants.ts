@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { IEnvironment } from './types';
+import {IEnvironment} from './types';
 
 dotenv.config();
 

@@ -1,4 +1,4 @@
-import {Salable} from '../src';
+import {Salable} from '.';
 
 declare global {
   interface Window {

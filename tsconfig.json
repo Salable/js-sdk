@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["*"]
-    },
     "target": "ESNext",
     "lib": ["dom", "esnext"],
     "allowJs": true,
@@ -21,12 +17,6 @@
     "outDir": "dist",
     "types": ["node"]
   },
-  "include": [
-    "packages/**/*",
-    "./types/additional.d.ts",
-    "packages/index.ts",
-    "cdn",
-    "docs"
-  ],
-  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out"]
+  "include": ["src", "./types/additional.d.ts", "src/index.ts", "cdn", "src/pricing-table", "src/globals.d.ts", "docs"],
+  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json"]
 }

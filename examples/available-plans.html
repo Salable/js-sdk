@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salable pricing table library</title>
+    <style>
+      #pricing-table {
+        width: 100%;
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+    </style>
+  </head>
+  <body style="padding: 40px">
+    <h1>Salable JS</h1>
+
+    <div>
+      <h2>Available Plans</h2>
+      <div id="available-plan"></div>
+    </div>
+
+    <div id="pricing-table"></div>
+    <script type="module">
+      import {Salable} from '../dist/index.js';
+      const salable = new Salable('77wA2OEXmNLhElAYZBMWCKvjj2QFvZ1EjpUBGhf0');
+
+      const availablePlans = salable.availablePlans({
+        granteeID: 'grantee',
+        memberID: 'member',
+        productID: '498fb8aa-3826-412c-8600-70ce621402c9',
+      });
+      availablePlans.mount(document.querySelector('#pricing-table'));
+      // console.log(salable.load());
+    </script>
+  </body>
+</html>
