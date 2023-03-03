@@ -32,7 +32,7 @@ const config = {
     typescript({
       tsconfig: 'tsconfig.json',
       tsconfigOverride: {
-        exclude: ['cdn/**'],
+        exclude: ['cdn/**', 'docs/**'],
       },
     }),
     copy({
