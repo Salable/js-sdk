@@ -1,0 +1,11 @@
+coverage
+node_modules
+dist
+build
+coverage
+.github
+.idea
+.vscode
+.cache
+.yalc
+package-lock.json

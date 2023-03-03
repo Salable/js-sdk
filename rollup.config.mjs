@@ -3,15 +3,15 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import cleaner from 'rollup-plugin-cleaner';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import json from 'rollup-plugin-json';
+import json from '@rollup/plugin-json';
 import dotenv from 'dotenv';
-import packageJson from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
+import packageJson from './package.json' assert {type: 'json'};
 
 dotenv.config();
 
 const config = {
-  input: './packages/index.ts',
+  input: './src/index.ts',
   output: [
     {
       file: packageJson.main,
@@ -25,9 +25,7 @@ const config = {
     cleaner({
       targets: ['./dist'],
     }),
-    resolve({
-      moduleDirectories: ['packages'],
-    }),
+    resolve(),
     commonjs(),
     typescript({
       tsconfig: 'tsconfig.json',
@@ -37,8 +35,8 @@ const config = {
     }),
     copy({
       targets: [
-        { src: 'packages/pricing-table/src/css', dest: 'dist' },
-        { src: 'packages/pricing-table/src/lottie', dest: 'dist' },
+        {src: 'src/pricing-table/src/css', dest: 'dist'},
+        {src: 'src/pricing-table/src/lottie', dest: 'dist'},
       ],
     }),
   ],

@@ -1,53 +1,51 @@
-# @salable/js-sdk
+<p align="center">
+  <a href="https://github.com/Salable/js-sdk" target="_blank" rel="noopener noreferrer">
+    <img src="./docs/salable-logo.png" height="64">
+  </a>
+  <br />
+</p>
 
-## Packages Included
+<div align="center">
 
-- [@salable/pricing-table](https://github.com/Salable/js-sdk/tree/main/packages/pricing-table)
+</div>
 
-## Development
+---
 
-### Initial Setup
+## Overview
 
-To set up the JS SDK on your local machine for development, perform the following steps.
+Salable JS is a JavaScript library for building and managing a SaaS application's products, plans, subscriptions, and payment.
 
-1. Clone the repo to your local machine
-2. Run `npm i` at the root of the project
+## Getting Started
 
-_Note: You don't need to run `npm i` per package. Because this project uses NPM workspaces, you only ever need to run it at root._
+### Installation
 
-### Adding Packages
+You can include Salable JS in your project by importing the SalableJS npm module or loading SalableJS with a script tag
 
-If you want to add a new package, perform the following steps.
+### Install SalableJS with npm
 
-1. Create a new folder inside the `packages` directory named as the name of the package. (e.g. pricing-table)
-2. Inside the new package folder, create `package.json` and `README.md` files.
-   - Use the template for `package.json` below, replacing information where required.
-3. Create a `src` folder in the root of your new package folder and inside it put a `index.ts` or `index.js` file depending on if you're using TS or not.
-   - From the `index.{js|ts}` file, export your package's files. This file is the entry point for Rollup to build from.
-4. Update `./packages/index.ts` to include your new package index file to ensure it is included in the output build.
-   - Export your new package from `./packages/index.ts` with a name based on your package name.
-5. Update this `README.md` file to include your new package in the list of packages at the top fo this file.
-6. To install/uninstall NPM packages to your new package, use the following commands and replace information where required. _NOTE: For your package name, use the directory name inside `./packages`_
-   - **Install:** `npm install <NPM_PACKAGE_NAME> -w <YOUR_PACKAGE_NAME>`
-   - **Uninstall:** `npm uninstall <NPM_PACKAGE_NAME> -w <YOUR_PACKAGE_NAME>`
-
-#### `package.json` example
-
-```json
-{
-  "name": "@salable/<YOUR_PACKAGE_NAME>",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "src/index.{js|ts}",
-  "scripts": {
-    // Your scripts here
-  },
-  "author": "Salable",
-  "license": "MIT"
-}
+```bash
+npm instal @salable/salable-js
 ```
 
-#### Example
+Once the installation is done, import the package and create and instance.
 
-For an example package, see the `pricing-table` package/directory inside `./packages`.
+```typescript
+import {Salable} from '@salable/salable-js';
+const salable = new Salable('{your-api-key-here}');
+```
+
+### Install SalableJS with script tag
+
+```html
+<script async>
+  import {Salable} from 'https://cdn.salable.app/latest/index.js';
+
+  const salable = new Salable(`{your-api-key-here}`);
+</script>
+```
+
+## License
+
+This project is licensed under the **MIT license**.
+
+See [LICENSE](https://github.com/Salable/js-sdk/tree/main/packages/salable-js/LICENSE) for more information.

@@ -1,17 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "prettier",
-    "plugin:jest/recommended",
-    "plugin:import/recommended"
-  ],
-  "plugins": [
-    "@typescript-eslint",
-    "jest",
-    "prettier",
-    "unused-imports",
-    "import"
-  ],
+  "extends": ["prettier", "plugin:jest/recommended", "plugin:import/recommended"],
+  "plugins": ["@typescript-eslint", "jest", "prettier", "unused-imports", "import"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
@@ -35,8 +25,12 @@
       {
         "trailingComma": "es5",
         "singleQuote": true,
-        "printWidth": 80,
-        "endOfLine": "auto"
+        "printWidth": 120,
+        "endOfLine": "auto",
+        "semi": true,
+        "arrowParens": "always",
+        "bracketSpacing": false,
+        "tabWidth": 2
       }
     ],
     "import/no-unresolved": [
