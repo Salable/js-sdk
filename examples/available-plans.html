@@ -15,21 +15,29 @@
 
     <div>
       <h2>Available Plans</h2>
-      <div id="available-plan"></div>
+      <div id="available-plans-table"></div>
+      <div id="error-box"></div>
     </div>
 
-    <div id="pricing-table"></div>
+    <!-- <div id="available-plans-table"></div> -->
     <script type="module">
       import {Salable} from '../dist/index.js';
-      const salable = new Salable('77wA2OEXmNLhElAYZBMWCKvjj2QFvZ1EjpUBGhf0');
+      const salable = new Salable('{{YOUR_API_KEY}}');
 
       const availablePlans = salable.availablePlans({
+        subscriptionID: '{{YOUR_API_SUBSCRIPTION_ID}}',
         granteeID: 'grantee',
         memberID: 'member',
-        productID: '498fb8aa-3826-412c-8600-70ce621402c9',
+        productID: '{{YOUR_API_PRODUCT_UUID}}',
       });
-      availablePlans.mount(document.querySelector('#pricing-table'));
-      // console.log(salable.load());
+      availablePlans.mount(document.querySelector('#available-plans-table'), (success, error) => {
+        if (success) {
+          console.log('Success', success);
+        }
+        if (error) {
+          document.querySelector('#error-box').innerHTML = error.message;
+        }
+      });
     </script>
   </body>
 </html>

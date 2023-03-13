@@ -1,4 +1,3 @@
-import 'isomorphic-fetch';
 import {SALABLE_BASE_URL} from './constants';
 import {MissingPropertyError} from './utils/errors';
 
@@ -6,7 +5,7 @@ export class BaseResource {
   protected _apiKey;
   protected _request;
   protected _createElWithClass;
-  protected _apiDomain;
+  protected _apiDomain: string;
 
   constructor(apiKey: string) {
     this._apiKey = (apiKey || '').trim();

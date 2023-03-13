@@ -8,6 +8,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -17,6 +18,14 @@
     "outDir": "dist",
     "types": ["node"]
   },
-  "include": ["src", "./types/additional.d.ts", "src/index.ts", "cdn", "src/pricing-table", "src/globals.d.ts", "docs"],
-  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json"]
+  "include": [
+    "src",
+    "./types/additional.d.ts",
+    "src/index.ts",
+    "cdn",
+    "src/resources/pricing-table",
+    "src/globals.d.ts",
+    "docs"
+  ],
+  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json", "src/**/__tests__"]
 }
