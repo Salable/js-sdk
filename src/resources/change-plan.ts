@@ -52,14 +52,17 @@ export class ChangePlan extends SalableBase {
       .then(() => {
         if (callback) {
           callback({message: 'Plan changed successfully'}, undefined);
+          return;
         }
       })
       .catch((error) => {
         if (callback) {
           if (error instanceof Error) {
             callback(undefined, error.message);
+            return;
           }
           callback(undefined, this._defaultErrorMessage);
+          return;
         }
       });
   };
