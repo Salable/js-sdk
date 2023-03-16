@@ -16,7 +16,7 @@
     "declaration": true,
     "noImplicitReturns": false,
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": [
     "src",
@@ -27,5 +27,5 @@
     "src/globals.d.ts",
     "docs"
   ],
-  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json", "src/**/__tests__"]
+  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json"]
 }

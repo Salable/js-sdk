@@ -2,7 +2,8 @@
 export default {
   // rootDir: ".",
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jest-environment-jsdom',
+  verbose: true,
   collectCoverageFrom: [
     '**/*.{ts,js}',
     '!**/node_modules/**',

@@ -28,7 +28,7 @@ const config = {
     resolve(),
     commonjs(),
     typescript({
-      tsconfig: 'tsconfig.json',
+      tsconfig: 'tsconfig.build.json',
       tsconfigOverride: {
         exclude: ['cdn/**', 'docs/**'],
       },

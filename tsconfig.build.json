@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json", "src/**/__tests__"]
+}
