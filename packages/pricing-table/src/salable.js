@@ -25,9 +25,10 @@ export class SalablePricingTable {
       apiKey: {
         value: this.envConfig.apiKey,
       },
-      // productUuid: {
-      //   value: this.envConfig.productUuid,
-      // },
+      productUuidOrPricingTableUuid: {
+        productUuid: this.envConfig.productUuid,
+        pricingTableUuid: this.envConfig.pricingTableUuid,
+      },
       cancelUrl: {
         value: this.envConfig.globalPlanOptions.cancelUrl,
       },
@@ -37,8 +38,20 @@ export class SalablePricingTable {
     };
 
     for (const key of Object.keys(requiredFields)) {
-      if (!requiredFields[key].value)
+      if (key === 'productUuidOrPricingTableUuid') {
+        if (
+          !requiredFields[key].productUuid &&
+          !requiredFields[key].pricingTableUuid
+        ) {
+          throw Error(
+            `Salable Pricing Table - one of productUuid or pricingTableUuid must be added to Pricing Table config`
+          );
+        }
+        continue;
+      }
+      if (!requiredFields[key].value) {
         throw Error(`Salable pricing table - missing property ${key}`);
+      }
     }
 
     if (this.envConfig.apiKey) {
