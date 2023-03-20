@@ -1,1 +1,1 @@
-export { SalablePricingTable } from '@salable/pricing-table/example';
+export { SalablePricingTable } from './pricing-table/src';
