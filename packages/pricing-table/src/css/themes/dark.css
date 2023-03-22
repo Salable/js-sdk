@@ -39,6 +39,9 @@
   color: #2a40ff;
   border-color: #2a40ff;
 }
+.salable-plan-featured {
+  border-color: #ffffff;
+}
 .salable-plan-heading {
   color: var(--salable-plan-heading-colour);
 }
