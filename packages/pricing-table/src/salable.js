@@ -39,10 +39,7 @@ export class SalablePricingTable {
 
     for (const key of Object.keys(requiredFields)) {
       if (key === 'productUuidOrPricingTableUuid') {
-        if (
-          !requiredFields[key].productUuid &&
-          !requiredFields[key].pricingTableUuid
-        ) {
+        if (!requiredFields[key].productUuid && !requiredFields[key].pricingTableUuid) {
           throw Error(
             `Salable Pricing Table - one of productUuid or pricingTableUuid must be added to Pricing Table config`
           );
@@ -58,8 +55,7 @@ export class SalablePricingTable {
       const classPrefix = 'salable';
       const pricingTable = this.envConfig.pricingTableNode;
       const bodyMovinScript = document.createElement('script');
-      bodyMovinScript.src =
-        'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js';
+      bodyMovinScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js';
       bodyMovinScript.integrity =
         'sha512-HDCfX3BneBQMfloBfluMQe6yio+OfXnbKAbI0SnfcZ4YfZL670nc52Aue1bBhgXa+QdWsBdhMVR2hYROljf+Fg==';
       bodyMovinScript.crossOrigin = 'anonymous';
@@ -87,10 +83,7 @@ export class SalablePricingTable {
           `salable-pricing-table-state-${this.envConfig.state}`
         );
 
-      const loadingEl = this.initialisers.createElWithClass(
-        'div',
-        `${classPrefix}-loading`
-      );
+      const loadingEl = this.initialisers.createElWithClass('div', `${classPrefix}-loading`);
       pricingTableContainerEl.appendChild(loadingEl);
 
       bodyMovinScript.addEventListener('load', () => {
@@ -189,18 +182,15 @@ export class SalablePricingTable {
           `./css/themes/${this.envConfig.theme ?? 'light'}.css`,
           `SalableCss${
             this.envConfig.theme
-              ? this.envConfig.theme[0].toUpperCase() +
-                this.envConfig.theme.substr(1)
+              ? this.envConfig.theme[0].toUpperCase() + this.envConfig.theme.substr(1)
               : 'Light'
           }`
         );
         if (this.envConfig.pricingTableUuid) {
-          const customThemeDefaultButton =
-            data.customTheme.elements.buttons.default;
+          const customThemeDefaultButton = data.customTheme.elements.buttons.default;
           this.initialisers.setCssVariables({
             ...(customThemeDefaultButton.backgroundColor && {
-              '--salable-button-background-colour':
-                customThemeDefaultButton.backgroundColor,
+              '--salable-button-background-colour': customThemeDefaultButton.backgroundColor,
               // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
               // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
               // '--salable-button-coming-soon-hover-border-colour':
@@ -218,14 +208,10 @@ export class SalablePricingTable {
             }),
           });
         }
-        const defaultCurrency = data?.currencies?.find(
-          (c) => c.defaultCurrency
-        );
+        const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
 
         let plans = data.plans
-          .filter(
-            (p) => p.active && p.planType !== 'bespoke' && p.status === 'ACTIVE'
-          )
+          .filter((p) => p.active && p.planType !== 'bespoke' && p.status === 'ACTIVE')
           .sort((a, b) => {
             if (this.envConfig.pricingTableUuid) {
               return a.sortOrder - b.sortOrder;
@@ -237,12 +223,8 @@ export class SalablePricingTable {
               return 1;
             }
             return (
-              a.currencies.find(
-                (c) => c.currencyUuid === defaultCurrency.currencyUuid
-              )?.price -
-              b.currencies.find(
-                (c) => c.currencyUuid === defaultCurrency.currencyUuid
-              )?.price
+              a.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price -
+              b.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price
             );
           });
 
@@ -251,8 +233,7 @@ export class SalablePricingTable {
             interval: 'month',
             plans: plans.filter(
               (p) =>
-                p.interval === 'month' ||
-                (p.pricingType === 'free' && p.planType === 'Standard')
+                p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
             ),
             pricingTableContainerEl,
             classPrefix,
@@ -268,16 +249,12 @@ export class SalablePricingTable {
           });
         }
 
-        if (
-          plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid')
-            .length
-        ) {
+        if (plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length) {
           this.initialisers.createPlansPerInterval({
             interval: 'year',
             plans: plans.filter(
               (p) =>
-                p.interval === 'year' ||
-                (p.pricingType === 'free' && p.planType === 'Standard')
+                p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
             ),
             pricingTableContainerEl,
             classPrefix,
@@ -294,16 +271,11 @@ export class SalablePricingTable {
         }
 
         if (
-          plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid')
-            .length &&
+          plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length &&
           plans.filter((p) => p.interval === 'month').length
         ) {
-          const monthlyEl = document.querySelector(
-            `.${classPrefix}-plans-container-month`
-          );
-          const yearEl = document.querySelector(
-            `.${classPrefix}-plans-container-year`
-          );
+          const monthlyEl = document.querySelector(`.${classPrefix}-plans-container-month`);
+          const yearEl = document.querySelector(`.${classPrefix}-plans-container-year`);
           const plansIntervalToggleEl =
             this.initialisers.createPricingTableIntervalToggle(classPrefix);
           document
@@ -319,32 +291,20 @@ export class SalablePricingTable {
               monthlyEl.style.display = 'none';
               yearEl.style.display = 'flex';
               document
-                .querySelector(
-                  `.${classPrefix}-plans-interval-toggle-label-year`
-                )
+                .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
                 .classList.add(`${classPrefix}-plans-interval-toggle-active`);
               document
-                .querySelector(
-                  `.${classPrefix}-plans-interval-toggle-label-month`
-                )
-                .classList.remove(
-                  `${classPrefix}-plans-interval-toggle-active`
-                );
+                .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
+                .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
             } else {
               pricingTableContainerEl.setAttribute('data-interval', 'month');
               monthlyEl.style.display = 'flex';
               yearEl.style.display = 'none';
               document
-                .querySelector(
-                  `.${classPrefix}-plans-interval-toggle-label-year`
-                )
-                .classList.remove(
-                  `${classPrefix}-plans-interval-toggle-active`
-                );
+                .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
+                .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
               document
-                .querySelector(
-                  `.${classPrefix}-plans-interval-toggle-label-month`
-                )
+                .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
                 .classList.add(`${classPrefix}-plans-interval-toggle-active`);
             }
           });
@@ -352,21 +312,13 @@ export class SalablePricingTable {
 
         loadingEl.style.display = 'none';
 
-        if (
-          this.envConfig.stylingOptions &&
-          Object.keys(this.envConfig.stylingOptions).length
-        ) {
-          const stylingOptionsKeyValues = Object.entries(
-            this.envConfig.stylingOptions
-          );
+        if (this.envConfig.stylingOptions && Object.keys(this.envConfig.stylingOptions).length) {
+          const stylingOptionsKeyValues = Object.entries(this.envConfig.stylingOptions);
           const root = document.querySelector(':root');
 
           if (stylingOptionsKeyValues) {
             for (const option of stylingOptionsKeyValues) {
-              root.style.setProperty(
-                `--${option[0].split('_').join('-')}`,
-                option[1]
-              );
+              root.style.setProperty(`--${option[0].split('_').join('-')}`, option[1]);
             }
           }
         }
@@ -590,23 +542,17 @@ class Initialisers {
   }
 
   createPlanPrice(classPrefix, plan, planEl, defaultCurrency) {
-    const planPriceEl = this.createElWithClass(
-      'div',
-      `${classPrefix}-plan-price`
-    );
+    const planPriceEl = this.createElWithClass('div', `${classPrefix}-plan-price`);
     if (plan.pricingType === 'free') {
       planPriceEl.innerText = 'Free';
     } else {
       if (plan.currencies?.length) {
         const matchedCurrency = plan.currencies.find((c) => {
-          if (this.envConfig.currency)
-            return c.currency.shortName === this.envConfig.currency;
+          if (this.envConfig.currency) return c.currency.shortName === this.envConfig.currency;
           return c.currency.uuid === defaultCurrency.currencyUuid;
         });
         if (this.envConfig.currency && !matchedCurrency)
-          throw Error(
-            'Salable pricing table - currency provided does not exist on product'
-          );
+          throw Error('Salable pricing table - currency provided does not exist on product');
         if (matchedCurrency) {
           const price = (matchedCurrency.price / 100).toFixed(2);
           planPriceEl.innerText = `${matchedCurrency.currency.symbol}${
@@ -630,10 +576,7 @@ class Initialisers {
   }
 
   createPlanHeading(classPrefix, plan) {
-    const planHeadingEl = this.createElWithClass(
-      'h3',
-      `${classPrefix}-plan-heading`
-    );
+    const planHeadingEl = this.createElWithClass('h3', `${classPrefix}-plan-heading`);
     planHeadingEl.innerText = plan.displayName;
     return planHeadingEl;
   }
@@ -643,33 +586,19 @@ class Initialisers {
   }
 
   createFeatureLabel(classPrefix) {
-    const featureLabelEl = this.createElWithClass(
-      'span',
-      `${classPrefix}-feature-list-item-label`
-    );
+    const featureLabelEl = this.createElWithClass('span', `${classPrefix}-feature-list-item-label`);
     return featureLabelEl;
   }
 
   createFeatureValue(classPrefix) {
-    const featureValueEl = this.createElWithClass(
-      'span',
-      `${classPrefix}-feature-list-item-value`
-    );
+    const featureValueEl = this.createElWithClass('span', `${classPrefix}-feature-list-item-value`);
     return featureValueEl;
   }
 
   createPlansFeaturesList(classPrefix, plan) {
-    const planFeaturesEl = this.createElWithClass(
-      'ul',
-      `${classPrefix}-feature-list`
-    );
-    for (const feature of plan.features.filter(
-      (p) => p.feature.visibility === 'public'
-    )) {
-      const featureEl = this.createElWithClass(
-        'li',
-        `${classPrefix}-feature-list-item`
-      );
+    const planFeaturesEl = this.createElWithClass('ul', `${classPrefix}-feature-list`);
+    for (const feature of plan.features.filter((p) => p.feature.visibility === 'public')) {
+      const featureEl = this.createElWithClass('li', `${classPrefix}-feature-list-item`);
       const featureLabelEl = this.createFeatureLabel(classPrefix);
       featureLabelEl.innerText = feature.feature.displayName;
       featureEl.appendChild(featureLabelEl);
@@ -682,8 +611,7 @@ class Initialisers {
           case 'false':
             return this.createFeatureIcon(classPrefix, feature);
           default:
-            return feature?.feature.valueType === 'enum' &&
-              feature.enumValue.name
+            return feature?.feature.valueType === 'enum' && feature.enumValue.name
               ? feature.enumValue.name
               : value;
         }
@@ -776,15 +704,10 @@ class Initialisers {
 
     const planCtaText = (plan, envConfig, buttonTextDefaults) => {
       switch (true) {
-        case envConfig.individualPlanOptions?.[plan?.uuid]?.cta?.text !==
-          undefined:
+        case envConfig.individualPlanOptions?.[plan?.uuid]?.cta?.text !== undefined:
           return envConfig.individualPlanOptions[plan.uuid].cta.text;
-        case envConfig.globalPlanOptions?.cta?.text?.[
-          plan.planType.toLowerCase()
-        ] !== undefined:
-          return envConfig.globalPlanOptions.cta.text[
-            plan.planType.toLowerCase()
-          ];
+        case envConfig.globalPlanOptions?.cta?.text?.[plan.planType.toLowerCase()] !== undefined:
+          return envConfig.globalPlanOptions.cta.text[plan.planType.toLowerCase()];
         case buttonTextDefaults?.[plan?.planType] !== undefined:
           if (plan?.planType === 'Standard')
             return buttonTextDefaults?.[plan?.planType]?.[plan?.pricingType];
@@ -797,17 +720,13 @@ class Initialisers {
     const planCtaUrl = (plan) => {
       switch (plan.planType) {
         case 'Standard':
-          return plan.pricingType === 'paid'
-            ? plan.checkoutUrl
-            : `${this.getApiDomain()}/licenses`;
+          return plan.pricingType === 'paid' ? plan.checkoutUrl : `${this.getApiDomain()}/licenses`;
         case 'Coming soon':
           const comingSoonUrl =
             this.envConfig?.individualPlanOptions?.[plan.uuid]?.contactUsLink ??
             this.envConfig?.globalPlanOptions?.contactUsLink;
           if (!comingSoonUrl)
-            throw Error(
-              `Salable pricing table - missing contact us link on ${plan.uuid}`
-            );
+            throw Error(`Salable pricing table - missing contact us link on ${plan.uuid}`);
           return comingSoonUrl;
       }
     };
@@ -819,18 +738,9 @@ class Initialisers {
 
     if (plan.pricingType === 'free' && plan.planType !== 'Coming soon') {
       planCtaEl.innerText = '';
-      const planCtaElId = `${
-        interval === 'year' ? 'year' : plan.interval
-      }${planIndex}Cta`;
-      const planCtaElInnerSpan = this.createElWithClass(
-        'span',
-        'salable-plan-button-span'
-      );
-      planCtaElInnerSpan.innerText = planCtaText(
-        plan,
-        envConfig,
-        buttonTextDefaults
-      );
+      const planCtaElId = `${interval === 'year' ? 'year' : plan.interval}${planIndex}Cta`;
+      const planCtaElInnerSpan = this.createElWithClass('span', 'salable-plan-button-span');
+      planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
       planCtaEl.appendChild(planCtaElInnerSpan);
       planCtaEl.classList.add('salable-plan-button-free');
       planCtaEl.id = planCtaElId;
@@ -841,9 +751,9 @@ class Initialisers {
           if (planCtaEl.getAttribute('disabled')) return null;
           planCtaEl.classList.add('salable-disabled');
 
-          const otherCtas = Array.from(
-            document.querySelectorAll('.salable-plan-button')
-          ).filter((b) => b.id !== planCtaElId);
+          const otherCtas = Array.from(document.querySelectorAll('.salable-plan-button')).filter(
+            (b) => b.id !== planCtaElId
+          );
           for (const cta of otherCtas) {
             cta.classList.add('salable-plan-button-disabled');
             cta.classList.add('salable-disabled');
@@ -859,25 +769,22 @@ class Initialisers {
             pricingTableContainerEl,
             `SalableLottie${planCtaElId}LoadingAnimation`
           );
-          const licensesResponse = await fetch(
-            `${this.getApiDomain()}/licenses`,
-            {
-              method: 'POST',
-              headers: {
-                'x-api-key': this.envConfig.apiKey,
-              },
-              body: JSON.stringify({
-                planUuid: plan.uuid,
-                member: this.checkoutConfig.member,
-                granteeId:
-                  this.envConfig?.individualPlanOptions?.[plan.uuid]
-                    ?.granteeId ?? this.envConfig.globalPlanOptions.granteeId,
-                ...(this.checkoutConfig.customer.email && {
-                  email: this.checkoutConfig.customer.email,
-                }),
+          const licensesResponse = await fetch(`${this.getApiDomain()}/licenses`, {
+            method: 'POST',
+            headers: {
+              'x-api-key': this.envConfig.apiKey,
+            },
+            body: JSON.stringify({
+              planUuid: plan.uuid,
+              member: this.checkoutConfig.member,
+              granteeId:
+                this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
+                this.envConfig.globalPlanOptions.granteeId,
+              ...(this.checkoutConfig.customer.email && {
+                email: this.checkoutConfig.customer.email,
               }),
-            }
-          ).catch(() => {
+            }),
+          }).catch(() => {
             // eslint-disable-next-line no-console
             console.error('Salable pricing table - error creating license');
           });
@@ -893,11 +800,7 @@ class Initialisers {
             cta.classList.remove('salable-disabled');
             cta.removeAttribute('disabled', true);
           }
-          planCtaElInnerSpan.innerText = planCtaText(
-            plan,
-            envConfig,
-            buttonTextDefaults
-          );
+          planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
         }
       });
     }
@@ -969,10 +872,7 @@ class Initialisers {
       const planFeaturesEl = this.createPlansFeaturesList(classPrefix, plan);
       planEl.appendChild(planFeaturesEl);
 
-      if (
-        envConfig?.individualPlanOptions?.[plan?.uuid]?.cta?.visibility !==
-        'hidden'
-      ) {
+      if (envConfig?.individualPlanOptions?.[plan?.uuid]?.cta?.visibility !== 'hidden') {
         if (envConfig?.globalPlanOptions?.cta?.visibility !== 'hidden') {
           const planCtaEl = this.createPlanCta({
             classPrefix,
@@ -986,10 +886,7 @@ class Initialisers {
             customTheme,
           });
           if (this.envConfig.state === 'preview') {
-            if (
-              plan.pricingType === 'free' &&
-              plan.planType !== 'Coming soon'
-            ) {
+            if (plan.pricingType === 'free' && plan.planType !== 'Coming soon') {
               this.createTooltip(
                 planCtaEl,
                 planEl,
@@ -1077,10 +974,7 @@ class Initialisers {
   }
 
   createTooltip(el, elParent, tooltipText, id) {
-    const toolTipElHolder = this.createElWithClass(
-      'div',
-      'salable-tooltip-holder'
-    );
+    const toolTipElHolder = this.createElWithClass('div', 'salable-tooltip-holder');
     const toolTipEl = this.createElWithClass('span', 'salable-tooltip');
     toolTipEl.innerText = tooltipText;
     toolTipEl.id = id;
@@ -1090,24 +984,16 @@ class Initialisers {
     toolTipElHolder.appendChild(el);
     elParent.appendChild(toolTipElHolder);
 
-    el.addEventListener('mouseover', () =>
-      toolTipEl.classList.add('salable-tooltip-visible')
-    );
-    el.addEventListener('mouseleave', () =>
-      toolTipEl.classList.remove('salable-tooltip-visible')
-    );
+    el.addEventListener('mouseover', () => toolTipEl.classList.add('salable-tooltip-visible'));
+    el.addEventListener('mouseleave', () => toolTipEl.classList.remove('salable-tooltip-visible'));
   }
 
   getApiDomain() {
-    return `https://api.salable.${
-      this.envConfig.environment === 'stg' ? 'org' : 'app'
-    }`;
+    return `https://api.salable.${this.envConfig.environment === 'stg' ? 'org' : 'app'}`;
   }
 
   getCdnDomain() {
-    return `https://cdn.salable.${
-      this.envConfig.environment === 'stg' ? 'org' : 'app'
-    }`;
+    return `https://cdn.salable.${this.envConfig.environment === 'stg' ? 'org' : 'app'}`;
   }
 
   getPricingTableFactory(data) {
