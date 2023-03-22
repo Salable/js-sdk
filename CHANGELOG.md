@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/Salable/js-sdk/compare/v1.3.1...v1.4.0) (2023-03-22)
+
+
+### Bug Fixes
+
+* change to required fields to check for product OR pricing table uuid ([96796ad](https://github.com/Salable/js-sdk/commit/96796ade3a5d1ac04e123d990bc3074f79f3633a))
+
+
+### Features
+
+* **featured plan:** styling to add featured plan and overwrite button colour values set in salable ([5650967](https://github.com/Salable/js-sdk/commit/56509676889c6f477aac1f2673b4d81de69e462a))
+* **PPP-20:** custom pricing tables ([c40d16e](https://github.com/Salable/js-sdk/commit/c40d16ee47035663be4a636faca1e3228d3ff998))
+* **pricing tables:** more css variables which can be changed through customisation from Salable api ([2c3607e](https://github.com/Salable/js-sdk/commit/2c3607e9db1f99de628fb5509bc140eacdba7d49))
+
 ## [1.3.1](https://github.com/Salable/js-sdk/compare/v1.3.0...v1.3.1) (2023-02-14)
 
 ### Bug Fixes
