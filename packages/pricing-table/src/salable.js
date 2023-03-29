@@ -179,7 +179,9 @@ export class SalablePricingTable {
           this.envConfig.theme = data.theme;
         }
         this.initialisers.createCssStyleSheetLink(
-          `./css/themes/${this.envConfig.theme ?? 'light'}.css`,
+          `${this.initialisers.getCdnDomain()}/latest/css/themes/${
+            this.envConfig.theme ?? 'light'
+          }.css`,
           `SalableCss${
             this.envConfig.theme
               ? this.envConfig.theme[0].toUpperCase() + this.envConfig.theme.substr(1)
