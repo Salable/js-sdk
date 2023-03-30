@@ -244,8 +244,7 @@ body {
   opacity: 1;
 }
 .salable-plan {
-  margin-bottom: 40px;
-  padding: 20px 0;
+  padding: 0 0 0 40px;
   width: 300px;
 }
 .salable-plan-featured {
@@ -261,6 +260,6 @@ a.salable-disabled {
 }
 @media only screen and (min-width: 700px) {
   .salable-plan {
-    margin-bottom: 0;
+    padding: 40px 0;
   }
 }
