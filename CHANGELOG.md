@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/Salable/js-sdk/compare/v1.4.0...v1.4.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* added cdn domain to theme css link ([27be197](https://github.com/Salable/js-sdk/commit/27be197714895cfe57c32a410805bc96ab956db7))
+* removed width calcs on features ([caca24a](https://github.com/Salable/js-sdk/commit/caca24af62456225c0ed57bfcd02711f7d80271d))
+
 # [1.4.0](https://github.com/Salable/js-sdk/compare/v1.3.1...v1.4.0) (2023-03-22)
 
 
