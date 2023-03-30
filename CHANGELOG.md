@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/Salable/js-sdk/compare/v1.4.1...v1.4.2) (2023-03-30)
+
+
+### Bug Fixes
+
+* correct api domain added ([de7b7d0](https://github.com/Salable/js-sdk/commit/de7b7d0890580aba50fc15d7118c2bdebd2c8bcc))
+
 ## [1.4.1](https://github.com/Salable/js-sdk/compare/v1.4.0...v1.4.1) (2023-03-30)
 
 
