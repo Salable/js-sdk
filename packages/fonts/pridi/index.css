@@ -1,0 +1,47 @@
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 200;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-ExtraLight.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 300;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 400;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 500;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 600;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Roboto;
+  font-weight: 700;
+  font-style: normal;
+  src: url('https://cdn.salable.app/latest/fonts/pridi/Pridi-Bold.woff2') format('woff2');
+}
