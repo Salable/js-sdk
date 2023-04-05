@@ -189,26 +189,28 @@ export class SalablePricingTable {
           }`
         );
         if (this.envConfig.pricingTableUuid) {
-          const customThemeDefaultButton = data.customTheme.elements.buttons.default;
-          this.initialisers.setCssVariables({
-            ...(customThemeDefaultButton.backgroundColor && {
-              '--salable-button-background-colour': customThemeDefaultButton.backgroundColor,
-              // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
-              // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
-              // '--salable-button-coming-soon-hover-border-colour':
-              //   customThemeDefaultButton.backgroundColor,
-            }),
-            ...(customThemeDefaultButton.hover.backgroundColor && {
-              '--salable-button-hover-background-colour':
-                customThemeDefaultButton.hover.backgroundColor,
-              // '--salable-button-coming-soon-hover-background-colour':
-              //   customThemeDefaultButton.hover.backgroundColor + 15,
-            }),
-            ...(customThemeDefaultButton.color && {
-              '--salable-button-colour': customThemeDefaultButton.color,
-              '--salable-button-hover-colour': customThemeDefaultButton.color,
-            }),
-          });
+          const customThemeDefaultButton = data.customTheme?.elements?.buttons?.default;
+          if (customThemeDefaultButton) {
+            this.initialisers.setCssVariables({
+              ...(customThemeDefaultButton.backgroundColor && {
+                '--salable-button-background-colour': customThemeDefaultButton.backgroundColor,
+                // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
+                // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
+                // '--salable-button-coming-soon-hover-border-colour':
+                //   customThemeDefaultButton.backgroundColor,
+              }),
+              ...(customThemeDefaultButton.hover.backgroundColor && {
+                '--salable-button-hover-background-colour':
+                  customThemeDefaultButton.hover.backgroundColor,
+                // '--salable-button-coming-soon-hover-background-colour':
+                //   customThemeDefaultButton.hover.backgroundColor + 15,
+              }),
+              ...(customThemeDefaultButton.color && {
+                '--salable-button-colour': customThemeDefaultButton.color,
+                '--salable-button-hover-colour': customThemeDefaultButton.color,
+              }),
+            });
+          }
         }
         const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
 
@@ -228,6 +230,14 @@ export class SalablePricingTable {
               a.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price -
               b.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price
             );
+          })
+          .map((p) => {
+            for (const f of p.features) {
+              f.sortOrder = data.features.find((feat) => feat.uuid === f.featureUuid)?.sortOrder;
+            }
+            return {
+              ...p,
+            };
           });
 
         if (plans.filter((p) => p.interval === 'month').length) {
@@ -599,7 +609,9 @@ class Initialisers {
 
   createPlansFeaturesList(classPrefix, plan) {
     const planFeaturesEl = this.createElWithClass('ul', `${classPrefix}-feature-list`);
-    for (const feature of plan.features.filter((p) => p.feature.visibility === 'public')) {
+    for (const feature of plan.features
+      ?.filter((p) => p.feature.visibility === 'public')
+      .sort((a, b) => a.sortOrder - b.sortOrder)) {
       const featureEl = this.createElWithClass('li', `${classPrefix}-feature-list-item`);
       const featureLabelEl = this.createFeatureLabel(classPrefix);
       featureLabelEl.innerText = feature.feature.displayName;
