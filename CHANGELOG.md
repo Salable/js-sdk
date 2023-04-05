@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Salable/js-sdk/compare/v1.4.2...v1.5.0) (2023-04-05)
+
+
+### Features
+
+* feature sort order implemented based on values set in Salable ([1ba09f0](https://github.com/Salable/js-sdk/commit/1ba09f065cbfc736cffb775b60db0e53f19daad8))
+
 ## [1.4.2](https://github.com/Salable/js-sdk/compare/v1.4.1...v1.4.2) (2023-03-30)
 
 
