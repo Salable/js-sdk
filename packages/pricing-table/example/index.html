@@ -18,6 +18,35 @@
         <div id="pricing-table"></div>
 
         <script type="module">
+          import { SalablePricingTable } from './salable.js';
+          (async () => {
+            const salable = new SalablePricingTable(
+              {
+                pricingTableNode: document.querySelector('#pricing-table'),
+                pricingTableUuid: '53d00da3-6781-4f6f-b215-75be6bfe81e9',
+                apiKey: '4dY1Obor7IiMeHULdZka37VyxXXSlln2miqmejWb',
+                globalPlanOptions: {
+                  granteeId: 'example-grantee-id-123',
+                  successUrl: 'https://example.com/success',
+                  cancelUrl: 'https://example.com/cancel',
+                },
+                theme: 'light',
+              },
+              {
+                member: 'example-member-123',
+                customer: {
+                  email: 'person@company.com',
+                },
+              }
+            );
+            await salable.init();
+          })();
+        </script>
+
+        <!--
+        <div id="pricing-table"></div>
+
+        <script type="module">
           import { SalablePricingTable } from 'https://cdn.salable.app/latest/index.js';
 
           (async () => {
@@ -44,6 +73,7 @@
             await salable.init();
           })();
         </script>
+        -->
       </div>
     </div>
   </body>
