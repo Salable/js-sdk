@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Salable/js-sdk/compare/v1.5.0...v1.6.0) (2023-04-20)
+
+
+### Features
+
+* set feature sort order per pricing table ([62199b2](https://github.com/Salable/js-sdk/commit/62199b2ddeaf60317285fa0af95ad92b55be2078))
+
 # [1.5.0](https://github.com/Salable/js-sdk/compare/v1.4.2...v1.5.0) (2023-04-05)
 
 
