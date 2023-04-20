@@ -235,9 +235,7 @@ export class SalablePricingTable {
             for (const f of p.features) {
               f.sortOrder = data.features.find((feat) => feat.uuid === f.featureUuid)?.sortOrder;
             }
-            return {
-              ...p,
-            };
+            return p;
           });
 
         if (plans.filter((p) => p.interval === 'month').length) {
@@ -1011,6 +1009,11 @@ class Initialisers {
   }
 
   getPricingTableFactory(data) {
+    if (data.featureOrder === 'custom') {
+      for (const f of data.product.features) {
+        f.sortOrder = data.features.find((feat) => feat.featureUuid === f.uuid)?.sortOrder;
+      }
+    }
     const plans = data.plans;
     const product = data.product;
     delete data.plans;

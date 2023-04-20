@@ -244,13 +244,17 @@ body {
   opacity: 1;
 }
 .salable-plan {
-  padding: 0 0 0 40px;
+  padding: 30px 0 40px;
   width: 300px;
 }
 .salable-plan-featured {
   width: 296px;
   border: 2px solid;
   border-radius: 8px;
+}
+.salable-plan.salable-plan-featured {
+  padding: 28px 0 38px;
+  width: 300px;
 }
 .salable-disabled {
   cursor: not-allowed;
