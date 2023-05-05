@@ -444,7 +444,8 @@ class CheckoutConfig {
   vatPostcode;
   member;
   marketingConsent;
-  couponCode;
+  promoCode;
+  allowPromoCode;
 
   constructor(config) {
     this.customerEmail = config.customer.email;
@@ -459,7 +460,8 @@ class CheckoutConfig {
     this.vatPostcode = config.vat?.postcode;
     this.member = config.member;
     this.marketingConsent = config.marketingConsent;
-    this.couponCode = config.couponCode;
+    this.promoCode = config.promoCode;
+    this.allowPromoCode = config.allowPromoCode;
   }
 
   get customerEmail() {
@@ -510,8 +512,12 @@ class CheckoutConfig {
     return this.marketingConsent;
   }
 
-  get couponCode() {
-    return this.couponCode;
+  get promoCode() {
+    return this.promoCode;
+  }
+
+  get allowPromoCode() {
+    return this.allowPromoCode;
   }
 }
 
@@ -957,7 +963,8 @@ class Initialisers {
       'customerEmail',
       'customerPostcode',
       'member',
-      'couponCode',
+      'promoCode',
+      'allowPromoCode',
       'marketingConsent',
       'vatCity',
       'vatCompanyName',
@@ -969,8 +976,7 @@ class Initialisers {
     ];
 
     for (const key of Object.keys(queryParams)) {
-      if (allowedQueryParams.includes(key)) {
-        if (!queryParams[key]) break;
+      if (allowedQueryParams.includes(key) && queryParams[key]) {
         switch (key) {
           case 'marketingConsent':
             paramsStr += `&${key}=${queryParams[key] ? '1' : '0'}`;
