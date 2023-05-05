@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Salable/js-sdk/compare/v1.6.0...v1.7.0) (2023-05-05)
+
+
+### Features
+
+* promoCode and allowPromoCode options added to checkout config ([d9d903a](https://github.com/Salable/js-sdk/commit/d9d903a5ba18530235257b9561b6c8ed4b11dfb2))
+
 # [1.6.0](https://github.com/Salable/js-sdk/compare/v1.5.0...v1.6.0) (2023-04-20)
 
 
