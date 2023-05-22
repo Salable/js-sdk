@@ -1,6 +1,13 @@
-import {Stack, StackProps, aws_s3, aws_cloudfront, aws_certificatemanager, aws_cloudfront_origins} from 'aws-cdk-lib';
-import {Construct} from 'constructs';
-import {IEnvironment} from '../bin/types';
+import {
+  Stack,
+  StackProps,
+  aws_s3,
+  aws_cloudfront,
+  aws_certificatemanager,
+  aws_cloudfront_origins,
+} from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { IEnvironment } from '../bin/types';
 
 export class CdkStack extends Stack {
   constructor(scope: Construct, id: string, environment: IEnvironment, props?: StackProps) {
@@ -23,7 +30,7 @@ export class CdkStack extends Stack {
       environment.certificateArn
     );
 
-    const salableJsSDKCloudfront = new aws_cloudfront.Distribution(this, 'salableJsSdkCdnCloudfront', {
+    new aws_cloudfront.Distribution(this, 'salableJsSdkCdnCloudfront', {
       defaultBehavior: {
         origin: new aws_cloudfront_origins.S3Origin(salableJsSdkCdnBucket),
         viewerProtocolPolicy: aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,

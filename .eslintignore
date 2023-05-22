@@ -1,4 +1,7 @@
 dist
 cdk.out
 **/*.d.ts
+
+build
+.docusaurus
 docs/build/**
