@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "author": "Salable",
   "license": "MIT",
   "files": [
@@ -16,6 +17,7 @@
   "scripts": {
     "prepare": "husky install",
     "commit": "cz",
+    "test": "jest",
     "build": "rollup -c",
     "build:cdn": "cd cdn && npm run build && cd ..",
     "preversion": "npm run build",
@@ -28,11 +30,12 @@
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-replace": "^5.0.1",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@types/jest": "^29.0.3",
+    "@types/jest": "^29.4.0",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "commitizen": "^4.2.5",
@@ -47,12 +50,13 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.0",
     "jest": "^29.0.3",
+    "jest-environment-jsdom": "^29.5.0",
+    "jest-fetch-mock": "^3.0.3",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "rollup": "^3.2.5",
     "rollup-plugin-cleaner": "^1.0.0",
     "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.34.1",
     "semantic-release": "^19.0.5",
@@ -76,5 +80,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "@pkgr/utils": "^2.4.0"
   }
 }

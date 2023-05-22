@@ -174,26 +174,18 @@ body {
   border-color: var(--salable-button-border-colour-disabled);
   background-color: transparent;
 }
-.salable-plan-button.salable-plan-button-featured:not(.salable-disabled):not(
-    .salable-plan-button-coming-soon
-  ) {
+.salable-plan-button.salable-plan-button-featured:not(.salable-disabled):not(.salable-plan-button-coming-soon) {
   background-color: var(--salable-button-featured-button-background-colour);
   color: var(--salable-button-featured-button-text-colour);
 }
-.salable-plan-button.salable-plan-button-featured:not(.salable-disabled):not(
-    .salable-plan-button-coming-soon
-  ):hover {
+.salable-plan-button.salable-plan-button-featured:not(.salable-disabled):not(.salable-plan-button-coming-soon):hover {
   background-color: var(--salable-button-featured-button-hover-background-colour);
 }
-.salable-plan-button.salable-plan-button-featured.salable-plan-button-coming-soon:not(
-    .salable-disabled
-  ) {
+.salable-plan-button.salable-plan-button-featured.salable-plan-button-coming-soon:not(.salable-disabled) {
   border-color: var(--salable-button-featured-button-border-colour);
   color: var(--salable-button-coming-soon-featured-button-text-colour);
 }
-.salable-plan-button.salable-plan-button-featured.salable-plan-button-coming-soon:not(
-    .salable-disabled
-  ):hover {
+.salable-plan-button.salable-plan-button-featured.salable-plan-button-coming-soon:not(.salable-disabled):hover {
   border-color: var(--salable-button-featured-button-hover-border-colour);
   color: var(--salable-button-featured-button-hover-text-colour);
   background-color: var(--salable-button-coming-soon-featured-button-hover-background-colour);

@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salable pricing table library</title>
+    <style>
+      #pricing-table {
+        width: 100%;
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+    </style>
+  </head>
+  <body style="padding: 40px">
+    <h1>Salable JS</h1>
+
+    <div>
+      <h2>Available Plans</h2>
+      <div id="available-plans-table"></div>
+      <div id="error-box"></div>
+    </div>
+
+    <script type="module">
+      import {Salable} from '../dist/index.js';
+      const salable = new Salable('{{YOUR_API_KEY}}');
+
+      const availablePlans = salable.availablePlans({
+        subscriptionID: '{{YOUR_API_SUBSCRIPTION_ID}}',
+        granteeID: 'grantee',
+        memberID: 'member',
+        productID: '{{YOUR_API_PRODUCT_UUID}}',
+      });
+      availablePlans.mount(document.querySelector('#available-plans-table'), (success, error) => {
+        if (success) {
+          console.log('Success', success);
+        }
+        if (error) {
+          document.querySelector('#error-box').innerHTML = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>

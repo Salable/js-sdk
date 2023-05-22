@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["*"]
-    },
     "target": "ESNext",
     "lib": ["dom", "esnext"],
     "allowJs": true,
@@ -12,6 +8,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -19,14 +16,16 @@
     "declaration": true,
     "noImplicitReturns": false,
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": [
-    "packages/**/*",
+    "src",
     "./types/additional.d.ts",
-    "packages/index.ts",
+    "src/index.ts",
     "cdn",
+    "src/resources/pricing-table",
+    "src/globals.d.ts",
     "docs"
   ],
-  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out"]
+  "exclude": ["node_modules", "lib", "jest.setup.ts", "dist", "cdk.out", "package.json"]
 }
