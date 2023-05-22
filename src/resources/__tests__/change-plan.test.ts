@@ -1,4 +1,4 @@
-import {ChangePlan} from '../change-plan';
+import { ChangePlan } from '../change-plan';
 
 class TestChangePlan extends ChangePlan {
   constructor(apiKey: string) {
@@ -38,15 +38,15 @@ describe('Unit Test | Resource | Change Plan', () => {
     const planID = 'test_plan_id';
 
     it('should throw error if planID is not provided', async () => {
-      await expect(testChangePlan.upgradeOrDowngradePlanSync({subscriptionID, planID: ''})).rejects.toThrow(
-        "SalableJS: Missing property: 'planID'"
-      );
+      await expect(
+        testChangePlan.upgradeOrDowngradePlanSync({ subscriptionID, planID: '' })
+      ).rejects.toThrow("SalableJS: Missing property: 'planID'");
     });
 
     it('should throw error if subscriptionID is not provided', async () => {
-      await expect(testChangePlan.upgradeOrDowngradePlanSync({subscriptionID: '', planID})).rejects.toThrow(
-        "SalableJS: Missing property: 'subscriptionID'"
-      );
+      await expect(
+        testChangePlan.upgradeOrDowngradePlanSync({ subscriptionID: '', planID })
+      ).rejects.toThrow("SalableJS: Missing property: 'subscriptionID'");
     });
 
     it('should make PUT request to update plan and return success message', async () => {
@@ -58,9 +58,9 @@ describe('Unit Test | Resource | Change Plan', () => {
         })
       );
 
-      const result = await testChangePlan.upgradeOrDowngradePlanSync({planID, subscriptionID});
+      const result = await testChangePlan.upgradeOrDowngradePlanSync({ planID, subscriptionID });
 
-      expect(result).toEqual({message: 'Plan changed successfully'});
+      expect(result).toEqual({ message: 'Plan changed successfully' });
       expect(fetch).toHaveBeenCalledWith(`${testChangePlan.APIDomain}${endpoint}`, {
         method: 'PUT',
         headers: {
@@ -79,15 +79,17 @@ describe('Unit Test | Resource | Change Plan', () => {
         })
       );
 
-      await expect(testChangePlan.upgradeOrDowngradePlanSync({planID, subscriptionID})).rejects.toThrow('Server error');
+      await expect(
+        testChangePlan.upgradeOrDowngradePlanSync({ planID, subscriptionID })
+      ).rejects.toThrow('Server error');
     });
 
     it('should throw default error message if response is not ok and error message is not available', async () => {
       global.fetch = jest.fn().mockImplementation(() => Promise.reject());
 
-      await expect(testChangePlan.upgradeOrDowngradePlanSync({planID, subscriptionID})).rejects.toThrow(
-        testChangePlan.defaultError
-      );
+      await expect(
+        testChangePlan.upgradeOrDowngradePlanSync({ planID, subscriptionID })
+      ).rejects.toThrow(testChangePlan.defaultError);
     });
 
     it('should throw error message if response is not ok and error message is available', async () => {
@@ -95,13 +97,13 @@ describe('Unit Test | Resource | Change Plan', () => {
         Promise.resolve({
           ok: false,
           statusText: 'Server error',
-          json: jest.fn().mockResolvedValue({error: 'Error message'}),
+          json: jest.fn().mockResolvedValue({ error: 'Error message' }),
         })
       );
 
-      await expect(testChangePlan.upgradeOrDowngradePlanSync({planID, subscriptionID})).rejects.toThrow(
-        'Error message'
-      );
+      await expect(
+        testChangePlan.upgradeOrDowngradePlanSync({ planID, subscriptionID })
+      ).rejects.toThrow('Error message');
     });
   });
 
@@ -111,15 +113,15 @@ describe('Unit Test | Resource | Change Plan', () => {
     const planID = 'plan123';
 
     it('should throw error if planID is not provided', () => {
-      expect(() => testChangePlan.upgradeOrDowngradePlanAsync({subscriptionID, planID: ''})).toThrow(
-        "SalableJS: Missing property: 'planID'"
-      );
+      expect(() =>
+        testChangePlan.upgradeOrDowngradePlanAsync({ subscriptionID, planID: '' })
+      ).toThrow("SalableJS: Missing property: 'planID'");
     });
 
     it('should throw error if subscriptionID is not provided', () => {
-      expect(() => testChangePlan.upgradeOrDowngradePlanAsync({subscriptionID: '', planID})).toThrow(
-        "SalableJS: Missing property: 'subscriptionID'"
-      );
+      expect(() =>
+        testChangePlan.upgradeOrDowngradePlanAsync({ subscriptionID: '', planID })
+      ).toThrow("SalableJS: Missing property: 'subscriptionID'");
     });
 
     it('should call the _request method with correct parameters', () => {
@@ -133,7 +135,7 @@ describe('Unit Test | Resource | Change Plan', () => {
       );
 
       // Act
-      testChangePlan.upgradeOrDowngradePlanAsync({planID, subscriptionID});
+      testChangePlan.upgradeOrDowngradePlanAsync({ planID, subscriptionID });
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(endpoint, {
@@ -153,10 +155,10 @@ describe('Unit Test | Resource | Change Plan', () => {
           json: () => Promise.resolve(),
         })
       );
-      const expected = {message: 'Plan changed successfully'};
+      const expected = { message: 'Plan changed successfully' };
 
       // Act
-      testChangePlan.upgradeOrDowngradePlanAsync({planID, subscriptionID}, (success, error) => {
+      testChangePlan.upgradeOrDowngradePlanAsync({ planID, subscriptionID }, (success, error) => {
         // Assert
         expect(success).toEqual(expected);
         expect(error).toEqual(undefined);
@@ -173,15 +175,18 @@ describe('Unit Test | Resource | Change Plan', () => {
       );
 
       // Act
-      testChangePlan.upgradeOrDowngradePlanAsync({planID: 'plan123', subscriptionID: 'sub456'}, (success, error) => {
-        // Assert
-        expect(success).toEqual(undefined);
-        expect(error).toEqual('Unknown error while changing plan. Please try again later');
-      });
+      testChangePlan.upgradeOrDowngradePlanAsync(
+        { planID: 'plan123', subscriptionID: 'sub456' },
+        (success, error) => {
+          // Assert
+          expect(success).toEqual(undefined);
+          expect(error).toEqual('Unknown error while changing plan. Please try again later');
+        }
+      );
     });
 
     it('should call the callback with an error message when the request fails with an Error object', () => {
-      const errorResponse = {error: 'Request failed'};
+      const errorResponse = { error: 'Request failed' };
       // Arrange
       global.fetch = jest.fn().mockImplementation(() =>
         Promise.resolve({
@@ -192,11 +197,14 @@ describe('Unit Test | Resource | Change Plan', () => {
       );
 
       // Act
-      testChangePlan.upgradeOrDowngradePlanAsync({planID: 'plan123', subscriptionID: 'sub456'}, (success, error) => {
-        // Assert
-        expect(success).toEqual(undefined);
-        expect(error).toEqual(errorResponse.error);
-      });
+      testChangePlan.upgradeOrDowngradePlanAsync(
+        { planID: 'plan123', subscriptionID: 'sub456' },
+        (success, error) => {
+          // Assert
+          expect(success).toEqual(undefined);
+          expect(error).toEqual(errorResponse.error);
+        }
+      );
     });
   });
 });

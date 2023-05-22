@@ -1,4 +1,4 @@
-import {SalableBase} from '../base';
+import { SalableBase } from '../base';
 
 class TestSalableBase extends SalableBase {
   public async testRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -41,7 +41,7 @@ describe('Unit Test | Resource | Base', () => {
     });
 
     it('should return json response when response is ok', async () => {
-      const responseData = {test: 'data'};
+      const responseData = { test: 'data' };
       const endpoint = '/test';
       global.fetch = jest.fn().mockImplementation(() =>
         Promise.resolve({
@@ -54,7 +54,7 @@ describe('Unit Test | Resource | Base', () => {
     });
 
     it('should throw error when response is not ok', async () => {
-      const errorResponse = {error: 'test error message'};
+      const errorResponse = { error: 'test error message' };
       const endpoint = '/test';
       global.fetch = jest.fn().mockImplementation(() =>
         Promise.resolve({

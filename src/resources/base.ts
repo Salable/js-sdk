@@ -1,5 +1,5 @@
-import {SALABLE_BASE_URL, SALABLE_BASE_CDN} from '../constants';
-import {MissingPropertyError} from '../utils/errors';
+import { SALABLE_BASE_URL, SALABLE_BASE_CDN } from '../constants';
+import { MissingPropertyError } from '../utils/errors';
 
 export interface IOptions {
   theme?: 'dark' | 'light';
@@ -46,7 +46,7 @@ export class SalableBase {
       if (response.ok) {
         return response.json() as Promise<T>;
       }
-      const error = (await response.json()) as {error: string};
+      const error = (await response.json()) as { error: string };
       throw new Error(error?.error ?? response.statusText);
     });
   };

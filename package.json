@@ -80,5 +80,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "@pkgr/utils": "^2.4.0"
   }
 }

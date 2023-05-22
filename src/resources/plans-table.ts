@@ -1,5 +1,5 @@
-import {IPlan, IPlanCurrency, IProductCurrency} from '../interfaces';
-import {ElementGenerator} from './element-generator';
+import { IPlan, IPlanCurrency, IProductCurrency } from '../interfaces';
+import { ElementGenerator } from './element-generator';
 
 export interface IEnvConfig {
   currency?: string;
@@ -41,16 +41,22 @@ export class PlansTableGenerator extends ElementGenerator {
     this._envConfig = envConfig;
   }
 
-  _createFeatureIcon(classPrefix: string, feature: {value: string}) {
+  _createFeatureIcon(classPrefix: string, feature: { value: string }) {
     return feature.value === 'false' ? '&#10007;' : '&#10004;';
   }
   _createFeatureLabel(classPrefix: string) {
-    const featureLabelEl = this._createElementWithClass('span', `${classPrefix}-feature-list-item-label`);
+    const featureLabelEl = this._createElementWithClass(
+      'span',
+      `${classPrefix}-feature-list-item-label`
+    );
     return featureLabelEl;
   }
 
   _createFeatureValue(classPrefix: string) {
-    const featureValueEl = this._createElementWithClass('span', `${classPrefix}-feature-list-item-value`);
+    const featureValueEl = this._createElementWithClass(
+      'span',
+      `${classPrefix}-feature-list-item-value`
+    );
     return featureValueEl;
   }
 
@@ -66,7 +72,10 @@ export class PlansTableGenerator extends ElementGenerator {
   }
 
   _createAvailablePlansTableIntervalToggle(classPrefix: string) {
-    const plansIntervalToggleEl = this._createElementWithClass('button', `${classPrefix}-plans-interval-toggle`);
+    const plansIntervalToggleEl = this._createElementWithClass(
+      'button',
+      `${classPrefix}-plans-interval-toggle`
+    );
     const plansIntervalToggleMonthLabel = this._createElementWithClass(
       'span',
       `${classPrefix}-plans-interval-toggle-label ${classPrefix}-plans-interval-toggle-label-month ${classPrefix}-plans-interval-toggle-active`
@@ -106,8 +115,13 @@ export class PlansTableGenerator extends ElementGenerator {
             price.toString().includes('.00') ? price.replace('.00', '') : price
           }`;
         }
-        const planPriceIntervalEl = this._createElementWithClass('span', `${classPrefix}-plan-price-interval`);
-        planPriceIntervalEl.innerText = `per ${plan.licenseType !== 'metered' ? plan.interval : 'unit'}`;
+        const planPriceIntervalEl = this._createElementWithClass(
+          'span',
+          `${classPrefix}-plan-price-interval`
+        );
+        planPriceIntervalEl.innerText = `per ${
+          plan.licenseType !== 'metered' ? plan.interval : 'unit'
+        }`;
         planPriceEl.appendChild(planPriceIntervalEl);
       }
     }
@@ -133,7 +147,9 @@ export class PlansTableGenerator extends ElementGenerator {
           case 'false':
             return this._createFeatureIcon(classPrefix, feature);
           default:
-            return feature?.feature.valueType === 'enum' && feature.enumValue?.name ? feature.enumValue.name : value;
+            return feature?.feature.valueType === 'enum' && feature.enumValue?.name
+              ? feature.enumValue.name
+              : value;
         }
       };
       const featureValueEl = this._createFeatureValue(classPrefix);

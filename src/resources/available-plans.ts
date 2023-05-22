@@ -1,8 +1,8 @@
-import {IPlan, IProduct, IProductCurrency, ISubscription} from '../interfaces';
-import {MissingPropertyError} from '../utils/errors';
-import {IBaseResource, SalableBase} from './base';
-import {ChangePlan} from './change-plan';
-import {IButtonTextDefaults, IEnvConfig, PlansTableGenerator} from './plans-table';
+import { IPlan, IProduct, IProductCurrency, ISubscription } from '../interfaces';
+import { MissingPropertyError } from '../utils/errors';
+import { IBaseResource, SalableBase } from './base';
+import { ChangePlan } from './change-plan';
+import { IButtonTextDefaults, IEnvConfig, PlansTableGenerator } from './plans-table';
 
 export type IMountPlanCallbackProp = (
   success?: {
@@ -89,11 +89,16 @@ export class SalableAvailablePlans extends SalableBase {
       bodyMovinScript.id = 'SalableLottieCdn';
       document.body.appendChild(bodyMovinScript);
 
-      this._plansTableGenerator._createCssStyleSheetLink(`${this._cdnDomain}/latest/css/main.css`, 'SalableCssMain');
+      this._plansTableGenerator._createCssStyleSheetLink(
+        `${this._cdnDomain}/latest/css/main.css`,
+        'SalableCssMain'
+      );
       this._plansTableGenerator._createCssStyleSheetLink(
         `${this._cdnDomain}/latest/css/themes/${this._options?.theme ?? 'light'}.css`,
         `SalableCss${
-          this._options?.theme ? this._options?.theme[0].toUpperCase() + this._options.theme.substr(1) : 'Light'
+          this._options?.theme
+            ? this._options?.theme[0].toUpperCase() + this._options.theme.substr(1)
+            : 'Light'
         }`
       );
 
@@ -108,31 +113,38 @@ export class SalableAvailablePlans extends SalableBase {
       if (this._envConfig?.globalPlanOptions?.cta?.visibility === 'hidden')
         availablePlansTableContainerEl.classList.add('salable-global-cta-hidden');
       if (this._envConfig?.state)
-        availablePlansTableContainerEl.classList.add(`salable-pricing-table-state-${this._envConfig.state}`);
+        availablePlansTableContainerEl.classList.add(
+          `salable-pricing-table-state-${this._envConfig.state}`
+        );
 
-      const loadingEl = this._plansTableGenerator._createElementWithClass('div', `${classPrefix}-loading`);
+      const loadingEl = this._plansTableGenerator._createElementWithClass(
+        'div',
+        `${classPrefix}-loading`
+      );
       availablePlansTableContainerEl.appendChild(loadingEl);
 
       bodyMovinScript.addEventListener('load', () => {
         this._plansTableGenerator._createInlineScript(
           this._plansTableGenerator._createLottieAnimation(
             `document.getElementsByClassName('salable-loading')[0]`,
-            `${this._cdnDomain}/latest/lottie/dots-left-${this._options?.theme === 'dark' ? 'white' : 'blue'}.json`
+            `${this._cdnDomain}/latest/lottie/dots-left-${
+              this._options?.theme === 'dark' ? 'white' : 'blue'
+            }.json`
           ),
           availablePlansTableContainerEl,
           'SalableLottiePricingTableLoadingAnimation'
         );
       });
-      const [productResult, subscriptionResult] = await Promise.allSettled<[Promise<IProduct>, Promise<ISubscription>]>(
-        [
-          this._request(
-            encodeURI(
-              `/products/${this._productID}?expand=[plans, currencies.currency, organisationPaymentIntegration, plans.currencies.currency, plans.features.feature, plans.features.enumValue]`
-            )
-          ),
-          this._request(`/subscriptions/${this._subscriptionID}`),
-        ]
-      );
+      const [productResult, subscriptionResult] = await Promise.allSettled<
+        [Promise<IProduct>, Promise<ISubscription>]
+      >([
+        this._request(
+          encodeURI(
+            `/products/${this._productID}?expand=[plans, currencies.currency, organisationPaymentIntegration, plans.currencies.currency, plans.features.feature, plans.features.enumValue]`
+          )
+        ),
+        this._request(`/subscriptions/${this._subscriptionID}`),
+      ]);
 
       const handleError = (err: string) => {
         throw new Error(`SalableJS - ${err}`);
@@ -160,17 +172,22 @@ export class SalableAvailablePlans extends SalableBase {
         .sort((a, b) => {
           if (a.pricingType === 'free' && a.planType !== 'Coming soon') return -1;
           if (a.planType === 'Coming soon') return 1;
-          const priceA = a.currencies.find((c) => c.currencyUuid === defaultCurrency?.currencyUuid)?.price || 0;
-          const priceB = b.currencies.find((c) => c.currencyUuid === defaultCurrency?.currencyUuid)?.price || 0;
+          const priceA =
+            a.currencies.find((c) => c.currencyUuid === defaultCurrency?.currencyUuid)?.price || 0;
+          const priceB =
+            b.currencies.find((c) => c.currencyUuid === defaultCurrency?.currencyUuid)?.price || 0;
           return priceA - priceB;
         });
 
-      const currentPlanIndex = plans.findIndex((plan) => plan.uuid === subscriptionData?.planUuid) ?? -1;
+      const currentPlanIndex =
+        plans.findIndex((plan) => plan.uuid === subscriptionData?.planUuid) ?? -1;
 
       if (plans.filter((p) => p.interval === 'month').length) {
         this._createPlansPerInterval({
           interval: 'month',
-          plans: plans.filter((p) => p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')),
+          plans: plans.filter(
+            (p) => p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
+          ),
           availablePlansTableContainerEl,
           classPrefix,
           envConfig: this._envConfig,
@@ -188,7 +205,9 @@ export class SalableAvailablePlans extends SalableBase {
       if (plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length) {
         this._createPlansPerInterval({
           interval: 'year',
-          plans: plans.filter((p) => p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')),
+          plans: plans.filter(
+            (p) => p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
+          ),
           availablePlansTableContainerEl,
           classPrefix,
           envConfig: this._envConfig,
@@ -207,11 +226,18 @@ export class SalableAvailablePlans extends SalableBase {
         plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length &&
         plans.filter((p) => p.interval === 'month').length
       ) {
-        const monthlyEl = document.querySelector(`.${classPrefix}-plans-container-month`) as HTMLElement;
-        const yearEl = document.querySelector(`.${classPrefix}-plans-container-year`) as HTMLElement;
-        const plansIntervalToggleEl = this._plansTableGenerator._createAvailablePlansTableIntervalToggle(classPrefix);
+        const monthlyEl = document.querySelector(
+          `.${classPrefix}-plans-container-month`
+        ) as HTMLElement;
+        const yearEl = document.querySelector(
+          `.${classPrefix}-plans-container-year`
+        ) as HTMLElement;
+        const plansIntervalToggleEl =
+          this._plansTableGenerator._createAvailablePlansTableIntervalToggle(classPrefix);
 
-        (document.querySelectorAll(`.${classPrefix}-plans-container`)[0] as HTMLElement).parentNode?.insertBefore(
+        (
+          document.querySelectorAll(`.${classPrefix}-plans-container`)[0] as HTMLElement
+        ).parentNode?.insertBefore(
           plansIntervalToggleEl,
           document.querySelectorAll(`.${classPrefix}-plans-container`)[0]
         );
@@ -269,9 +295,16 @@ export class SalableAvailablePlans extends SalableBase {
   }: ICreatePlanCTA) {
     const planCtaEl = this._plansTableGenerator._createElementWithClass(
       'button',
-      `${classPrefix}-plan-button${plan.planType === 'Coming soon' ? ' salable-plan-button-coming-soon' : ''}`
+      `${classPrefix}-plan-button${
+        plan.planType === 'Coming soon' ? ' salable-plan-button-coming-soon' : ''
+      }`
     );
-    const planCtaText = ({subscriptionPlanID, planID, planIndex, currentPlanIndex}: IPlanCTA): string => {
+    const planCtaText = ({
+      subscriptionPlanID,
+      planID,
+      planIndex,
+      currentPlanIndex,
+    }: IPlanCTA): string => {
       if (subscriptionPlanID === planID) {
         return 'Current Plan';
       }
@@ -289,7 +322,10 @@ export class SalableAvailablePlans extends SalableBase {
     });
 
     const planCtaElId = `button-${planIndex}-cta`;
-    const planCtaElInnerSpan = this._plansTableGenerator._createElementWithClass('span', 'salable-plan-button-span');
+    const planCtaElInnerSpan = this._plansTableGenerator._createElementWithClass(
+      'span',
+      'salable-plan-button-span'
+    );
     planCtaEl.appendChild(planCtaElInnerSpan);
     planCtaEl.classList.add('salable-plan-button-free');
     planCtaEl.id = planCtaElId;
@@ -337,12 +373,12 @@ export class SalableAvailablePlans extends SalableBase {
         // Make an API call to upgrade or downgrade user's plan
         try {
           const changePlan = new ChangePlan(this._apiKey);
-          const {message} = await changePlan.upgradeOrDowngradePlanSync({
+          const { message } = await changePlan.upgradeOrDowngradePlanSync({
             planID: plan.uuid,
             subscriptionID: subscriptionData.uuid,
           });
           if (callback) {
-            callback({message}, undefined);
+            callback({ message }, undefined);
           }
         } catch (error) {
           planCtaElInnerSpan.innerText = currentButtonTextHolder;
@@ -353,8 +389,10 @@ export class SalableAvailablePlans extends SalableBase {
           }
           if (callback) {
             const message =
-              error instanceof Error ? error.message : 'Unable to upgrade or downgrade plan. Please try again later';
-            callback(undefined, {message});
+              error instanceof Error
+                ? error.message
+                : 'Unable to upgrade or downgrade plan. Please try again later';
+            callback(undefined, { message });
           }
           return;
         }
@@ -364,7 +402,9 @@ export class SalableAvailablePlans extends SalableBase {
         const newCurrentPlanIndex = plans.findIndex((DPlan) => DPlan.uuid === plan.uuid) ?? -1;
 
         planCtaElInnerSpan.innerText =
-          planIndex > newCurrentPlanIndex && planIndex !== newCurrentPlanIndex ? planCtaElText : 'Downgrade';
+          planIndex > newCurrentPlanIndex && planIndex !== newCurrentPlanIndex
+            ? planCtaElText
+            : 'Downgrade';
         buttonIndex = 0;
         for (const cta of planCTAs) {
           cta.classList.remove('salable-plan-button-disabled');
@@ -373,7 +413,9 @@ export class SalableAvailablePlans extends SalableBase {
 
           const buttonHTML = cta.getElementsByClassName(`${classPrefix}-plan-button-span`);
           buttonHTML[0].innerHTML =
-            buttonIndex > newCurrentPlanIndex && buttonIndex !== newCurrentPlanIndex ? planCtaElText : 'Downgrade';
+            buttonIndex > newCurrentPlanIndex && buttonIndex !== newCurrentPlanIndex
+              ? planCtaElText
+              : 'Downgrade';
 
           if (buttonIndex === newCurrentPlanIndex) {
             buttonHTML[0].innerHTML = 'Current Plan';

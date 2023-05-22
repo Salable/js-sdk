@@ -3,7 +3,7 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-const {readdirSync} = require('fs');
+const { readdirSync } = require('fs');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -33,7 +33,9 @@ const config = {
           versions: (() => {
             const versions = readdirSync(`./versioned_docs`);
 
-            const versionNumbers = versions.flatMap((ver) => (ver.includes('version') ? [ver.split('-')[1]] : []));
+            const versionNumbers = versions.flatMap((ver) =>
+              ver.includes('version') ? [ver.split('-')[1]] : []
+            );
 
             return {
               current: {

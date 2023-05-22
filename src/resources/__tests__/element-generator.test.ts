@@ -1,4 +1,4 @@
-import {ElementGenerator} from '../element-generator';
+import { ElementGenerator } from '../element-generator';
 
 describe('Unit Test | Resource | Element Generator', () => {
   let elementGenerator: ElementGenerator;

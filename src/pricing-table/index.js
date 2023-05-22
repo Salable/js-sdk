@@ -1,1 +1,1 @@
-export {SalablePricingTable} from './salable.js';
+export { SalablePricingTable } from './salable.js';

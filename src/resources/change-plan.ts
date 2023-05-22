@@ -1,5 +1,5 @@
-import {MissingPropertyError} from '../utils/errors';
-import {SalableBase} from './base';
+import { MissingPropertyError } from '../utils/errors';
+import { SalableBase } from './base';
 
 export interface IChangePlan {
   planID: string;
@@ -20,7 +20,7 @@ export class ChangePlan extends SalableBase {
     this._defaultErrorMessage = 'Unknown error while changing plan. Please try again later';
   }
 
-  upgradeOrDowngradePlanSync = async ({planID, subscriptionID}: IChangePlan) => {
+  upgradeOrDowngradePlanSync = async ({ planID, subscriptionID }: IChangePlan) => {
     if (typeof planID !== 'string' || !planID.trim()) {
       MissingPropertyError('planID');
     }
@@ -31,7 +31,7 @@ export class ChangePlan extends SalableBase {
       await this._request(`/subscriptions/${subscriptionID}/updateplan/${planID}`, {
         method: 'PUT',
       });
-      return {message: 'Plan changed successfully'};
+      return { message: 'Plan changed successfully' };
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -39,7 +39,10 @@ export class ChangePlan extends SalableBase {
       throw new Error(this._defaultErrorMessage);
     }
   };
-  upgradeOrDowngradePlanAsync = ({planID, subscriptionID}: IChangePlan, callback?: ChangePlanCallbackProp) => {
+  upgradeOrDowngradePlanAsync = (
+    { planID, subscriptionID }: IChangePlan,
+    callback?: ChangePlanCallbackProp
+  ) => {
     if (typeof planID !== 'string' || !planID.trim()) {
       MissingPropertyError('planID');
     }
@@ -51,7 +54,7 @@ export class ChangePlan extends SalableBase {
     })
       .then(() => {
         if (callback) {
-          callback({message: 'Plan changed successfully'}, undefined);
+          callback({ message: 'Plan changed successfully' }, undefined);
           return;
         }
       })
