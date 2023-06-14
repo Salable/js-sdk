@@ -129,35 +129,33 @@ export class SalablePricingTable {
           })
         : [];
 
+      const currency = this.envConfig.currency ?? '';
+
       let response = {};
       let encoded = null;
+      const queryParams = `?globalGranteeId=${
+        this.envConfig.globalPlanOptions.granteeId
+      }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
+        this.envConfig.globalPlanOptions.successUrl
+      }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
+        this.envConfig.globalPlanOptions.cancelUrl
+      }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
+        this.checkoutConfig.member
+      }${this.initialisers.queryParametersFactory(this.checkoutConfig)}${
+        currency && `&currency=${currency}`
+      }`;
+
       if (this.envConfig.pricingTableUuid) {
         encoded = encodeURI(
           `${this.initialisers.getApiDomain()}/pricing-tables/${
             this.envConfig.pricingTableUuid
-          }?globalGranteeId=${
-            this.envConfig.globalPlanOptions.granteeId
-          }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
-            this.envConfig.globalPlanOptions.successUrl
-          }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
-            this.envConfig.globalPlanOptions.cancelUrl
-          }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
-            this.checkoutConfig.member
-          }${this.initialisers.queryParametersFactory(this.checkoutConfig)}`
+          }${queryParams}`
         );
       } else {
         encoded = encodeURI(
           `${this.initialisers.getApiDomain()}/products/${
             this.envConfig.productUuid
-          }/pricingtable?globalGranteeId=${
-            this.envConfig.globalPlanOptions.granteeId
-          }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
-            this.envConfig.globalPlanOptions.successUrl
-          }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
-            this.envConfig.globalPlanOptions.cancelUrl
-          }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
-            this.checkoutConfig.member
-          }${this.initialisers.queryParametersFactory(this.checkoutConfig)}`
+          }/pricingtable${queryParams}`
         );
       }
       try {
