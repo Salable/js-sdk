@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Salable/js-sdk/compare/v1.7.0...v1.8.0) (2023-06-14)
+
+
+### Features
+
+* added support for passing a currency to config if Product supports multiple currencies ([f445425](https://github.com/Salable/js-sdk/commit/f4454255cada7d8fb9b9012abc17554518f09443))
+
 # [1.7.0](https://github.com/Salable/js-sdk/compare/v1.6.0...v1.7.0) (2023-05-05)
 
 
