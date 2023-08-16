@@ -1,0 +1,17 @@
+/*************************
+PRICING
+**************************/
+.salable_pricing {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+
+.salable_pricing__label {
+  font-size: 24px;
+}
+
+.salable_pricing__price {
+  font-size: 15px;
+}

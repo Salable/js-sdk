@@ -1,0 +1,31 @@
+{
+  "name": "@salable/checkout",
+  "version": "0.0.0",
+  "description": "Render Salable checkout with your payment integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salable/js-sdk.git#main"
+  },
+  "keywords": [
+    "salable",
+    "payment",
+    "checkout"
+  ],
+  "author": "Salable",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Salable/js-sdk/issues"
+  },
+  "homepage": "https://github.com/Salable/js-sdk/tree/main#readme",
+  "dependencies": {
+    "@preline/overlay": "^1.4.0",
+    "preline": "^1.9.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}
