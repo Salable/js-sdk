@@ -1,5 +1,6 @@
 import { ICheckoutStyle } from '../interfaces/checkout.interface';
 import { defaultStyles } from '../resources/base';
+import { BaseComponent } from './base';
 
 interface IBackground {
   height?: string;
@@ -8,7 +9,7 @@ interface IBackground {
 }
 
 interface IIntegrationWrapper {
-  children?: string;
+  children?: string | string[];
   topComponent?: string;
   integrationType: 'stripe' | 'paddle';
   preview?: boolean;
@@ -16,8 +17,9 @@ interface IIntegrationWrapper {
   styles: ICheckoutStyle | null;
 }
 
-export class CheckoutComponents {
+export class SkeletonComponents extends BaseComponent {
   constructor() {
+    super();
     // DEV environment
     this._createCssStyleSheetLink(`../../../dist/css/skeleton.css`, 'SalableCssSkeleton');
   }
@@ -27,14 +29,6 @@ export class CheckoutComponents {
     return background[key];
   }
 
-  protected _createCssStyleSheetLink(link: string, id: string) {
-    const head = document.getElementsByTagName('head')[0];
-    const linkStylesheet = document.createElement('link');
-    linkStylesheet.setAttribute('href', link);
-    linkStylesheet.setAttribute('rel', 'stylesheet');
-    if (id) linkStylesheet.id = id;
-    head.appendChild(linkStylesheet);
-  }
   _InputLabelSkeleton(message = 'loading') {
     return `
      <div class="salable_skeleton__label">
@@ -54,6 +48,17 @@ export class CheckoutComponents {
     </div>
     `;
   }
+
+  protected _components = ({ children }: Pick<IIntegrationWrapper, 'children'>): string => {
+    if (children && typeof children === 'string') {
+      return children;
+    }
+    if (typeof children === 'object' && children.length) {
+      // return {...children},
+      return children.join('');
+    }
+    return '';
+  };
 
   _FormFieldLoading(children?: string) {
     return `
@@ -128,9 +133,13 @@ export class CheckoutComponents {
                 </div>`
                     : ''
                 }
-                ${children ? children : ''}
+                ${this._components({ children })}
             </div>
         </div>
     `;
   }
+
+  // _AfterIntegrationWrapper({ children }: Pick<IIntegrationWrapper, 'children'>) {
+
+  // }
 }

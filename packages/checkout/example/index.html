@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salable Checkout library</title>
+    <style>
+      .container {
+        width: 100%;
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+    </style>
+    <link rel="stylesheet" href="../../../dist/css/checkout.css" />
+  </head>
+  <body>
+    <h1>Salable Checkout js library</h1>
+
+    <div style="padding: 40px">
+      <div class="container">
+        <div id="checkout"></div>
+
+        <script type="module">
+          import { SalableCheckout } from '../../../dist/index.js';
+
+          const checkout = new SalableCheckout({
+            APIKey: 'l9C7iaOS6E6TQ7Kl8iQn72MFuY0EZdf36BtegNVY',
+            granteeID: 'example-grantee-123',
+            memberID: 'example-member-123',
+            planID: '2410d3bb-3a1e-41dd-8643-6c3d9772445d',
+            successURL: 'http://127.0.0.1:5500/packages/checkout/example/index.html',
+          });
+
+          checkout.mount(document.querySelector('#checkout'));
+        </script>
+      </div>
+    </div>
+  </body>
+</html>

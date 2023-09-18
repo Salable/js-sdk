@@ -1,4 +1,6 @@
-import { BaseComponent } from '../components/base';
+import { IntegrationComponents } from '../components/checkout';
+import { ICheckoutStyle } from '../interfaces/checkout.interface';
+import { IBaseResource, SalableBase } from '../resources/base';
 import { Stripe } from '../resources/external';
 import {
   StripeElements,
@@ -6,30 +8,65 @@ import {
   StripePaymentElementOptions,
 } from '@stripe/stripe-js';
 
-interface IStripeProvider {
+interface IStripeProvider extends IBaseResource {
   granteeID: string;
   memberID: string;
+  successURL: string;
 }
 
 interface IStripeRender {
   planID: string;
   stripePubKey: string;
+  account?: string;
   node: string;
 }
 
-export class StripeProvider extends BaseComponent {
+interface IRenderElementRender {
+  planID: string;
+  stripePubKey: string;
+  clientSecret: string;
+  successURL: string;
+  node: string;
+}
+
+interface ICreateSubscriptionIntent {
+  userEmail: string;
+  planID: string;
+  memberId: string;
+  granteeID: string;
+}
+
+interface IInputEmail {
+  label?: string;
+  errorMessage?: string;
+  style?: ICheckoutStyle;
+  className?: string;
+}
+
+export class StripeProvider extends SalableBase {
   protected _granteeID: string;
   protected _memberID: string;
-  constructor({ granteeID, memberID }: Omit<IStripeProvider, 'planID' | 'stripePubKey'>) {
-    super();
+  protected _successURL: string;
+  protected _components: IntegrationComponents;
+  protected _validateEmailRegex = /\S+@\S+\.\S+/;
+  constructor({
+    granteeID,
+    memberID,
+    APIKey,
+    options,
+    successURL,
+  }: Omit<IStripeProvider, 'planID' | 'stripePubKey'>) {
+    super(APIKey, options);
     this._granteeID = granteeID;
     this._memberID = memberID;
+    this._successURL = successURL;
 
     // DEV environment
     this._createCssStyleSheetLink(
       `../../../dist/css/stripe-checkout.css`,
       'SalableCssStripeCheckout'
     );
+    this._components = new IntegrationComponents();
   }
 
   protected _bedrock(node: string) {
@@ -49,41 +86,184 @@ export class StripeProvider extends BaseComponent {
               <div id="payment-message" class="hidden"></div>
             </form>
             `;
-    // return elements;
     if (rootNode) rootNode.innerHTML = elements;
   }
 
-  _render({ stripePubKey, node }: IStripeRender) {
+  _InputEmail({ label = 'Email', style, className }: IInputEmail) {
+    return `
+        <div data-field="email" class="${className ? className : ''}">
+        <label htmlFor="slb_email-input" class="slb_input_label">
+            ${label}
+        </label>
+        <input
+            id="slb-email-input"
+            dir="ltr"
+            type="email"
+            inputMode="email"
+            name="slb-email"
+            autoComplete="email"
+            class="slb_input"
+            style=${style ? JSON.stringify(style) : ''}
+        />
+        <div class="slb_errorMessageBox">
+            <span class="slb_errorMessage" id="slb_errorMessage_email"></span>
+        </div>
+        </div>
+    `;
+  }
+
+  _FormButton(style?: ICheckoutStyle) {
+    const styling = `
+    ${style?.borderRadius ? `border-radius: ${style.borderRadius}` : ''}
+    ${style?.spacingUnit ? `padding: ${style.spacingUnit}` : ''}
+    ${style?.backgroundColor ? `background-color: ${style.backgroundColor}` : ''}
+    `;
+    return `
+        <button
+            disabled={isLoading || !stripe || !elements}
+            id="submit"
+            style=${styling}
+        >
+            <span id="slb_button-text">
+            {isLoading ? <div class="spinner" id="spinner" /> : 'Pay now'}
+            </span>
+        </button>
+    `;
+  }
+
+  protected _createSubscriptionIntent = ({
+    userEmail,
+    granteeID,
+    memberId,
+    planID,
+    node,
+    stripePubKey,
+  }: ICreateSubscriptionIntent & Omit<IRenderElementRender, 'clientSecret' | 'successURL'>) => {
+    const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
+    const emailValid = this._validateEmailRegex.test(userEmail);
+    // Validate email address
+    if (!userEmail || !emailValid) {
+      document.getElementById('slb-email-input')?.classList.add('slb-email-input-invalid');
+
+      if (emailInputErrorNode) {
+        emailInputErrorNode.textContent = 'Invalid email address';
+      }
+
+      return;
+    }
+    // Create client secrete for stripe form
+    this._components._setLoading(true);
+    void (async () => {
+      try {
+        /**
+         * TODO: When the TPA is ready, switch out and use endpoints from TPA
+         * Also, use the _request method from base class e.g this._request(endpoint)
+         *  */
+        const res = await fetch(`http://localhost:4242/subscription-intents`, {
+          method: 'POST',
+          body: JSON.stringify({
+            planUuid: planID,
+            email: userEmail,
+            member: memberId,
+            granteeId: granteeID,
+          }),
+        });
+        const clientSecret = ((await res.json()) as { clientSecret: string }).clientSecret;
+        if (clientSecret) {
+          this._renderStripeElement({
+            planID,
+            node,
+            stripePubKey,
+            clientSecret,
+            successURL: this._successURL,
+          });
+        }
+      } catch (error) {
+        this._components._showMessage('Failed to create payment intent. Please try again');
+      }
+      this._components._setLoading(false);
+    })();
+  };
+
+  _render({ node, stripePubKey, planID }: IStripeRender) {
+    // Get the element the form will be rendered on
+    const rootNode = document.getElementById(node);
+
+    // function for handling and creating payment intent with stripe and client secret
+    const handleSubmit = (e: Event) => {
+      e.preventDefault();
+
+      const inputEmail = document.getElementById('slb-email-input') as HTMLInputElement;
+      this._createSubscriptionIntent({
+        granteeID: this._granteeID,
+        memberId: this._memberID,
+        planID,
+        userEmail: inputEmail.value,
+        node,
+        stripePubKey,
+      });
+    };
+
+    /**
+     * Form will handle and process the necessary information needed
+     * to create payment intent and return client secret
+     **/
+    const elements = `
+          <form id="email-form">
+            ${this._InputEmail({ label: 'Email' })}
+            <button id="submit" type="submit" >
+              <span id="button-text">Continue</span>
+            </button>
+            <div class="slb_errorMessageBox">
+              <span class="slb_errorMessage" id="slb_errorMessage"></span>
+            </div>
+          </form>
+    `;
+    if (rootNode) rootNode.innerHTML = elements;
+    document.querySelector('#email-form')?.addEventListener('submit', handleSubmit);
+    const emailInput = document.getElementById('slb-email-input') as HTMLInputElement;
+    const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
+
+    emailInput?.addEventListener('input', () => {
+      const emailValid = this._validateEmailRegex.test(emailInput.value);
+      // Validate email address
+      if (!emailInput.value || !emailValid) {
+        emailInput?.classList.add('slb-email-input-invalid');
+      } else {
+        if (emailInputErrorNode) {
+          emailInputErrorNode.textContent = '';
+        }
+        emailInput?.classList.remove('slb-email-input-invalid');
+      }
+    });
+    return '';
+  }
+
+  protected _renderStripeElement({
+    stripePubKey,
+    node,
+    clientSecret,
+    successURL,
+  }: IRenderElementRender) {
     void (async () => {
       await this._loadScript('https://js.stripe.com/v3/', 'salableStripeScript');
-      this._bedrock(node);
-      // This is your test publishable API key.
+
       if (typeof Stripe === 'undefined') return;
-      const stripe = Stripe(stripePubKey);
+      const stripe = Stripe(stripePubKey, {});
 
       if (typeof stripe === 'undefined') return;
-
-      // The items the customer wants to buy
-      const items = [{ id: 'xl-tshirt' }];
-
       let elements: StripeElements;
 
-      await initialize();
+      // render elements in dom for stripe to render its element
+      this._bedrock(node);
+
+      initialize();
       await checkStatus();
 
       document.querySelector('#payment-form')?.addEventListener('submit', handleSubmit);
 
-      //   let emailAddress = '';
-      // Fetches a payment intent and captures the client secret
-      async function initialize() {
+      function initialize() {
         if (typeof stripe === 'undefined') return;
-        const response = await fetch('http://localhost:4242/create-payment-intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items }),
-        });
-        const { clientSecret } = (await response.json()) as { clientSecret: string };
-
         const options: StripeElementsOptions = {
           clientSecret,
           appearance: {
@@ -92,13 +272,6 @@ export class StripeProvider extends BaseComponent {
         };
         elements = stripe.elements(options);
 
-        // const linkAuthenticationElement = elements.create('linkAuthentication');
-        // linkAuthenticationElement.mount('#link-authentication-element');
-
-        // linkAuthenticationElement.on('change', (event) => {
-        //   emailAddress = event.value.email;
-        // });
-
         const paymentElementOptions: StripePaymentElementOptions = {
           layout: 'tabs',
         };
@@ -106,6 +279,8 @@ export class StripeProvider extends BaseComponent {
         const paymentElement = elements.create('payment', paymentElementOptions);
         paymentElement.mount('#payment-element');
       }
+
+      const components = new IntegrationComponents();
 
       async function handleSubmit(e: Event) {
         e.preventDefault();
@@ -116,13 +291,13 @@ export class StripeProvider extends BaseComponent {
           return;
         }
 
-        setLoading(true);
+        components._setLoading(true);
 
         const { error } = await stripe.confirmPayment({
           elements,
           confirmParams: {
             // Make sure to change this to your payment completion page
-            return_url: 'http://127.0.0.1:5500/packages/checkout/example/index.html',
+            return_url: successURL,
             // receipt_email: emailAddress,
           },
         });
@@ -133,12 +308,12 @@ export class StripeProvider extends BaseComponent {
         // be redirected to an intermediate site first to authorize the payment, then
         // redirected to the `return_url`.
         if (error.type === 'card_error' || error.type === 'validation_error') {
-          showMessage(error.message || undefined);
+          components._showMessage(error.message || undefined);
         } else {
-          showMessage('An unexpected error occurred.');
+          components._showMessage('An unexpected error occurred.');
         }
 
-        setLoading(false);
+        components._setLoading(false);
       }
 
       // Fetches the payment intent status after payment submission
@@ -155,50 +330,21 @@ export class StripeProvider extends BaseComponent {
 
         switch (paymentIntent?.status) {
           case 'succeeded':
-            showMessage('Payment succeeded!');
+            components._showMessage('Payment succeeded!');
             break;
           case 'processing':
-            showMessage('Your payment is processing.');
+            components._showMessage('Your payment is processing.');
             break;
           case 'requires_payment_method':
-            showMessage('Your payment was not successful, please try again.');
+            components._showMessage('Your payment was not successful, please try again.');
             break;
           default:
-            showMessage('Something went wrong.');
+            components._showMessage('Something went wrong.');
             break;
         }
-      }
-
-      // ------- UI helpers -------
-
-      function showMessage(messageText?: string) {
-        const messageContainer = document.querySelector('#payment-message');
-
-        if (!messageContainer || !messageText) return;
-
-        messageContainer.classList.remove('hidden');
-        messageContainer.textContent = messageText;
-
-        setTimeout(function () {
-          messageContainer.classList.add('hidden');
-          messageContainer.textContent = '';
-        }, 4000);
       }
 
       // Show a spinner on payment submission
-      function setLoading(isLoading: boolean) {
-        if (isLoading) {
-          // Disable the button and show a spinner
-          document.querySelector('#submit')?.setAttribute('disabled', 'true');
-          document.querySelector('#spinner')?.classList.remove('hidden');
-          document.querySelector('#button-text')?.classList.add('hidden');
-        } else {
-          document.querySelector('#submit')?.setAttribute('disabled', 'false');
-          document.querySelector('#spinner')?.classList.add('hidden');
-          document.querySelector('#button-text')?.classList.remove('hidden');
-        }
-      }
     })();
-    return '';
   }
 }

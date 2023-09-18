@@ -1,7 +1,11 @@
-import { CheckoutComponents } from './components/skeleton';
+import { CheckoutComponents } from './components/checkout';
+import { SkeletonComponents } from './components/skeleton';
+import { StripeProvider } from './integrations/stripe';
 import { ICheckoutStyling, ICheckoutStylingResponse } from './interfaces/checkout.interface';
-import { IPlan } from './interfaces/plan.interface';
+import { IOrganisationPaymentIntegration, IPlan } from './interfaces/plan.interface';
 import { IBaseResource, SalableBase } from './resources/base';
+import { environment } from './resources/config';
+import { decryptAccount } from './utils/decrypt-data';
 import { MissingPropertyError } from './utils/errors';
 
 export interface ISalableCheckout extends IBaseResource {
@@ -20,6 +24,7 @@ export class SalableCheckout extends SalableBase {
   protected _memberID: string;
   protected _checkoutNode: string | null;
   protected _styling: ICheckoutStyling | null;
+  protected _skeleton: SkeletonComponents;
   protected _components: CheckoutComponents;
 
   constructor({ APIKey, options, ...params }: ISalableCheckout) {
@@ -31,6 +36,7 @@ export class SalableCheckout extends SalableBase {
     this._cancelURL = params.cancelURL;
     this._checkoutNode = null;
     this._styling = null;
+    this._skeleton = new SkeletonComponents();
     this._components = new CheckoutComponents();
   }
 
@@ -39,14 +45,19 @@ export class SalableCheckout extends SalableBase {
       if (!checkoutNode) MissingPropertyError('element');
       try {
         // 1. Loading
-        checkoutNode.innerHTML = this._components._IntegrationWrapper({
+        checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
           integrationType: 'paddle',
-          children: this._components._FormFieldLoading(),
+          children: this._skeleton._FormFieldLoading(),
           styles: null,
         });
+
+        let integrationType: string | null = null;
+
+        // 2. Get data
         let planData: IPlan | null = null;
         let stylingData: ICheckoutStylingResponse | null = null;
         let planErrorMessage: string | null = null;
+        let paymentIntegration: IOrganisationPaymentIntegration | null = null;
 
         const [planResponse, stylingResponse] = await Promise.allSettled([
           this._request<IPlan>(
@@ -60,9 +71,14 @@ export class SalableCheckout extends SalableBase {
           }),
         ]);
 
+        integrationType = 'stripe';
         if (planResponse.status === 'fulfilled') {
           planData = planResponse.value;
+          integrationType =
+            planData.product?.organisationPaymentIntegration?.integrationName || null;
+          paymentIntegration = planData?.product.organisationPaymentIntegration;
         } else {
+          integrationType = 'paddle';
           planErrorMessage =
             (planResponse.reason as { stack: string; message: string }).message ||
             'Failed to get plan required for payment';
@@ -73,20 +89,72 @@ export class SalableCheckout extends SalableBase {
         } else {
           // Do nothing
         }
+        // 3. Display variant output
         // Render error message
         if (planErrorMessage && !planData) {
-          checkoutNode.innerHTML = this._components._IntegrationWrapper({
+          checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
             integrationType: 'stripe',
-            children: this._components._FormFieldError(planErrorMessage),
+            children: this._skeleton._FormFieldError(planErrorMessage),
             styles: stylingData?.checkoutStyling || null,
           });
           return;
         }
-        // TODO: Render plan
+
+        const paymentNodeID = 'slb-stripe-root';
+        checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
+          integrationType: (integrationType as 'paddle' | 'stripe') || 'stripe',
+          children: [
+            this._components._pricingDetails(planData, planData?.currencies[0] || null),
+            ` <div class=${paymentNodeID} id=${paymentNodeID}></div>`,
+          ],
+          styles: null,
+        });
+
+        if (!paymentIntegration) return;
+
+        /**
+         * Load CryptoJS package.
+         * CryptoJS will be used for decrypting the payment integration
+         * account data for consumption
+         */
+        await this._loadScript(
+          'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js',
+          'salableCrypto'
+        );
+
+        const stripeProvider = new StripeProvider({
+          granteeID: this._granteeID,
+          memberID: this._memberID,
+          successURL: this._successURL,
+          APIKey: this._apiKey,
+          options: this._options,
+        });
+        const paymentType = decryptAccount<'stripe'>(
+          paymentIntegration.accountData?.encryptedData,
+          paymentIntegration.accountData.key
+        );
+
+        if (!paymentType || paymentType.status !== 'ACTIVE') {
+          checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
+            integrationType: 'stripe',
+            children: this._skeleton._FormFieldError(
+              'Payment Integration for this product not fully setup yet'
+            ),
+            styles: null,
+          });
+          return;
+        }
+        if (paymentType.paymentProvider === 'stripe') {
+          stripeProvider._render({
+            node: paymentNodeID,
+            planID: planData?.uuid || '',
+            stripePubKey: environment.publishableKey,
+          });
+        }
       } catch (error) {
-        checkoutNode.innerHTML = this._components._IntegrationWrapper({
-          integrationType: 'paddle',
-          children: this._components._FormFieldError('Something went wrong. Please try again'),
+        checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
+          integrationType: 'stripe',
+          children: this._skeleton._FormFieldError('Something went wrong. Please try again'),
           styles: null,
         });
       }

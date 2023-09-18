@@ -19,6 +19,7 @@ const config = {
       sourcemap: true,
     },
   ],
+  external: ['@stripe/stripe-js', 'crypto-js'],
   plugins: [
     json(),
     peerDepsExternal(),

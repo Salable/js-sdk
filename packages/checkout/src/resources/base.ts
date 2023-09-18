@@ -1,3 +1,4 @@
+import { BaseComponent } from '../components/base';
 import { SALABLE_BASE_URL, SALABLE_BASE_CDN } from '../constants';
 import { MissingPropertyError } from '../utils/errors';
 
@@ -18,13 +19,14 @@ export interface IBaseResource {
   options?: IOptions;
 }
 
-export class SalableBase {
+export class SalableBase extends BaseComponent {
   protected _apiKey: string;
   protected _apiDomain: string;
   protected _cdnDomain: string;
   protected _options?: IOptions;
 
   constructor(apiKey: string, options?: IOptions) {
+    super();
     this._apiKey = (apiKey || '').trim();
     this._apiDomain = SALABLE_BASE_URL;
     this._cdnDomain = SALABLE_BASE_CDN;

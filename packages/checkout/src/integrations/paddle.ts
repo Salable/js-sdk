@@ -25,7 +25,7 @@ export class PaddleProvider extends BaseComponent {
       paddle.Setup({
         vendor: vendor,
       });
-      paddle.Environment.set('sandbox');
+      // paddle.Environment.set('sandbox');
       paddle.Checkout.open({
         method: 'inline',
         product: planID,

@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/Salable/js-sdk/tree/main#readme",
   "dependencies": {
-    "@preline/overlay": "^1.4.0",
-    "preline": "^1.9.0"
+    "@stripe/stripe-js": "^2.1.0",
+    "crypto-js": "^4.1.1"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.3"
+    "@types/crypto-js": "^4.1.1"
   }
 }

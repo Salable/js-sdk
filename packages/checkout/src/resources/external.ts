@@ -1,6 +1,6 @@
-export const Stripe = (key: string) => {
+export const Stripe = (key: string, options: object) => {
   if (window && window.Stripe) {
-    return window.Stripe(key);
+    return window.Stripe(key, options);
   }
 };
 
