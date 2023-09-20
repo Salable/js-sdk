@@ -17,7 +17,7 @@ interface IStripeProvider extends IBaseResource {
 interface IStripeRender {
   planID: string;
   stripePubKey: string;
-  account?: string;
+  accountID: string;
   node: string;
 }
 
@@ -26,6 +26,7 @@ interface IRenderElementRender {
   stripePubKey: string;
   clientSecret: string;
   successURL: string;
+  accountID: string;
   node: string;
 }
 
@@ -34,6 +35,7 @@ interface ICreateSubscriptionIntent {
   planID: string;
   memberId: string;
   granteeID: string;
+  accountID: string;
 }
 
 interface IInputEmail {
@@ -138,6 +140,7 @@ export class StripeProvider extends SalableBase {
     planID,
     node,
     stripePubKey,
+    accountID,
   }: ICreateSubscriptionIntent & Omit<IRenderElementRender, 'clientSecret' | 'successURL'>) => {
     const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
     const emailValid = this._validateEmailRegex.test(userEmail);
@@ -151,30 +154,30 @@ export class StripeProvider extends SalableBase {
 
       return;
     }
-    // Create client secrete for stripe form
+    //After email is validated, create client secrete for stripe form
     this._components._setLoading(true);
     void (async () => {
       try {
-        /**
-         * TODO: When the TPA is ready, switch out and use endpoints from TPA
-         * Also, use the _request method from base class e.g this._request(endpoint)
-         *  */
-        const res = await fetch(`http://localhost:4242/subscription-intents`, {
-          method: 'POST',
-          body: JSON.stringify({
-            planUuid: planID,
-            email: userEmail,
-            member: memberId,
-            granteeId: granteeID,
-          }),
-        });
-        const clientSecret = ((await res.json()) as { clientSecret: string }).clientSecret;
+        const res = await this._request<{ clientSecret: string }>(
+          '/checkout/create-subscription-intent',
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              planUuid: planID,
+              email: userEmail,
+              member: memberId,
+              granteeId: granteeID,
+            }),
+          }
+        );
+        const clientSecret = res.clientSecret;
         if (clientSecret) {
           this._renderStripeElement({
             planID,
             node,
             stripePubKey,
             clientSecret,
+            accountID,
             successURL: this._successURL,
           });
         }
@@ -185,7 +188,14 @@ export class StripeProvider extends SalableBase {
     })();
   };
 
-  _render({ node, stripePubKey, planID }: IStripeRender) {
+  /**
+   * Render function renders components needed to
+   * handle and process payment for a plan with
+   * Stripe payment method
+   * @param IStripeRender
+   * @returns empty string
+   */
+  _render({ node, stripePubKey, planID, accountID }: IStripeRender) {
     // Get the element the form will be rendered on
     const rootNode = document.getElementById(node);
 
@@ -201,6 +211,7 @@ export class StripeProvider extends SalableBase {
         userEmail: inputEmail.value,
         node,
         stripePubKey,
+        accountID,
       });
     };
 
@@ -249,7 +260,9 @@ export class StripeProvider extends SalableBase {
       await this._loadScript('https://js.stripe.com/v3/', 'salableStripeScript');
 
       if (typeof Stripe === 'undefined') return;
-      const stripe = Stripe(stripePubKey, {});
+      const stripe = Stripe(stripePubKey, {
+        stripeAccount: 'acct_1NiiWSQNgztiveVE',
+      });
 
       if (typeof stripe === 'undefined') return;
       let elements: StripeElements;

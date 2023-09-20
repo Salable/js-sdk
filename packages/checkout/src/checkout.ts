@@ -66,7 +66,7 @@ export class SalableCheckout extends SalableBase {
               method: 'GET',
             }
           ),
-          this._request<ICheckoutStylingResponse>('/checkout/styling', {
+          this._request<ICheckoutStylingResponse>('/checkout/get-styling', {
             method: 'GET',
           }),
         ]);
@@ -78,7 +78,7 @@ export class SalableCheckout extends SalableBase {
             planData.product?.organisationPaymentIntegration?.integrationName || null;
           paymentIntegration = planData?.product.organisationPaymentIntegration;
         } else {
-          integrationType = 'paddle';
+          integrationType = 'stripe';
           planErrorMessage =
             (planResponse.reason as { stack: string; message: string }).message ||
             'Failed to get plan required for payment';
@@ -149,6 +149,7 @@ export class SalableCheckout extends SalableBase {
             node: paymentNodeID,
             planID: planData?.uuid || '',
             stripePubKey: environment.publishableKey,
+            accountID: paymentType.accountId,
           });
         }
       } catch (error) {
