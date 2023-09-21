@@ -1,27 +1,12 @@
 :root {
-  --p-spacingXs: 1px;
-  --p-spacingSm: 2px;
   --p-spacing1: 0.25rem;
-  --p-spacing2: 0.5rem;
   --p-spacing3: 0.75rem;
-  --p-spacing4: 1rem;
-  --p-spacing5: 1.25rem;
-  --p-spacing6: 1.5rem;
-  --p-spacing7: 1.75rem;
-  --p-spacing8: 2rem;
-  --p-spacing9: 2.25rem;
-  --p-spacing10: 2.5rem;
   --fontSizeSm: 0.93rem;
   --borderRadius: 5px;
   --fontWeightNormal: 400;
   --colorBackground: #fff;
   --p-colorBackgroundDeemphasize10: #e6e6e6;
-  --sail-duration-80: 80ms;
-  --sail-duration-120: 120ms;
-  --sail-duration-160: 160ms;
   --sail-duration-240: 240ms;
-  --sail-duration-320: 320ms;
-  --sail-duration-400: 400ms;
   --sail-duration: var(--sail-duration-240);
   --sail-spacing-12: 12px;
   --error: rgb(205, 61, 100);
@@ -74,7 +59,7 @@ INPUT EMAIL
 }
 
 .slb_input:invalid,
-.slb-email-input-invalid {
+.slb_email_input_invalid {
   border-color: var(--error);
 }
 .slb_input:focus,

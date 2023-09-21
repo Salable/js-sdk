@@ -43,7 +43,7 @@ export class SkeletonComponents extends BaseComponent {
     <div class="salable_skeleton__input_wrapper salable_skeleton__cursor_loading">
       ${label}
       <div class="salable_skeleton__input">
-        <span class="salable_skeleton__discernable_text">${message}</span>
+        <span class="salable_skeleton__discernable_text" style="opacity: 0;">${message}</span>
       </div>
     </div>
     `;
@@ -138,8 +138,4 @@ export class SkeletonComponents extends BaseComponent {
         </div>
     `;
   }
-
-  // _AfterIntegrationWrapper({ children }: Pick<IIntegrationWrapper, 'children'>) {
-
-  // }
 }

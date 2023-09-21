@@ -1,4 +1,6 @@
+import { ICheckoutStyle } from '../interfaces/checkout.interface';
 import { IPlan, IPlanCurrency } from '../interfaces/plan.interface';
+import { extractStyles } from '../utils/functions';
 import { BaseComponent } from './base';
 
 export class CheckoutComponents extends BaseComponent {
@@ -25,86 +27,70 @@ export class CheckoutComponents extends BaseComponent {
     </p>
     `;
   }
-
-  _addStripeEmailForm() {
-    return `
-        <form onSubmit={createSubscriptionIntent}>
-            <InputEmail className={styles['mb-24']} onChange={onEmailChange} errorMessage={emailError} />
-            <button
-                disabled={creatingIntent}
-                id="submit"
-                type="submit"
-                style={{
-                borderRadius: customStyles?.borderRadius,
-                padding: customStyles?.spacingUnit3,
-                backgroundColor: customStyles?.primaryColor,
-                }}
-            >
-                <span id="button-text">
-                {creatingIntent ? <div className="spinner" id="spinner" /> : 'Continue'}
-                </span>
-            </button>
-            <ErrorMessage message={errorMessage} />
-        </form>
-    `;
-  }
-
-  _addStripePaymentForm() {
-    return `
-        <form id="payment-form">
-            <div id="link-authentication-element"></div>
-            <div id="payment-element"></div>
-            <button id="submit">
-                <div class="spinner hidden" id="spinner"></div>
-                <span id="button-text">Pay now</span>
-            </button>
-            <div id="payment-message" class="hidden"></div>
-        </form>
-    `;
-  }
-
-  _StripeProvider() {
-    // 1. Load stripe library
-
-    void (async () => {
-      try {
-        //   this._addScript('https://js.stripe.com/v3/', 'salableStripeScript');
-
-        await this._loadScript('https://js.stripe.com/v3/', 'salableStripeScript');
-      } catch (error) {}
-    })();
-
-    // 2. Load
-    return this._addStripeEmailForm();
-  }
 }
 
 export class IntegrationComponents {
-  _showMessage(messageText?: string, autoHide = true) {
-    const errorNode = document.querySelector('#slb_errorMessage');
+  _ErrorMessage() {
+    return `
+        <div class="slb_errorMessageBox">
+            <span class="slb_errorMessage" id="slb_errorMessage_email"></span>
+        </div>`;
+  }
+
+  _showMessage(
+    messageText?: string,
+    type: 'info' | 'error' | 'success' | 'warning' = 'info',
+    autoHide = true
+  ) {
+    const errorNode = document.querySelector('#slb_payment_message');
     if (!errorNode || !messageText) return;
 
-    errorNode.classList.remove('hidden');
+    errorNode.classList.add('slb_payment_message');
+    switch (type) {
+      case 'error':
+        errorNode.classList.add('slb_payment_message_error');
+        break;
+      case 'success':
+        errorNode.classList.add('slb_payment_message_success');
+        break;
+      case 'warning':
+        errorNode.classList.add('slb_payment_message_warning');
+        break;
+      case 'info':
+      default:
+        errorNode.classList.add('slb_payment_message_info');
+        break;
+    }
     errorNode.textContent = messageText;
 
     setTimeout(function () {
       if (!errorNode || !autoHide) return;
 
-      errorNode.classList.add('hidden');
+      errorNode.classList.remove('slb_payment_message');
       errorNode.textContent = '';
     }, 4000);
   }
 
-  _setLoading(isLoading: boolean) {
+  _FormButton(text: string, styles: ICheckoutStyle) {
+    const styling = extractStyles(styles, { primaryColor: 'background-color' });
+    return `
+        <button id="slb_button_submit" class="slb_button_submit" type="submit" style="${styling}">
+          <div id="slb_button_spinner" class="slb_button_spinner slb_hidden"></div>
+          <span id="slb_button_text">${text}</span>
+        </button>
+    `;
+  }
+
+  _setLoadingForSubmitButton(isLoading: boolean) {
     if (isLoading) {
       // Disable the button and show a spinner
-      document.querySelector('#submit')?.setAttribute('disabled', 'true');
-      document.querySelector('#spinner')?.classList.remove('hidden');
-      document.querySelector('#button-text')?.classList.add('hidden');
+      document.querySelector('#slb_button_submit')?.setAttribute('disabled', 'true');
+      document.querySelector('#slb_button_spinner')?.classList.remove('slb_hidden');
+      document.querySelector('#slb_button_text')?.classList.add('slb_hidden');
     } else {
-      document.querySelector('#submit')?.removeAttribute('disabled');
-      document.querySelector('#spinner')?.classList.add('hidden');
-      document.querySelector('#button-text')?.classList.remove('hidden');
+      document.querySelector('#slb_button_submit')?.removeAttribute('disabled');
+      document.querySelector('#slb_button_spinner')?.classList.add('slb_hidden');
+      document.querySelector('#slb_button_text')?.classList.remove('slb_hidden');
     }
   }
 }

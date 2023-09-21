@@ -7,10 +7,13 @@ import {
   StripeElementsOptions,
   StripePaymentElementOptions,
 } from '@stripe/stripe-js';
+import { extractStyles } from '../utils/functions';
 
-interface IStripeProvider extends IBaseResource {
+interface IBase {
   granteeID: string;
   memberID: string;
+}
+interface IStripeProvider extends IBase, IBaseResource {
   successURL: string;
 }
 
@@ -19,6 +22,7 @@ interface IStripeRender {
   stripePubKey: string;
   accountID: string;
   node: string;
+  styles: ICheckoutStyle;
 }
 
 interface IRenderElementRender {
@@ -28,20 +32,19 @@ interface IRenderElementRender {
   successURL: string;
   accountID: string;
   node: string;
+  styles: ICheckoutStyle;
 }
 
-interface ICreateSubscriptionIntent {
+interface ICreateSubscriptionIntent extends IBase {
   userEmail: string;
   planID: string;
-  memberId: string;
-  granteeID: string;
   accountID: string;
 }
 
 interface IInputEmail {
   label?: string;
   errorMessage?: string;
-  style?: ICheckoutStyle;
+  styles: ICheckoutStyle;
   className?: string;
 }
 
@@ -71,91 +74,67 @@ export class StripeProvider extends SalableBase {
     this._components = new IntegrationComponents();
   }
 
-  protected _bedrock(node: string) {
+  protected _bedrock(node: string, styles: ICheckoutStyle) {
     const rootNode = document.getElementById(node);
     const elements = `
-            <form id="payment-form">
+            <form id="slb_payment_form">
               <div id="link-authentication-element">
                 <!--Stripe.js injects the Link Authentication Element-->
               </div>
-              <div id="payment-element">
-                <!--Stripe.js injects the Payment Element-->
-              </div>
-              <button id="submit">
-              <div class="spinner hidden" id="spinner"></div>
-                <span id="button-text">Pay now</span>
-              </button>
-              <div id="payment-message" class="hidden"></div>
+              <div id="slb_payment_element"></div>
+              ${this._components._FormButton('Pay now', styles)}
+              <div id="slb_payment_message" class=""></div>
             </form>
             `;
     if (rootNode) rootNode.innerHTML = elements;
   }
 
-  _InputEmail({ label = 'Email', style, className }: IInputEmail) {
+  _InputEmail({ label = 'Email', styles, className }: IInputEmail) {
+    const stylings = extractStyles(styles);
     return `
         <div data-field="email" class="${className ? className : ''}">
-        <label htmlFor="slb_email-input" class="slb_input_label">
+        <label htmlFor="slb_email_input" class="slb_input_label">
             ${label}
         </label>
         <input
-            id="slb-email-input"
+            id="slb_email_input"
             dir="ltr"
             type="email"
             inputMode="email"
-            name="slb-email"
+            name="slb_email"
             autoComplete="email"
             class="slb_input"
-            style=${style ? JSON.stringify(style) : ''}
+            style="${stylings}"
         />
-        <div class="slb_errorMessageBox">
-            <span class="slb_errorMessage" id="slb_errorMessage_email"></span>
+        ${this._components._ErrorMessage()}
         </div>
-        </div>
-    `;
-  }
-
-  _FormButton(style?: ICheckoutStyle) {
-    const styling = `
-    ${style?.borderRadius ? `border-radius: ${style.borderRadius}` : ''}
-    ${style?.spacingUnit ? `padding: ${style.spacingUnit}` : ''}
-    ${style?.backgroundColor ? `background-color: ${style.backgroundColor}` : ''}
-    `;
-    return `
-        <button
-            disabled={isLoading || !stripe || !elements}
-            id="submit"
-            style=${styling}
-        >
-            <span id="slb_button-text">
-            {isLoading ? <div class="spinner" id="spinner" /> : 'Pay now'}
-            </span>
-        </button>
     `;
   }
 
   protected _createSubscriptionIntent = ({
     userEmail,
     granteeID,
-    memberId,
+    memberID,
     planID,
     node,
     stripePubKey,
     accountID,
+    styles,
   }: ICreateSubscriptionIntent & Omit<IRenderElementRender, 'clientSecret' | 'successURL'>) => {
     const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
     const emailValid = this._validateEmailRegex.test(userEmail);
     // Validate email address
     if (!userEmail || !emailValid) {
-      document.getElementById('slb-email-input')?.classList.add('slb-email-input-invalid');
+      document.getElementById('slb_email_input')?.classList.add('slb_email_input_invalid');
 
       if (emailInputErrorNode) {
-        emailInputErrorNode.textContent = 'Invalid email address';
+        emailInputErrorNode.textContent = 'Your email is invalid.';
       }
 
       return;
     }
     //After email is validated, create client secrete for stripe form
-    this._components._setLoading(true);
+    this._components._setLoadingForSubmitButton(true);
     void (async () => {
       try {
         const res = await this._request<{ clientSecret: string }>(
@@ -165,7 +144,7 @@ export class StripeProvider extends SalableBase {
             body: JSON.stringify({
               planUuid: planID,
               email: userEmail,
-              member: memberId,
+              member: memberID,
               granteeId: granteeID,
             }),
           }
@@ -179,12 +158,13 @@ export class StripeProvider extends SalableBase {
             clientSecret,
             accountID,
             successURL: this._successURL,
+            styles,
           });
         }
       } catch (error) {
         this._components._showMessage('Failed to create payment intent. Please try again');
       }
-      this._components._setLoading(false);
+      this._components._setLoadingForSubmitButton(false);
     })();
   };
 
@@ -195,7 +175,7 @@ export class StripeProvider extends SalableBase {
    * @param IStripeRender
    * @returns empty string
    */
-  _render({ node, stripePubKey, planID, accountID }: IStripeRender) {
+  _render({ node, stripePubKey, planID, accountID, styles }: IStripeRender) {
     // Get the element the form will be rendered on
     const rootNode = document.getElementById(node);
 
@@ -203,15 +183,16 @@ export class StripeProvider extends SalableBase {
     const handleSubmit = (e: Event) => {
       e.preventDefault();
 
-      const inputEmail = document.getElementById('slb-email-input') as HTMLInputElement;
+      const inputEmail = document.getElementById('slb_email_input') as HTMLInputElement;
       this._createSubscriptionIntent({
         granteeID: this._granteeID,
-        memberId: this._memberID,
+        memberID: this._memberID,
         planID,
         userEmail: inputEmail.value,
         node,
         stripePubKey,
         accountID,
+        styles,
       });
     };
 
@@ -220,33 +201,30 @@ export class StripeProvider extends SalableBase {
      * to create payment intent and return client secret
      **/
     const elements = `
-          <form id="email-form">
-            ${this._InputEmail({ label: 'Email' })}
-            <button id="submit" type="submit" >
-              <span id="button-text">Continue</span>
-            </button>
-            <div class="slb_errorMessageBox">
-              <span class="slb_errorMessage" id="slb_errorMessage"></span>
-            </div>
+          <form id="slb_email_form">
+            ${this._InputEmail({ label: 'Email', styles })}
+            ${this._components._FormButton('Continue', styles)}
+            ${this._components._ErrorMessage()}
           </form>
     `;
     if (rootNode) rootNode.innerHTML = elements;
-    document.querySelector('#email-form')?.addEventListener('submit', handleSubmit);
-    const emailInput = document.getElementById('slb-email-input') as HTMLInputElement;
+    document.querySelector('#slb_email_form')?.addEventListener('submit', handleSubmit);
+    const emailInput = document.getElementById('slb_email_input') as HTMLInputElement;
     const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
 
     emailInput?.addEventListener('input', () => {
       const emailValid = this._validateEmailRegex.test(emailInput.value);
       // Validate email address
       if (!emailInput.value || !emailValid) {
-        emailInput?.classList.add('slb-email-input-invalid');
+        emailInput?.classList.add('slb_email_input_invalid');
       } else {
         if (emailInputErrorNode) {
           emailInputErrorNode.textContent = '';
         }
-        emailInput?.classList.remove('slb-email-input-invalid');
+        emailInput?.classList.remove('slb_email_input_invalid');
       }
     });
+
     return '';
   }
 
@@ -255,25 +233,27 @@ export class StripeProvider extends SalableBase {
     node,
     clientSecret,
     successURL,
+    accountID,
+    styles,
   }: IRenderElementRender) {
     void (async () => {
       await this._loadScript('https://js.stripe.com/v3/', 'salableStripeScript');
 
       if (typeof Stripe === 'undefined') return;
       const stripe = Stripe(stripePubKey, {
-        stripeAccount: 'acct_1NiiWSQNgztiveVE',
+        stripeAccount: accountID,
       });
 
       if (typeof stripe === 'undefined') return;
       let elements: StripeElements;
 
       // render elements in dom for stripe to render its element
-      this._bedrock(node);
+      this._bedrock(node, styles);
 
       initialize();
       await checkStatus();
 
-      document.querySelector('#payment-form')?.addEventListener('submit', handleSubmit);
+      document.querySelector('#slb_payment_form')?.addEventListener('submit', handleSubmit);
 
       function initialize() {
         if (typeof stripe === 'undefined') return;
@@ -281,6 +261,10 @@ export class StripeProvider extends SalableBase {
           clientSecret,
           appearance: {
             theme: 'stripe',
+            variables: {
+              borderRadius: styles.borderRadius,
+              colorPrimary: styles.primaryColor,
+            },
           },
         };
         elements = stripe.elements(options);
@@ -290,7 +274,7 @@ export class StripeProvider extends SalableBase {
         };
 
         const paymentElement = elements.create('payment', paymentElementOptions);
-        paymentElement.mount('#payment-element');
+        paymentElement.mount('#slb_payment_element');
       }
 
       const components = new IntegrationComponents();
@@ -304,7 +288,7 @@ export class StripeProvider extends SalableBase {
           return;
         }
 
-        components._setLoading(true);
+        components._setLoadingForSubmitButton(true);
 
         const { error } = await stripe.confirmPayment({
           elements,
@@ -321,12 +305,12 @@ export class StripeProvider extends SalableBase {
         // be redirected to an intermediate site first to authorize the payment, then
         // redirected to the `return_url`.
         if (error.type === 'card_error' || error.type === 'validation_error') {
-          components._showMessage(error.message || undefined);
+          components._showMessage(error.message || undefined, 'error');
         } else {
-          components._showMessage('An unexpected error occurred.');
+          components._showMessage('An unexpected error occurred.', 'error');
         }
 
-        components._setLoading(false);
+        components._setLoadingForSubmitButton(false);
       }
 
       // Fetches the payment intent status after payment submission
@@ -343,21 +327,19 @@ export class StripeProvider extends SalableBase {
 
         switch (paymentIntent?.status) {
           case 'succeeded':
-            components._showMessage('Payment succeeded!');
+            components._showMessage('Payment succeeded!', 'success');
             break;
           case 'processing':
-            components._showMessage('Your payment is processing.');
+            components._showMessage('Your payment is processing.', 'info');
             break;
           case 'requires_payment_method':
-            components._showMessage('Your payment was not successful, please try again.');
+            components._showMessage('Your payment was not successful, please try again.', 'error');
             break;
           default:
-            components._showMessage('Something went wrong.');
+            components._showMessage('Something went wrong.', 'error');
             break;
         }
       }
-
-      // Show a spinner on payment submission
     })();
   }
 }

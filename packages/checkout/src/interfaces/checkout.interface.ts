@@ -6,9 +6,7 @@ export interface ICheckoutStyling {
   borderRadius: string;
 }
 
-export interface ICheckoutStylingResponse {
-  checkoutStyling: ICheckoutStyling;
-}
+export type ICheckoutStylingResponse = ICheckoutStyling;
 
 export interface ICheckoutStyle {
   fontFamily?: string;

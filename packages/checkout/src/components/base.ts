@@ -8,21 +8,6 @@ export class BaseComponent {
     head.appendChild(linkStylesheet);
   }
 
-  protected _addScript(link: string, id: string, reload?: string) {
-    const getScript = document.getElementById(id);
-    if (getScript && !reload) {
-      return;
-    }
-    if (getScript && reload) {
-      getScript.remove();
-    }
-    const bodyScript = document.createElement('script');
-    bodyScript.src = link;
-    bodyScript.defer = true;
-    bodyScript.id = id;
-    document.body.appendChild(bodyScript);
-  }
-
   protected _loadScript = (FILE_URL: string, id: string, type = 'text/javascript') => {
     return new Promise((resolve, reject) => {
       try {

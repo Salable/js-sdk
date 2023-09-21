@@ -8,8 +8,6 @@ SKELETON
   flex-direction: column;
   gap: 20px;
   padding: 96px;
-  /* width: 100%;
-  height: 100%; */
   justify-content: center;
   align-content: center;
   justify-items: center;
@@ -79,9 +77,6 @@ SKELETON
 }
 .salable_skeleton__cursor_loading {
   cursor: progress;
-}
-.salable_skeleton__cursor_error {
-  cursor: not-allowed;
 }
 
 .salable_skeleton__label {

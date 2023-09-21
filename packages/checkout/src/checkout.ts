@@ -3,7 +3,7 @@ import { SkeletonComponents } from './components/skeleton';
 import { StripeProvider } from './integrations/stripe';
 import { ICheckoutStyling, ICheckoutStylingResponse } from './interfaces/checkout.interface';
 import { IOrganisationPaymentIntegration, IPlan } from './interfaces/plan.interface';
-import { IBaseResource, SalableBase } from './resources/base';
+import { IBaseResource, SalableBase, defaultStyles } from './resources/base';
 import { environment } from './resources/config';
 import { decryptAccount } from './utils/decrypt-data';
 import { MissingPropertyError } from './utils/errors';
@@ -48,7 +48,7 @@ export class SalableCheckout extends SalableBase {
         checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
           integrationType: 'paddle',
           children: this._skeleton._FormFieldLoading(),
-          styles: null,
+          styles: defaultStyles,
         });
 
         let integrationType: string | null = null;
@@ -95,7 +95,7 @@ export class SalableCheckout extends SalableBase {
           checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
             integrationType: 'stripe',
             children: this._skeleton._FormFieldError(planErrorMessage),
-            styles: stylingData?.checkoutStyling || null,
+            styles: stylingData || defaultStyles,
           });
           return;
         }
@@ -107,7 +107,7 @@ export class SalableCheckout extends SalableBase {
             this._components._pricingDetails(planData, planData?.currencies[0] || null),
             ` <div class=${paymentNodeID} id=${paymentNodeID}></div>`,
           ],
-          styles: null,
+          styles: stylingData || defaultStyles,
         });
 
         if (!paymentIntegration) return;
@@ -140,7 +140,7 @@ export class SalableCheckout extends SalableBase {
             children: this._skeleton._FormFieldError(
               'Payment Integration for this product not fully setup yet'
             ),
-            styles: null,
+            styles: stylingData || defaultStyles,
           });
           return;
         }
@@ -150,13 +150,14 @@ export class SalableCheckout extends SalableBase {
             planID: planData?.uuid || '',
             stripePubKey: environment.publishableKey,
             accountID: paymentType.accountId,
+            styles: stylingData || defaultStyles,
           });
         }
       } catch (error) {
         checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
           integrationType: 'stripe',
           children: this._skeleton._FormFieldError('Something went wrong. Please try again'),
-          styles: null,
+          styles: defaultStyles,
         });
       }
     })();
