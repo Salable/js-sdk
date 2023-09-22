@@ -1,5 +1,5 @@
 import { ICheckoutStyle } from '../interfaces/checkout.interface';
-import { defaultStyles } from '../resources/base';
+import { extractStyles } from '../utils/functions';
 import { BaseComponent } from './base';
 
 interface IBackground {
@@ -10,11 +10,10 @@ interface IBackground {
 
 interface IIntegrationWrapper {
   children?: string | string[];
-  topComponent?: string;
   integrationType: 'stripe' | 'paddle';
   preview?: boolean;
   background?: IBackground;
-  styles: ICheckoutStyle | null;
+  styles: ICheckoutStyle;
 }
 
 export class SkeletonComponents extends BaseComponent {
@@ -82,42 +81,20 @@ export class SkeletonComponents extends BaseComponent {
     return this._FormFieldLoading(errorContent);
   }
 
-  _IntegrationWrapper({
-    topComponent,
-    integrationType,
-    preview,
-    children,
-    styles,
-    background,
-  }: IIntegrationWrapper) {
-    const heightValue = this._getStyleValueString('height', background);
-    const height = heightValue ? `height: ${heightValue};` : '';
-
-    const widthValue = this._getStyleValueString('width', background);
-    const width = widthValue ? `width: ${widthValue};` : '';
-    const backgroundColor = background?.none
-      ? 'none'
-      : styles?.backgroundColor || defaultStyles.backgroundColor;
-    const borderRadius = styles?.borderRadius
-      ? `border-radius: ${styles?.borderRadius}`
-      : `border-radius: ${defaultStyles.borderRadius}`;
-    const fontFamily = styles?.fontFamily
-      ? `font-family: ${styles?.fontFamily}`
-      : `font-family: ${defaultStyles.fontFamily}`;
+  _IntegrationWrapper({ integrationType, preview, children, styles }: IIntegrationWrapper) {
+    const stylings = extractStyles(styles, {
+      fontFamily: true,
+      backgroundColor: true,
+      borderRadius: false,
+    });
 
     return `
-        <div
-            class="${background?.none ? '' : 'salable_integrationContainer'}"
-            style="background-color: ${backgroundColor};${height}${width}"
-        >
-            ${topComponent ? topComponent : ''}
-            <div
-                aria-readonly
+            <div aria-readonly
                 class="salable_integrationWrapper${preview ? 'salable_previewWrapper' : ''} ${
       integrationType === 'stripe' ? 'salable_stripeWrapper' : ''
     } ${integrationType === 'paddle' ? 'salable_paddleWrapper' : ''}"
                 tabIndex=${preview ? -1 : 0}
-                style="${fontFamily}; ${borderRadius}"
+                style="${stylings}"
             >
                 ${
                   integrationType === 'paddle' && preview
@@ -135,7 +112,6 @@ export class SkeletonComponents extends BaseComponent {
                 }
                 ${this._components({ children })}
             </div>
-        </div>
     `;
   }
 }
