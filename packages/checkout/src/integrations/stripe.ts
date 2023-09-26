@@ -8,6 +8,7 @@ import {
   StripePaymentElementOptions,
 } from '@stripe/stripe-js';
 import { extractStyles } from '../utils/functions';
+import { SkeletonComponents } from '../components/skeleton';
 
 interface IBase {
   granteeID: string;
@@ -21,18 +22,14 @@ interface IStripeRender {
   planID: string;
   stripePubKey: string;
   accountID: string;
+  customerEmail?: string;
   node: string;
   styles: ICheckoutStyle;
 }
 
-interface IRenderElementRender {
-  planID: string;
-  stripePubKey: string;
+interface IRenderElementRender extends IStripeRender {
   clientSecret: string;
   successURL: string;
-  accountID: string;
-  node: string;
-  styles: ICheckoutStyle;
 }
 
 interface ICreateSubscriptionIntent extends IBase {
@@ -52,6 +49,7 @@ export class StripeProvider extends SalableBase {
   protected _granteeID: string;
   protected _memberID: string;
   protected _successURL: string;
+  protected _skeleton: SkeletonComponents;
   protected _components: IntegrationComponents;
   protected _validateEmailRegex = /\S+@\S+\.\S+/;
   constructor({
@@ -65,6 +63,7 @@ export class StripeProvider extends SalableBase {
     this._granteeID = granteeID;
     this._memberID = memberID;
     this._successURL = successURL;
+    this._skeleton = new SkeletonComponents();
 
     // DEV environment
     this._createCssStyleSheetLink(
@@ -120,7 +119,8 @@ export class StripeProvider extends SalableBase {
     stripePubKey,
     accountID,
     styles,
-  }: ICreateSubscriptionIntent & Omit<IRenderElementRender, 'clientSecret' | 'successURL'>) => {
+  }: ICreateSubscriptionIntent &
+    Omit<IRenderElementRender, 'clientSecret' | 'successURL' | 'customerEmail'>) => {
     const emailInputErrorNode = document.getElementById('slb_errorMessage_email');
     const emailValid = this._validateEmailRegex.test(userEmail);
     // Validate email address
@@ -155,7 +155,7 @@ export class StripeProvider extends SalableBase {
             planID,
             node,
             stripePubKey,
-            clientSecret,
+            clientSecret: 'pi_3NtEyOQNgztiveVE0ukRHDt4_secret_SMgDXBKxBIIDGKSkDMKV8JFeE',
             accountID,
             successURL: this._successURL,
             styles,
@@ -175,7 +175,7 @@ export class StripeProvider extends SalableBase {
    * @param IStripeRender
    * @returns empty string
    */
-  _render({ node, stripePubKey, planID, accountID, styles }: IStripeRender) {
+  _render({ node, stripePubKey, planID, accountID, customerEmail, styles }: IStripeRender) {
     // Get the element the form will be rendered on
     const rootNode = document.getElementById(node);
 
@@ -195,6 +195,38 @@ export class StripeProvider extends SalableBase {
         styles,
       });
     };
+
+    /**
+     * If prefill email is provided,
+     * validate email, show message, and create payment intent
+     */
+    if (customerEmail) {
+      const emailValid = this._validateEmailRegex.test(customerEmail);
+      if (emailValid) {
+        const elements = `
+        <form id="slb_email_form">
+        ${this._skeleton._IntegrationWrapper({
+          integrationType: 'paddle',
+          width: '375px',
+          children: this._skeleton._FormFieldMessage('Initializing checkout...'),
+          styles: styles,
+        })}
+        </form>
+        `;
+        if (rootNode) rootNode.innerHTML = elements;
+        this._createSubscriptionIntent({
+          granteeID: this._granteeID,
+          memberID: this._memberID,
+          planID,
+          userEmail: customerEmail,
+          node,
+          stripePubKey,
+          accountID,
+          styles,
+        });
+        return '';
+      }
+    }
 
     /**
      * Form will handle and process the necessary information needed

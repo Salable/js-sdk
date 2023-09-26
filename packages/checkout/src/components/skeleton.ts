@@ -12,6 +12,7 @@ interface IIntegrationWrapper {
   children?: string | string[];
   integrationType: 'stripe' | 'paddle';
   preview?: boolean;
+  width?: string;
   background?: IBackground;
   styles: ICheckoutStyle;
 }
@@ -80,8 +81,24 @@ export class SkeletonComponents extends BaseComponent {
     `;
     return this._FormFieldLoading(errorContent);
   }
+  _FormFieldMessage(message: string) {
+    const errorContent = `
+    <div class="salable_errorBox">
+        <div class="salable_messageBox__container">
+          <p>${message}</p>
+        </div>
+      </div>
+    `;
+    return this._FormFieldLoading(errorContent);
+  }
 
-  _IntegrationWrapper({ integrationType, preview, children, styles }: IIntegrationWrapper) {
+  _IntegrationWrapper({
+    integrationType,
+    preview,
+    children,
+    styles,
+    width = '458px',
+  }: IIntegrationWrapper) {
     const stylings = extractStyles(styles, {
       fontFamily: true,
       backgroundColor: true,
@@ -94,7 +111,7 @@ export class SkeletonComponents extends BaseComponent {
       integrationType === 'stripe' ? 'salable_stripeWrapper' : ''
     } ${integrationType === 'paddle' ? 'salable_paddleWrapper' : ''}"
                 tabIndex=${preview ? -1 : 0}
-                style="${stylings}"
+                style="${stylings};min-width:${width};"
             >
                 ${
                   integrationType === 'paddle' && preview

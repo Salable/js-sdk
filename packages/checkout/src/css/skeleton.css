@@ -17,7 +17,6 @@ SKELETON
 
 .salable_integrationWrapper {
   min-width: 375px;
-  width: 458px;
   position: relative;
   background-color: #ffffff;
   padding: 30px 42px 38px;
@@ -107,6 +106,11 @@ SKELETON
 
 .salable_errorBox__container {
   background-color: rgb(255, 163, 163);
+  border-radius: 4px;
+  padding: 5px 15px;
+}
+.salable_messageBox__container {
+  background-color: rgba(232, 232, 232, 0.642);
   border-radius: 4px;
   padding: 5px 15px;
 }

@@ -12,6 +12,7 @@ export interface ISalableCheckout extends IBaseResource {
   planID: string;
   successURL: string;
   cancelURL: string;
+  customerEmail?: string;
   granteeID: string;
   memberID: string;
 }
@@ -22,6 +23,7 @@ export class SalableCheckout extends SalableBase {
   protected _cancelURL: string;
   protected _granteeID: string;
   protected _memberID: string;
+  protected _customerEmail?: string;
   protected _checkoutNode: string | null;
   protected _styling: ICheckoutStyling | null;
   protected _skeleton: SkeletonComponents;
@@ -33,6 +35,7 @@ export class SalableCheckout extends SalableBase {
     this._granteeID = params.granteeID;
     this._memberID = params.memberID;
     this._successURL = params.successURL;
+    this._customerEmail = params.customerEmail;
     this._cancelURL = params.cancelURL;
     this._checkoutNode = null;
     this._styling = null;
@@ -149,6 +152,7 @@ export class SalableCheckout extends SalableBase {
             node: paymentNodeID,
             planID: planData?.uuid || '',
             stripePubKey: environment.publishableKey,
+            customerEmail: this._customerEmail,
             accountID: paymentType.accountId,
             styles: stylingData || defaultStyles,
           });

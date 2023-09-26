@@ -28,6 +28,7 @@ const config = {
       targets: ['./dist'],
     }),
     replace({
+      preventAssignment: true,
       'process.env.SALABLE_PUBLISHABLE_KEY': `"${process.env.SALABLE_PUBLISHABLE_KEY}"`,
     }),
     resolve({
