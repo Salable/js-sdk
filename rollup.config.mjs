@@ -7,6 +7,7 @@ import json from 'rollup-plugin-json';
 import dotenv from 'dotenv';
 import packageJson from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
+import replace from '@rollup/plugin-replace';
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ const config = {
     peerDepsExternal(),
     cleaner({
       targets: ['./dist'],
+    }),
+    replace({
+      'process.env.SALABLE_PUBLISHABLE_KEY': `"${process.env.SALABLE_PUBLISHABLE_KEY}"`,
     }),
     resolve({
       moduleDirectories: ['packages'],
