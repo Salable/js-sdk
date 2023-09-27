@@ -15,6 +15,7 @@ export interface ISalableCheckout extends IBaseResource {
   customerEmail?: string;
   granteeID: string;
   memberID: string;
+  styling?: ICheckoutStyling;
 }
 
 export class SalableCheckout extends SalableBase {
@@ -24,13 +25,12 @@ export class SalableCheckout extends SalableBase {
   protected _granteeID: string;
   protected _memberID: string;
   protected _customerEmail?: string;
-  protected _checkoutNode: string | null;
-  protected _styling: ICheckoutStyling | null;
+  protected _stylings: ICheckoutStyling;
   protected _testMode: boolean;
   protected _skeleton: SkeletonComponents;
   protected _components: CheckoutComponents;
 
-  constructor({ APIKey, options, ...params }: ISalableCheckout) {
+  constructor({ APIKey, options, styling, ...params }: ISalableCheckout) {
     super(APIKey, options);
     this._createCssStyleSheetLink(`../../../dist/css/skeleton.css`, 'SalableCssSkeleton');
     this._planID = params.planID;
@@ -39,8 +39,7 @@ export class SalableCheckout extends SalableBase {
     this._successURL = params.successURL;
     this._customerEmail = params.customerEmail;
     this._cancelURL = params.cancelURL;
-    this._checkoutNode = null;
-    this._styling = null;
+    this._stylings = { ...defaultStyles, ...styling };
     const testMode = APIKey.startsWith('test_') ? true : false;
     this._testMode = testMode;
     this._skeleton = new SkeletonComponents({ testMode });
@@ -55,14 +54,13 @@ export class SalableCheckout extends SalableBase {
         checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
           integrationType: 'paddle',
           children: this._skeleton._FormFieldLoading(),
-          styles: defaultStyles,
+          styles: this._stylings,
         });
 
         let integrationType: string | null = null;
 
         // 2. Get data
         let planData: IPlan | null = null;
-        let stylingData: ICheckoutStylingResponse | null = null;
         let planErrorMessage: string | null = null;
         let paymentIntegration: IOrganisationPaymentIntegration | null = null;
 
@@ -96,9 +94,9 @@ export class SalableCheckout extends SalableBase {
         }
 
         if (stylingResponse.status === 'fulfilled') {
-          stylingData = stylingResponse.value;
+          this._stylings = { ...defaultStyles, ...stylingResponse.value, ...this._stylings };
         } else {
-          // Do nothing
+          this._stylings = { ...defaultStyles, ...this._stylings };
         }
         // 3. Display variant output
         // Render error message
@@ -106,7 +104,7 @@ export class SalableCheckout extends SalableBase {
           checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
             integrationType: 'stripe',
             children: this._skeleton._FormFieldError(planErrorMessage),
-            styles: stylingData || defaultStyles,
+            styles: this._stylings,
           });
           return;
         }
@@ -118,7 +116,7 @@ export class SalableCheckout extends SalableBase {
             this._components._pricingDetails(planData, planData?.currencies[0] || null),
             ` <div class=${paymentNodeID} id=${paymentNodeID}></div>`,
           ],
-          styles: stylingData || defaultStyles,
+          styles: this._stylings,
         });
 
         if (!paymentIntegration) return;
@@ -148,30 +146,36 @@ export class SalableCheckout extends SalableBase {
           paymentIntegration.accountData.key
         );
 
+        /**
+         * Check and display a message if the payment isn't fully setup
+         */
         if (!paymentType || paymentType.status !== 'ACTIVE') {
           checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
             integrationType: 'stripe',
             children: this._skeleton._FormFieldError(
               'Payment Integration for this product not fully setup yet'
             ),
-            styles: stylingData || defaultStyles,
+            styles: this._stylings,
           });
           return;
         }
+        /**
+         * Render Stripe Payment element if the payment method is Stripe
+         */
         if (paymentType.paymentProvider === 'stripe') {
           stripeProvider._render({
             node: paymentNodeID,
             planID: planData?.uuid || '',
             customerEmail: this._customerEmail,
             accountID: paymentType.accountId,
-            styles: stylingData || defaultStyles,
+            styles: this._stylings,
           });
         }
       } catch (error) {
         checkoutNode.innerHTML = this._skeleton._IntegrationWrapper({
           integrationType: 'stripe',
           children: this._skeleton._FormFieldError('Something went wrong. Please try again'),
-          styles: defaultStyles,
+          styles: this._stylings || defaultStyles,
         });
       }
     })();

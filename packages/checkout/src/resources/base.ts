@@ -1,5 +1,5 @@
 import { BaseComponent } from '../components/base';
-import { SALABLE_BASE_URL, SALABLE_BASE_CDN } from '../constants';
+import { environment } from './config';
 import { MissingPropertyError } from '../utils/errors';
 
 export interface IOptions {
@@ -28,8 +28,8 @@ export class SalableBase extends BaseComponent {
   constructor(apiKey: string, options?: IOptions) {
     super();
     this._apiKey = (apiKey || '').trim();
-    this._apiDomain = SALABLE_BASE_URL;
-    this._cdnDomain = SALABLE_BASE_CDN;
+    this._apiDomain = environment.baseURL;
+    this._cdnDomain = environment.baseCDN;
 
     if (new.target === SalableBase) {
       throw new Error('You cannot instantiate an abstract class!');

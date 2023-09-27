@@ -30,6 +30,9 @@ const config = {
     replace({
       preventAssignment: true,
       'process.env.SALABLE_PUBLISHABLE_KEY': `"${process.env.SALABLE_PUBLISHABLE_KEY}"`,
+      'process.env.SALABLE_LIVE_KEY': `"${process.env.SALABLE_LIVE_KEY}"`,
+      'process.env.SALABLE_BASE_URL': `"${process.env.SALABLE_BASE_URL}"`,
+      'process.env.SALABLE_BASE_CDN': `"${process.env.SALABLE_BASE_CDN}"`,
     }),
     resolve({
       moduleDirectories: ['packages'],
