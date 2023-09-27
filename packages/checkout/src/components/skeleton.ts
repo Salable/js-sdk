@@ -13,15 +13,21 @@ interface IIntegrationWrapper {
   integrationType: 'stripe' | 'paddle';
   preview?: boolean;
   width?: string;
+  testMode?: boolean;
   background?: IBackground;
   styles: ICheckoutStyle;
 }
 
 export class SkeletonComponents extends BaseComponent {
-  constructor() {
+  protected _testMode: boolean;
+
+  constructor({ testMode }: { testMode: boolean }) {
     super();
-    // DEV environment
-    this._createCssStyleSheetLink(`../../../dist/css/skeleton.css`, 'SalableCssSkeleton');
+    this._testMode = testMode;
+  }
+
+  changeTestMode(testMode: boolean) {
+    this._testMode = testMode;
   }
 
   protected _getStyleValueString(key: keyof Omit<IBackground, 'none'>, background?: IBackground) {
@@ -105,6 +111,8 @@ export class SkeletonComponents extends BaseComponent {
       borderRadius: false,
     });
 
+    const isTestMode = this._testMode;
+
     return `
             <div aria-readonly
                 class="salable_integrationWrapper${preview ? 'salable_previewWrapper' : ''} ${
@@ -113,6 +121,7 @@ export class SkeletonComponents extends BaseComponent {
                 tabIndex=${preview ? -1 : 0}
                 style="${stylings};min-width:${width};"
             >
+            ${isTestMode ? '<div class="slb_integration_test_mode">test mode</div>' : ''}
                 ${
                   integrationType === 'paddle' && preview
                     ? `

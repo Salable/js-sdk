@@ -26,11 +26,13 @@ export class SalableCheckout extends SalableBase {
   protected _customerEmail?: string;
   protected _checkoutNode: string | null;
   protected _styling: ICheckoutStyling | null;
+  protected _testMode: boolean;
   protected _skeleton: SkeletonComponents;
   protected _components: CheckoutComponents;
 
   constructor({ APIKey, options, ...params }: ISalableCheckout) {
     super(APIKey, options);
+    this._createCssStyleSheetLink(`../../../dist/css/skeleton.css`, 'SalableCssSkeleton');
     this._planID = params.planID;
     this._granteeID = params.granteeID;
     this._memberID = params.memberID;
@@ -39,7 +41,9 @@ export class SalableCheckout extends SalableBase {
     this._cancelURL = params.cancelURL;
     this._checkoutNode = null;
     this._styling = null;
-    this._skeleton = new SkeletonComponents();
+    const testMode = APIKey.startsWith('test_') ? true : false;
+    this._testMode = testMode;
+    this._skeleton = new SkeletonComponents({ testMode });
     this._components = new CheckoutComponents();
   }
 
@@ -80,6 +84,10 @@ export class SalableCheckout extends SalableBase {
           integrationType =
             planData.product?.organisationPaymentIntegration?.integrationName || null;
           paymentIntegration = planData?.product.organisationPaymentIntegration;
+
+          // check if plan is test mode
+          this._testMode = this._testMode && planData.isTest;
+          this._skeleton.changeTestMode(this._testMode);
         } else {
           integrationType = 'stripe';
           planErrorMessage =
@@ -131,6 +139,9 @@ export class SalableCheckout extends SalableBase {
           successURL: this._successURL,
           APIKey: this._apiKey,
           options: this._options,
+          testMode: this._testMode,
+          stripePubKey: environment.publishableKey,
+          stipeLiveKey: environment.liveKey,
         });
         const paymentType = decryptAccount<'stripe'>(
           paymentIntegration.accountData?.encryptedData,
@@ -151,7 +162,6 @@ export class SalableCheckout extends SalableBase {
           stripeProvider._render({
             node: paymentNodeID,
             planID: planData?.uuid || '',
-            stripePubKey: environment.publishableKey,
             customerEmail: this._customerEmail,
             accountID: paymentType.accountId,
             styles: stylingData || defaultStyles,

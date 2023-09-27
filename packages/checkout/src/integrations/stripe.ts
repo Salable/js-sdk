@@ -16,11 +16,13 @@ interface IBase {
 }
 interface IStripeProvider extends IBase, IBaseResource {
   successURL: string;
+  testMode: boolean;
+  stripePubKey: string;
+  stipeLiveKey: string;
 }
 
 interface IStripeRender {
   planID: string;
-  stripePubKey: string;
   accountID: string;
   customerEmail?: string;
   node: string;
@@ -49,6 +51,9 @@ export class StripeProvider extends SalableBase {
   protected _granteeID: string;
   protected _memberID: string;
   protected _successURL: string;
+  protected _testMode: boolean;
+  protected _stripePubKey: string;
+  protected _stipeLiveKey: string;
   protected _skeleton: SkeletonComponents;
   protected _components: IntegrationComponents;
   protected _validateEmailRegex = /\S+@\S+\.\S+/;
@@ -58,12 +63,18 @@ export class StripeProvider extends SalableBase {
     APIKey,
     options,
     successURL,
-  }: Omit<IStripeProvider, 'planID' | 'stripePubKey'>) {
+    testMode,
+    stipeLiveKey,
+    stripePubKey,
+  }: Omit<IStripeProvider, 'planID'>) {
     super(APIKey, options);
     this._granteeID = granteeID;
     this._memberID = memberID;
     this._successURL = successURL;
-    this._skeleton = new SkeletonComponents();
+    this._stipeLiveKey = stipeLiveKey;
+    this._stripePubKey = stripePubKey;
+    this._testMode = testMode;
+    this._skeleton = new SkeletonComponents({ testMode });
 
     // DEV environment
     this._createCssStyleSheetLink(
@@ -116,7 +127,6 @@ export class StripeProvider extends SalableBase {
     memberID,
     planID,
     node,
-    stripePubKey,
     accountID,
     styles,
   }: ICreateSubscriptionIntent &
@@ -154,8 +164,7 @@ export class StripeProvider extends SalableBase {
           this._renderStripeElement({
             planID,
             node,
-            stripePubKey,
-            clientSecret: 'pi_3NtEyOQNgztiveVE0ukRHDt4_secret_SMgDXBKxBIIDGKSkDMKV8JFeE',
+            clientSecret,
             accountID,
             successURL: this._successURL,
             styles,
@@ -175,7 +184,7 @@ export class StripeProvider extends SalableBase {
    * @param IStripeRender
    * @returns empty string
    */
-  _render({ node, stripePubKey, planID, accountID, customerEmail, styles }: IStripeRender) {
+  _render({ node, planID, accountID, customerEmail, styles }: IStripeRender) {
     // Get the element the form will be rendered on
     const rootNode = document.getElementById(node);
 
@@ -190,7 +199,6 @@ export class StripeProvider extends SalableBase {
         planID,
         userEmail: inputEmail.value,
         node,
-        stripePubKey,
         accountID,
         styles,
       });
@@ -220,11 +228,10 @@ export class StripeProvider extends SalableBase {
           planID,
           userEmail: customerEmail,
           node,
-          stripePubKey,
           accountID,
           styles,
         });
-        return '';
+        return;
       }
     }
 
@@ -261,7 +268,6 @@ export class StripeProvider extends SalableBase {
   }
 
   protected _renderStripeElement({
-    stripePubKey,
     node,
     clientSecret,
     successURL,
@@ -272,9 +278,15 @@ export class StripeProvider extends SalableBase {
       await this._loadScript('https://js.stripe.com/v3/', 'salableStripeScript');
 
       if (typeof Stripe === 'undefined') return;
-      const stripe = Stripe(stripePubKey, {
+
+      let stripe = Stripe(this._stipeLiveKey, {
         stripeAccount: accountID,
       });
+      if (this._testMode) {
+        stripe = Stripe(this._stripePubKey, {
+          stripeAccount: accountID,
+        });
+      }
 
       if (typeof stripe === 'undefined') return;
       let elements: StripeElements;

@@ -31,6 +31,7 @@ export interface IProduct {
 export interface IPlan {
   uuid: string;
   name: string;
+  isTest: boolean;
   description: null | string;
   displayName: string;
   status: string;

@@ -2,61 +2,43 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Salable Checkout library</title>
-    <style>
-      body {
-        margin: 0;
-      }
-      .background {
-        position: relative;
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(83, 83, 83, 0.543);
-        width: 100%;
-        height: 100%;
-        display: block;
-        color: yellow;
-      }
-      .bg-text {
-        color: lightgrey;
-        font-size: 80px;
-        margin-top: auto;
-      }
-      .content {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1;
-      }
-    </style>
+    <link rel="stylesheet" href="./index.css" />
     <link rel="stylesheet" href="../../../dist/css/checkout.css" />
   </head>
   <body>
-    <div class="background">
-      <p class="bg-text">Salable Checkout JS library</p>
-      <p class="bg-text">Salable Checkout JS library</p>
-      <p class="bg-text">Salable Checkout JS library</p>
-      <p class="bg-text">Salable Checkout JS library</p>
+    <div class="success_container">
+      <div class="card index_card">
+        <button id="provide-email-btn" class="another-payment-btn">
+          Checkout - <strong>Provide Email</strong>
+        </button>
+        <button id="prefill-email-btn" class="another-payment-btn">
+          Checkout - <strong>PreFill Email</strong>
+        </button>
+        <button id="test-mode-plan-btn" class="another-payment-btn">
+          Checkout - <strong>Test Mode Plan</strong>
+        </button>
+        <button id="live-mode-plan-btn" class="another-payment-btn">
+          Checkout - <strong>Live Mode Plan</strong>
+        </button>
+      </div>
     </div>
-
-    <div class="content">
-      <div id="checkout"></div>
-
-      <script type="module">
-        import { SalableCheckout } from '../../../dist/index.js';
-
-        const checkout = new SalableCheckout({
-          APIKey: 'l9C7iaOS6E6TQ7Kl8iQn72MFuY0EZdf36BtegNVY',
-          granteeID: 'example-grantee-123',
-          memberID: 'example-member-123',
-          planID: '2410d3bb-3a1e-41dd-8643-6c3d9772445d',
-          successURL: 'http://127.0.0.1:5500/packages/checkout/example/index.html',
-        });
-
-        checkout.mount(document.querySelector('#checkout'));
-      </script>
-    </div>
+    <script type="text/javascript">
+      document.getElementById('provide-email-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/provide-email.html`;
+        location.href = newURL;
+      };
+      document.getElementById('prefill-email-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/prefill-email.html`;
+        location.href = newURL;
+      };
+      document.getElementById('test-mode-plan-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/test-mode-plan.html`;
+        location.href = newURL;
+      };
+      document.getElementById('live-mode-plan-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/live-mode-plan.html`;
+        location.href = newURL;
+      };
+    </script>
   </body>
 </html>
