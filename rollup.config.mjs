@@ -33,6 +33,7 @@ const config = {
       'process.env.SALABLE_LIVE_KEY': `"${process.env.SALABLE_LIVE_KEY}"`,
       'process.env.SALABLE_BASE_URL': `"${process.env.SALABLE_BASE_URL}"`,
       'process.env.SALABLE_BASE_CDN': `"${process.env.SALABLE_BASE_CDN}"`,
+      'process.env.ENVIRONMENT': `"${process.env.ENVIRONMENT}"`,
     }),
     resolve({
       moduleDirectories: ['packages'],

@@ -9,6 +9,7 @@ import {
 } from '@stripe/stripe-js';
 import { extractStyles } from '../utils/functions';
 import { SkeletonComponents } from '../components/skeleton';
+import { environment } from '../resources/config';
 
 interface IBase {
   granteeID: string;
@@ -78,7 +79,7 @@ export class StripeProvider extends SalableBase {
 
     // DEV environment
     this._createCssStyleSheetLink(
-      `../../../dist/css/stripe-checkout.css`,
+      `${environment.assert}/css/stripe-checkout.css`,
       'SalableCssStripeCheckout'
     );
     this._components = new IntegrationComponents();

@@ -1,5 +1,6 @@
 import { ICheckoutStyle } from '../interfaces/checkout.interface';
 import { IPlan, IPlanCurrency } from '../interfaces/plan.interface';
+import { environment } from '../resources/config';
 import { extractStyles } from '../utils/functions';
 import { BaseComponent } from './base';
 
@@ -7,7 +8,7 @@ export class CheckoutComponents extends BaseComponent {
   constructor() {
     super();
     // DEV environment
-    this._createCssStyleSheetLink(`../../../dist/css/checkout.css`, 'SalableCssCheckout');
+    this._createCssStyleSheetLink(`${environment.assert}/css/checkout.css`, 'SalableCssCheckout');
   }
 
   _pricingDetails(plan: IPlan | null, planCurrency: IPlanCurrency | null) {

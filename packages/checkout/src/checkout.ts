@@ -32,7 +32,7 @@ export class SalableCheckout extends SalableBase {
 
   constructor({ APIKey, options, styling, ...params }: ISalableCheckout) {
     super(APIKey, options);
-    this._createCssStyleSheetLink(`../../../dist/css/skeleton.css`, 'SalableCssSkeleton');
+    this._createCssStyleSheetLink(`${environment.assert}/css/skeleton.css`, 'SalableCssSkeleton');
     this._planID = params.planID;
     this._granteeID = params.granteeID;
     this._memberID = params.memberID;
