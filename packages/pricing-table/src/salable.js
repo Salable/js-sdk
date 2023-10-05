@@ -430,6 +430,7 @@ class EnvConfig {
 }
 
 class CheckoutConfig {
+  customerId;
   customerEmail;
   customerPostcode;
   customerCountry;
@@ -446,6 +447,7 @@ class CheckoutConfig {
   allowPromoCode;
 
   constructor(config) {
+    this.customerId = config.customer.id;
     this.customerEmail = config.customer.email;
     this.customerPostcode = config.customer.postcode;
     this.customerCountry = config.customer.country;
@@ -958,6 +960,7 @@ class Initialisers {
 
     const allowedQueryParams = [
       'customerCountry',
+      'customerId',
       'customerEmail',
       'customerPostcode',
       'member',
