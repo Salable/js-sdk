@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Salable/js-sdk/compare/v1.8.0...v1.9.0) (2023-10-05)
+
+
+### Features
+
+* customer parameter to pre fill checkout details ([263187c](https://github.com/Salable/js-sdk/commit/263187c966b316cf6bbef6406835630cb5962bae))
+
 # [1.8.0](https://github.com/Salable/js-sdk/compare/v1.7.0...v1.8.0) (2023-06-14)
 
 
