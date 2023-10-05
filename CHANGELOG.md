@@ -1,3 +1,21 @@
+# [1.10.0-beta.1](https://github.com/Salable/js-sdk/compare/v1.9.0...v1.10.0-beta.1) (2023-10-05)
+
+
+### Bug Fixes
+
+* pass account ID to stripe payment element ([1482b5a](https://github.com/Salable/js-sdk/commit/1482b5a4e556e44ff00799f9321002b045aaf193))
+
+
+### Features
+
+* add paddle payment ([64faef5](https://github.com/Salable/js-sdk/commit/64faef5edacf0131563c9d37834ef4456ca53819))
+* add stripe integration ([f07c5a5](https://github.com/Salable/js-sdk/commit/f07c5a50593d5e698294fdaa267edc299e68a1f1))
+* allow pre-filling of customer email ([a8089d7](https://github.com/Salable/js-sdk/commit/a8089d717c645d610792287903cdc470d7213a21))
+* allowing customization through props ([95dc300](https://github.com/Salable/js-sdk/commit/95dc300ea495746f091115a84e5af527fb3968dd))
+* checkout library ([4cc15e7](https://github.com/Salable/js-sdk/commit/4cc15e7836c4f58b89b26c4e0dfa93a8f8acf1c3))
+* determine if plan loaded is test or live mode ([714bd31](https://github.com/Salable/js-sdk/commit/714bd3189591f7f9cc54106c41f8e33da11b43fe))
+* render checkout component and handle error on fetch ([abdd0cc](https://github.com/Salable/js-sdk/commit/abdd0ccb52dc8008828e4502e141b30bfa9c23ba))
+
 # [1.9.0](https://github.com/Salable/js-sdk/compare/v1.8.0...v1.9.0) (2023-10-05)
 
 ### Features
