@@ -212,7 +212,7 @@ export class SalablePricingTable {
         }
         const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
 
-        const plans = data.plans;
+        const plans = data.plans.filter((p) => p.status === 'ACTIVE' && p.planType !== 'bespoke');
 
         const hasFreeYearlyPlans = plans.filter(
           (p) => p.interval === 'year' && p.pricingType === 'free'
@@ -227,6 +227,8 @@ export class SalablePricingTable {
         const hasPaidMonthlyPlans = plans.filter(
           (p) => p.interval === 'month' && p.pricingType === 'paid'
         ).length;
+        const hasYearlyPlans = plans.filter((p) => p.interval === 'year').length;
+        const hasMonthlyPlans = plans.filter((p) => p.interval === 'month').length;
 
         const monthlyPlans =
           (hasPaidMonthlyPlans && hasFreeYearlyPlans && !hasPaidYearlyPlans) ||
@@ -241,7 +243,7 @@ export class SalablePricingTable {
         const yearlyPlans =
           (hasPaidYearlyPlans && hasFreeMonthlyPlans && !hasPaidMonthlyPlans) ||
           (hasPaidMonthlyPlans && hasPaidYearlyPlans) ||
-          !hasPaidMonthlyPlans
+          (hasYearlyPlans && !hasMonthlyPlans)
             ? plans.filter(
                 (p) =>
                   p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
