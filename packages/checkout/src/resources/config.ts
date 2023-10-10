@@ -10,6 +10,9 @@ if (!SALABLE_BASE_URL) throw new Error('Missing SALABLE_BASE_URL');
 if (!SALABLE_BASE_CDN) throw new Error('Missing SALABLE_BASE_CDN');
 if (!ENVIRONMENT) throw new Error('Missing ENVIRONMENT');
 
+// eslint-disable-next-line prettier/prettier, no-console
+console.log('PRO B <->', SALABLE_BASE_URL);
+
 export const environment = {
   publishableKey: SALABLE_PUBLISHABLE_KEY,
   liveKey: SALABLE_LIVE_KEY,
