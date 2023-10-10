@@ -866,6 +866,7 @@ class Initialisers {
     featuredPlanUuid,
     customTheme,
   }) {
+    if (!plans.length) return null;
     const buttonTextDefaults = {
       Standard: {
         free: 'Create license',
