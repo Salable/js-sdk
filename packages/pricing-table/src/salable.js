@@ -51,291 +51,246 @@ export class SalablePricingTable {
       }
     }
 
-    if (this.envConfig.apiKey) {
-      const classPrefix = 'salable';
-      const pricingTable = this.envConfig.pricingTableNode;
-      const bodyMovinScript = document.createElement('script');
-      bodyMovinScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js';
-      bodyMovinScript.integrity =
-        'sha512-HDCfX3BneBQMfloBfluMQe6yio+OfXnbKAbI0SnfcZ4YfZL670nc52Aue1bBhgXa+QdWsBdhMVR2hYROljf+Fg==';
-      bodyMovinScript.crossOrigin = 'anonymous';
-      bodyMovinScript.defer = true;
-      bodyMovinScript.id = 'SalableLottieCdn';
-      document.body.appendChild(bodyMovinScript);
+    const classPrefix = 'salable';
+    const pricingTable = this.envConfig.pricingTableNode;
+    const bodyMovinScript = document.createElement('script');
+    bodyMovinScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.7/lottie.min.js';
+    bodyMovinScript.integrity =
+      'sha512-HDCfX3BneBQMfloBfluMQe6yio+OfXnbKAbI0SnfcZ4YfZL670nc52Aue1bBhgXa+QdWsBdhMVR2hYROljf+Fg==';
+    bodyMovinScript.crossOrigin = 'anonymous';
+    bodyMovinScript.defer = true;
+    bodyMovinScript.id = 'SalableLottieCdn';
+    document.body.appendChild(bodyMovinScript);
 
-      this.initialisers.createCssStyleSheetLink(
-        `${this.initialisers.getCdnDomain()}/latest/css/main.css`,
-        'SalableCssMain'
+    this.initialisers.createCssStyleSheetLink(
+      `${this.initialisers.getCdnDomain()}/latest/css/main.css`,
+      'SalableCssMain'
+    );
+
+    const pricingTableContainerEl = this.initialisers.createElWithClass(
+      'div',
+      `${classPrefix}-pricing-table-container`
+    );
+    pricingTable.appendChild(pricingTableContainerEl);
+
+    pricingTableContainerEl.setAttribute('data-interval', 'month');
+
+    if (this.envConfig.globalPlanOptions?.cta?.visibility === 'hidden')
+      pricingTableContainerEl.classList.add('salable-global-cta-hidden');
+    if (this.envConfig.state)
+      pricingTableContainerEl.classList.add(`salable-pricing-table-state-${this.envConfig.state}`);
+
+    const loadingEl = this.initialisers.createElWithClass('div', `${classPrefix}-loading`);
+    pricingTableContainerEl.appendChild(loadingEl);
+
+    bodyMovinScript.addEventListener('load', () => {
+      this.initialisers.createInlineScript(
+        this.initialisers.createLottieAnimation(
+          `document.getElementsByClassName('salable-loading')[0]`,
+          `${this.initialisers.getCdnDomain()}/latest/lottie/dots-left-${
+            this.envConfig.theme === 'dark' ? 'white' : 'blue'
+          }.json`
+        ),
+        pricingTableContainerEl,
+        'SalableLottiePricingTableLoadingAnimation'
       );
+    });
 
-      const pricingTableContainerEl = this.initialisers.createElWithClass(
-        'div',
-        `${classPrefix}-pricing-table-container`
+    if (!this.envConfig.globalPlanOptions.successUrl)
+      this.envConfig.globalPlanOptions.successUrl = document.URL;
+
+    const granteeIdsWithHashes = this.envConfig.individualPlanOptions
+      ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
+          const granteeId =
+            this.envConfig.individualPlanOptions[key].granteeId ??
+            this.envConfig.globalPlanOptions.granteeId;
+          return `${key},${granteeId}`;
+        })
+      : [];
+
+    const successUrlsWithHashes = this.envConfig.individualPlanOptions
+      ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
+          const successUrl =
+            this.envConfig.individualPlanOptions[key].successUrl ??
+            this.envConfig.globalPlanOptions.successUrl;
+          return `${key},${successUrl}`;
+        })
+      : [];
+
+    const cancelUrlsWithHashes = this.envConfig.individualPlanOptions
+      ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
+          const cancelUrl =
+            this.envConfig.individualPlanOptions[key].cancelUrl ??
+            this.envConfig.globalPlanOptions.cancelUrl;
+          return `${key},${cancelUrl}`;
+        })
+      : [];
+
+    const currency = this.envConfig.currency ?? '';
+
+    let response = {};
+    let encoded = null;
+    const queryParams = `?globalGranteeId=${
+      this.envConfig.globalPlanOptions.granteeId
+    }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
+      this.envConfig.globalPlanOptions.successUrl
+    }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
+      this.envConfig.globalPlanOptions.cancelUrl
+    }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
+      this.checkoutConfig.member
+    }${this.initialisers.queryParametersFactory(this.checkoutConfig)}${
+      currency && `&currency=${currency}`
+    }`;
+
+    if (this.envConfig.pricingTableUuid) {
+      encoded = encodeURI(
+        `${this.initialisers.getApiDomain()}/pricing-tables/${
+          this.envConfig.pricingTableUuid
+        }${queryParams}`
       );
-      pricingTable.appendChild(pricingTableContainerEl);
-
-      pricingTableContainerEl.setAttribute('data-interval', 'month');
-
-      if (this.envConfig.globalPlanOptions?.cta?.visibility === 'hidden')
-        pricingTableContainerEl.classList.add('salable-global-cta-hidden');
-      if (this.envConfig.state)
-        pricingTableContainerEl.classList.add(
-          `salable-pricing-table-state-${this.envConfig.state}`
-        );
-
-      const loadingEl = this.initialisers.createElWithClass('div', `${classPrefix}-loading`);
-      pricingTableContainerEl.appendChild(loadingEl);
-
-      bodyMovinScript.addEventListener('load', () => {
-        this.initialisers.createInlineScript(
-          this.initialisers.createLottieAnimation(
-            `document.getElementsByClassName('salable-loading')[0]`,
-            `${this.initialisers.getCdnDomain()}/latest/lottie/dots-left-${
-              this.envConfig.theme === 'dark' ? 'white' : 'blue'
-            }.json`
-          ),
-          pricingTableContainerEl,
-          'SalableLottiePricingTableLoadingAnimation'
-        );
-      });
-
-      if (!this.envConfig.globalPlanOptions.successUrl)
-        this.envConfig.globalPlanOptions.successUrl = document.URL;
-
-      const granteeIdsWithHashes = this.envConfig.individualPlanOptions
-        ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
-            const granteeId =
-              this.envConfig.individualPlanOptions[key].granteeId ??
-              this.envConfig.globalPlanOptions.granteeId;
-            return `${key},${granteeId}`;
-          })
-        : [];
-
-      const successUrlsWithHashes = this.envConfig.individualPlanOptions
-        ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
-            const successUrl =
-              this.envConfig.individualPlanOptions[key].successUrl ??
-              this.envConfig.globalPlanOptions.successUrl;
-            return `${key},${successUrl}`;
-          })
-        : [];
-
-      const cancelUrlsWithHashes = this.envConfig.individualPlanOptions
-        ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
-            const cancelUrl =
-              this.envConfig.individualPlanOptions[key].cancelUrl ??
-              this.envConfig.globalPlanOptions.cancelUrl;
-            return `${key},${cancelUrl}`;
-          })
-        : [];
-
-      const currency = this.envConfig.currency ?? '';
-
-      let response = {};
-      let encoded = null;
-      const queryParams = `?globalGranteeId=${
-        this.envConfig.globalPlanOptions.granteeId
-      }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
-        this.envConfig.globalPlanOptions.successUrl
-      }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
-        this.envConfig.globalPlanOptions.cancelUrl
-      }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
-        this.checkoutConfig.member
-      }${this.initialisers.queryParametersFactory(this.checkoutConfig)}${
-        currency && `&currency=${currency}`
-      }`;
-
-      if (this.envConfig.pricingTableUuid) {
-        encoded = encodeURI(
-          `${this.initialisers.getApiDomain()}/pricing-tables/${
-            this.envConfig.pricingTableUuid
-          }${queryParams}`
-        );
-      } else {
-        encoded = encodeURI(
-          `${this.initialisers.getApiDomain()}/products/${
-            this.envConfig.productUuid
-          }/pricingtable${queryParams}`
-        );
-      }
-      try {
-        response = await fetch(encoded, {
-          method: 'GET',
-          headers: {
-            'x-api-key': this.envConfig.apiKey,
-            version: 'v1',
-          },
-        });
-      } catch (error) {
-        throw new Error('Salable - Failed to fetch pricing table');
-      }
-
-      if (response.status === 200) {
-        let data = await response.json();
-        if (this.envConfig.pricingTableUuid) {
-          data = this.initialisers.getPricingTableFactory(data);
-          this.envConfig.theme = data.theme;
-        }
-        this.initialisers.createCssStyleSheetLink(
-          `${this.initialisers.getCdnDomain()}/latest/css/themes/${
-            this.envConfig.theme ?? 'light'
-          }.css`,
-          `SalableCss${
-            this.envConfig.theme
-              ? this.envConfig.theme[0].toUpperCase() + this.envConfig.theme.substr(1)
-              : 'Light'
-          }`
-        );
-        if (this.envConfig.pricingTableUuid) {
-          const customThemeDefaultButton = data.customTheme?.elements?.buttons?.default;
-          if (customThemeDefaultButton) {
-            this.initialisers.setCssVariables({
-              ...(customThemeDefaultButton.backgroundColor && {
-                '--salable-button-background-colour': customThemeDefaultButton.backgroundColor,
-                // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
-                // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
-                // '--salable-button-coming-soon-hover-border-colour':
-                //   customThemeDefaultButton.backgroundColor,
-              }),
-              ...(customThemeDefaultButton.hover.backgroundColor && {
-                '--salable-button-hover-background-colour':
-                  customThemeDefaultButton.hover.backgroundColor,
-                // '--salable-button-coming-soon-hover-background-colour':
-                //   customThemeDefaultButton.hover.backgroundColor + 15,
-              }),
-              ...(customThemeDefaultButton.color && {
-                '--salable-button-colour': customThemeDefaultButton.color,
-                '--salable-button-hover-colour': customThemeDefaultButton.color,
-              }),
-            });
-          }
-        }
-        const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
-
-        let plans = data.plans
-          .filter((p) => p.active && p.planType !== 'bespoke' && p.status === 'ACTIVE')
-          .sort((a, b) => {
-            if (this.envConfig.pricingTableUuid) {
-              return a.sortOrder - b.sortOrder;
-            }
-            if (a.pricingType === 'free' && a.planType !== 'Coming soon') {
-              return -1;
-            }
-            if (a.planType === 'Coming soon' || b.planType === 'Coming soon') {
-              return 1;
-            }
-            return (
-              a.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price -
-              b.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price
-            );
-          })
-          .map((p) => {
-            for (const f of p.features) {
-              f.sortOrder = data.features.find((feat) => feat.uuid === f.featureUuid)?.sortOrder;
-            }
-            return p;
-          });
-
-        if (plans.filter((p) => p.interval === 'month').length) {
-          this.initialisers.createPlansPerInterval({
-            interval: 'month',
-            plans: plans.filter(
-              (p) =>
-                p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
-            ),
-            pricingTableContainerEl,
-            classPrefix,
-            envConfig: this.envConfig,
-            checkoutConfig: this.checkoutConfig,
-            plansContainerEl: this.initialisers.createElWithClass(
-              'div',
-              `${classPrefix}-plans-container ${classPrefix}-plans-container-month`
-            ),
-            defaultCurrency,
-            featuredPlanUuid: data.featuredPlanUuid,
-            customTheme: data.customTheme,
-          });
-        }
-
-        if (plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length) {
-          this.initialisers.createPlansPerInterval({
-            interval: 'year',
-            plans: plans.filter(
-              (p) =>
-                p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
-            ),
-            pricingTableContainerEl,
-            classPrefix,
-            envConfig: this.envConfig,
-            checkoutConfig: this.checkoutConfig,
-            plansContainerEl: this.initialisers.createElWithClass(
-              'div',
-              `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
-            ),
-            defaultCurrency,
-            featuredPlanUuid: data.featuredPlanUuid,
-            customTheme: data.customTheme,
-          });
-        }
-
-        if (
-          plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length &&
-          plans.filter((p) => p.interval === 'month').length
-        ) {
-          const monthlyEl = document.querySelector(`.${classPrefix}-plans-container-month`);
-          const yearEl = document.querySelector(`.${classPrefix}-plans-container-year`);
-          const plansIntervalToggleEl =
-            this.initialisers.createPricingTableIntervalToggle(classPrefix);
-          document
-            .querySelectorAll(`.${classPrefix}-plans-container`)[0]
-            .parentNode.insertBefore(
-              plansIntervalToggleEl,
-              document.querySelectorAll(`.${classPrefix}-plans-container`)[0]
-            );
-          yearEl.style.display = 'none';
-          plansIntervalToggleEl.addEventListener('click', () => {
-            if (yearEl.style.display === 'none') {
-              pricingTableContainerEl.setAttribute('data-interval', 'year');
-              monthlyEl.style.display = 'none';
-              yearEl.style.display = 'flex';
-              document
-                .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
-                .classList.add(`${classPrefix}-plans-interval-toggle-active`);
-              document
-                .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
-                .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
-            } else {
-              pricingTableContainerEl.setAttribute('data-interval', 'month');
-              monthlyEl.style.display = 'flex';
-              yearEl.style.display = 'none';
-              document
-                .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
-                .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
-              document
-                .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
-                .classList.add(`${classPrefix}-plans-interval-toggle-active`);
-            }
-          });
-        }
-
-        loadingEl.style.display = 'none';
-
-        if (this.envConfig.stylingOptions && Object.keys(this.envConfig.stylingOptions).length) {
-          const stylingOptionsKeyValues = Object.entries(this.envConfig.stylingOptions);
-          const root = document.querySelector(':root');
-
-          if (stylingOptionsKeyValues) {
-            for (const option of stylingOptionsKeyValues) {
-              root.style.setProperty(`--${option[0].split('_').join('-')}`, option[1]);
-            }
-          }
-        }
-      }
     } else {
-      // eslint-disable-next-line no-console
-      console.error(
-        'Api key is missing from environment config passed into Salable init() function'
+      encoded = encodeURI(
+        `${this.initialisers.getApiDomain()}/products/${
+          this.envConfig.productUuid
+        }/pricingtable${queryParams}`
       );
+    }
+    try {
+      response = await fetch(encoded, {
+        method: 'GET',
+        headers: {
+          'x-api-key': this.envConfig.apiKey,
+          version: 'v1',
+        },
+      });
+    } catch (error) {
+      throw new Error('Salable - Failed to fetch pricing table');
+    }
+
+    if (response.status !== 200) throw Error('Failed to fetch pricing table data');
+
+    let data = await response.json();
+    if (this.envConfig.pricingTableUuid) {
+      data = this.initialisers.getPricingTableFactory(data);
+      this.envConfig.theme = data.theme;
+    }
+    this.initialisers.createCssStyleSheetLink(
+      `${this.initialisers.getCdnDomain()}/latest/css/themes/${
+        this.envConfig.theme ?? 'light'
+      }.css`,
+      `SalableCss${
+        this.envConfig.theme
+          ? this.envConfig.theme[0].toUpperCase() + this.envConfig.theme.substr(1)
+          : 'Light'
+      }`
+    );
+    if (this.envConfig.pricingTableUuid) {
+      const customThemeDefaultButton = data.customTheme?.elements?.buttons?.default;
+      if (customThemeDefaultButton) {
+        this.initialisers.setCssVariables({
+          ...(customThemeDefaultButton.backgroundColor && {
+            '--salable-button-background-colour': customThemeDefaultButton.backgroundColor,
+            // '--salable-button-coming-soon-colour': customThemeDefaultButton.backgroundColor,
+            // '--salable-button-coming-soon-hover-colour': customThemeDefaultButton.backgroundColor,
+            // '--salable-button-coming-soon-hover-border-colour':
+            //   customThemeDefaultButton.backgroundColor,
+          }),
+          ...(customThemeDefaultButton.hover.backgroundColor && {
+            '--salable-button-hover-background-colour':
+              customThemeDefaultButton.hover.backgroundColor,
+            // '--salable-button-coming-soon-hover-background-colour':
+            //   customThemeDefaultButton.hover.backgroundColor + 15,
+          }),
+          ...(customThemeDefaultButton.color && {
+            '--salable-button-colour': customThemeDefaultButton.color,
+            '--salable-button-hover-colour': customThemeDefaultButton.color,
+          }),
+        });
+      }
+    }
+    const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
+
+    let plans = data.plans;
+
+    const hasFreeYearlyPlans = plans.filter(
+      (p) => p.interval === 'year' && p.pricingType === 'free'
+    ).length;
+    const hasPaidYearlyPlans = plans.filter(
+      (p) => p.interval === 'year' && p.pricingType === 'paid'
+    ).length;
+
+    const hasFreeMonthlyPlans = plans.filter(
+      (p) => p.interval === 'month' && p.pricingType === 'free'
+    ).length;
+    const hasPaidMonthlyPlans = plans.filter(
+      (p) => p.interval === 'month' && p.pricingType === 'paid'
+    ).length;
+
+    const monthlyPlans =
+      (hasPaidMonthlyPlans && hasFreeYearlyPlans && !hasPaidYearlyPlans) ||
+      (hasPaidMonthlyPlans && hasPaidYearlyPlans) ||
+      !hasPaidYearlyPlans
+        ? plans.filter(
+            (p) => p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
+          )
+        : [];
+
+    const yearlyPlans =
+      (hasPaidYearlyPlans && hasFreeMonthlyPlans && !hasPaidMonthlyPlans) ||
+      (hasPaidMonthlyPlans && hasPaidYearlyPlans) ||
+      !hasPaidMonthlyPlans
+        ? plans.filter(
+            (p) => p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
+          )
+        : [];
+
+    this.initialisers.createPlansPerInterval({
+      interval: 'month',
+      plans: monthlyPlans,
+      pricingTableContainerEl,
+      classPrefix,
+      envConfig: this.envConfig,
+      checkoutConfig: this.checkoutConfig,
+      plansContainerEl: this.initialisers.createElWithClass(
+        'div',
+        `${classPrefix}-plans-container ${classPrefix}-plans-container-month`
+      ),
+      defaultCurrency,
+      featuredPlanUuid: data.featuredPlanUuid,
+      customTheme: data.customTheme,
+    });
+
+    this.initialisers.createPlansPerInterval({
+      interval: 'year',
+      plans: yearlyPlans,
+      pricingTableContainerEl,
+      classPrefix,
+      envConfig: this.envConfig,
+      checkoutConfig: this.checkoutConfig,
+      plansContainerEl: this.initialisers.createElWithClass(
+        'div',
+        `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
+      ),
+      defaultCurrency,
+      featuredPlanUuid: data.featuredPlanUuid,
+      customTheme: data.customTheme,
+    });
+
+    if (yearlyPlans.length && monthlyPlans.length) {
+      this.initialisers.createIntervalToggle(classPrefix, pricingTableContainerEl);
+    }
+
+    loadingEl.style.display = 'none';
+
+    if (this.envConfig.stylingOptions && Object.keys(this.envConfig.stylingOptions).length) {
+      const stylingOptionsKeyValues = Object.entries(this.envConfig.stylingOptions);
+      const root = document.querySelector(':root');
+
+      if (stylingOptionsKeyValues) {
+        for (const option of stylingOptionsKeyValues) {
+          root.style.setProperty(`--${option[0].split('_').join('-')}`, option[1]);
+        }
+      }
     }
   }
 
@@ -536,7 +491,7 @@ class Initialisers {
     return el;
   }
 
-  createPricingTableIntervalToggle(classPrefix) {
+  createPricingTableIntervalToggleLabels(classPrefix) {
     const plansIntervalToggleEl = this.createElWithClass(
       'button',
       `${classPrefix}-plans-interval-toggle`
@@ -867,6 +822,7 @@ class Initialisers {
     featuredPlanUuid,
     customTheme,
   }) {
+    if (!plans.length) return null;
     const buttonTextDefaults = {
       Standard: {
         free: 'Create license',
@@ -925,6 +881,42 @@ class Initialisers {
       pricingTableContainerEl.appendChild(plansContainerEl);
       planIndex++;
     }
+  }
+
+  createIntervalToggle(classPrefix, pricingTableContainerEl) {
+    const monthlyEl = document.querySelector(`.${classPrefix}-plans-container-month`);
+    const yearEl = document.querySelector(`.${classPrefix}-plans-container-year`);
+    const plansIntervalToggleEl = this.createPricingTableIntervalToggleLabels(classPrefix);
+    document
+      .querySelectorAll(`.${classPrefix}-plans-container`)[0]
+      .parentNode.insertBefore(
+        plansIntervalToggleEl,
+        document.querySelectorAll(`.${classPrefix}-plans-container`)[0]
+      );
+    yearEl.style.display = 'none';
+    plansIntervalToggleEl.addEventListener('click', () => {
+      if (yearEl.style.display === 'none') {
+        pricingTableContainerEl.setAttribute('data-interval', 'year');
+        monthlyEl.style.display = 'none';
+        yearEl.style.display = 'flex';
+        document
+          .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
+          .classList.add(`${classPrefix}-plans-interval-toggle-active`);
+        document
+          .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
+          .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
+      } else {
+        pricingTableContainerEl.setAttribute('data-interval', 'month');
+        monthlyEl.style.display = 'flex';
+        yearEl.style.display = 'none';
+        document
+          .querySelector(`.${classPrefix}-plans-interval-toggle-label-year`)
+          .classList.remove(`${classPrefix}-plans-interval-toggle-active`);
+        document
+          .querySelector(`.${classPrefix}-plans-interval-toggle-label-month`)
+          .classList.add(`${classPrefix}-plans-interval-toggle-active`);
+      }
+    });
   }
 
   createCssStyleSheetLink(link, id) {
