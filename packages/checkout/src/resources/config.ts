@@ -15,5 +15,5 @@ export const environment = {
   liveKey: SALABLE_LIVE_KEY,
   baseURL: SALABLE_BASE_URL,
   baseCDN: SALABLE_BASE_CDN,
-  assert: ENVIRONMENT === 'prod' ? `${SALABLE_BASE_CDN}` : '../../../dist',
+  assert: ENVIRONMENT === 'dev' ? '../../../dist' : SALABLE_BASE_CDN,
 };
