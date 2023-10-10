@@ -1,3 +1,10 @@
+# [1.10.0-beta.2](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.1...v1.10.0-beta.2) (2023-10-10)
+
+
+### Bug Fixes
+
+* picking the right env from different environment for asserts ([44c1ab8](https://github.com/Salable/js-sdk/commit/44c1ab8d225a8b1bc055ca4167865192ec2e344d))
+
 # [1.10.0-beta.1](https://github.com/Salable/js-sdk/compare/v1.9.0...v1.10.0-beta.1) (2023-10-05)
 
 
