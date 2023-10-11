@@ -1,6 +1,6 @@
 {
   "name": "@salable/checkout",
-  "version": "1.10.0-beta.4",
+  "version": "1.10.0-beta.5",
   "description": "Render Salable checkout with your payment integration",
   "main": "index.js",
   "scripts": {
