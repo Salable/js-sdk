@@ -1,3 +1,10 @@
+# [1.10.0-beta.8](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.7...v1.10.0-beta.8) (2023-10-11)
+
+
+### Bug Fixes
+
+* add missing env to build ([9b28f14](https://github.com/Salable/js-sdk/commit/9b28f1412a1d36222459f5bae9fc9b01b8c4b83a))
+
 # [1.10.0-beta.7](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.6...v1.10.0-beta.7) (2023-10-11)
 
 
