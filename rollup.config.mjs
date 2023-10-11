@@ -34,6 +34,7 @@ const config = {
       'process.env.SALABLE_BASE_URL': `"${process.env.SALABLE_BASE_URL}"`,
       'process.env.SALABLE_BASE_CDN': `"${process.env.SALABLE_BASE_CDN}"`,
       'process.env.ENVIRONMENT': `"${process.env.ENVIRONMENT}"`,
+      'process.env.CDN_DOMAIN': `"${process.env.CDN_DOMAIN}"`,
     }),
     resolve({
       moduleDirectories: ['packages'],
