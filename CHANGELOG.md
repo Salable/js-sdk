@@ -1,3 +1,10 @@
+# [1.10.0-beta.10](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.9...v1.10.0-beta.10) (2023-10-11)
+
+
+### Bug Fixes
+
+* cdn domain ([30c8e1c](https://github.com/Salable/js-sdk/commit/30c8e1cdfb2d26a1c4180e3f0cbcdff316b6ab43))
+
 # [1.10.0-beta.9](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.8...v1.10.0-beta.9) (2023-10-11)
 
 
