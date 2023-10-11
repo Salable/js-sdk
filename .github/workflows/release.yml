@@ -36,6 +36,7 @@ jobs:
           SALABLE_BASE_URL: ${{ secrets.SALABLE_BASE_URL }}
           SALABLE_PUBLISHABLE_KEY: ${{ secrets.SALABLE_PUBLISHABLE_KEY }}
           SALABLE_BASE_CDN: ${{ secrets.SALABLE_BASE_CDN }}
+          CDN_DOMAIN: ${{ secrets.CDN_DOMAIN }}
           SALABLE_LIVE_KEY: ${{ secrets.SALABLE_LIVE_KEY }}
           ENVRIONMENT: ${{ secrets.ENVRIONMENT }}
         run: npx semantic-release

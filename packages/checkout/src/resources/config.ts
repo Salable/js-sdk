@@ -7,15 +7,11 @@ const ENVIRONMENT = process.env.ENVIRONMENT?.trim();
 if (!SALABLE_PUBLISHABLE_KEY) throw new Error('Missing SALABLE_PUBLISHABLE_KEY');
 if (!SALABLE_LIVE_KEY) throw new Error('Missing SALABLE_LIVE_KEY');
 if (!SALABLE_BASE_URL) throw new Error('Missing SALABLE_BASE_URL');
-if (!CDN_DOMAIN) throw new Error('Missing SALABLE_BASE_CDN');
+if (!CDN_DOMAIN) throw new Error('Missing CDN_DOMAIN');
 if (!ENVIRONMENT) throw new Error('Missing ENVIRONMENT');
 
 // eslint-disable-next-line prettier/prettier, no-console
-console.log('PRO B <->', SALABLE_BASE_URL);
-// eslint-disable-next-line prettier/prettier, no-console
-console.log('PRO CDN <->', CDN_DOMAIN);
-// eslint-disable-next-line prettier/prettier, no-console
-console.log('PRO ENV <->', ENVIRONMENT);
+console.log('PRO B ->', SALABLE_BASE_URL, 'PRO CDN >', CDN_DOMAIN, 'PRO ENV >', ENVIRONMENT);
 
 export const environment = {
   publishableKey: SALABLE_PUBLISHABLE_KEY,
