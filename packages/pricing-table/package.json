@@ -1,6 +1,6 @@
 {
   "name": "@salable/pricing-table",
-  "version": "1.10.0-beta.6",
+  "version": "1.10.0-beta.7",
   "description": "",
   "type": "module",
   "main": "src/index.js",
