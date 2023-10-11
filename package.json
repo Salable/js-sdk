@@ -1,6 +1,6 @@
 {
   "name": "@salable/js-sdk",
-  "version": "1.10.0-beta.6",
+  "version": "1.10.0-beta.7",
   "description": "",
   "type": "module",
   "main": "dist/index.js",
