@@ -12,8 +12,6 @@ if (!ENVIRONMENT) throw new Error('Missing ENVIRONMENT');
 
 // eslint-disable-next-line prettier/prettier, no-console
 console.log('PRO B <->', SALABLE_BASE_URL);
-// eslint-disable-next-line prettier/prettier, no-console
-console.log('PRO B <->', SALABLE_BASE_CDN);
 
 export const environment = {
   publishableKey: SALABLE_PUBLISHABLE_KEY,
