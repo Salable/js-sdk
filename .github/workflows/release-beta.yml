@@ -3,15 +3,12 @@ name: Release
 on:
   push:
     branches:
-      - main
-      - alpha
-      - '*.*.*'
-      - '*.*'
+      - beta
 
 jobs:
   release:
     name: Release
-    environment: Production
+    environment: Test
     concurrency: release
     runs-on: ubuntu-latest
 
