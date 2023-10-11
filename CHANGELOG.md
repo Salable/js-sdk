@@ -1,3 +1,10 @@
+# [1.10.0-beta.4](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.3...v1.10.0-beta.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* env values debug ([efa2d8e](https://github.com/Salable/js-sdk/commit/efa2d8ee8bb1a1974dccbdffcae098e7747e0fe9))
+
 # [1.10.0-beta.3](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.2...v1.10.0-beta.3) (2023-10-11)
 
 
