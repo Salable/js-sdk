@@ -1,3 +1,10 @@
+# [1.10.0-beta.9](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.8...v1.10.0-beta.9) (2023-10-11)
+
+
+### Bug Fixes
+
+* envs pop ([dedfa61](https://github.com/Salable/js-sdk/commit/dedfa61af769b21a36be3b4cbabd514523d644f6))
+
 # [1.10.0-beta.8](https://github.com/Salable/js-sdk/compare/v1.10.0-beta.7...v1.10.0-beta.8) (2023-10-11)
 
 
