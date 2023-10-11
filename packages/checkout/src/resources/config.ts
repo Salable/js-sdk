@@ -13,10 +13,12 @@ if (!ENVIRONMENT) throw new Error('Missing ENVIRONMENT');
 // eslint-disable-next-line prettier/prettier, no-console
 console.log('PRO B ->', SALABLE_BASE_URL, 'PRO CDN ->', CDN_DOMAIN, 'PRO ENV ->', ENVIRONMENT);
 
+const CDNBase = !CDN_DOMAIN.startsWith('http') ? `https://${CDN_DOMAIN}` : CDN_DOMAIN;
+
 export const environment = {
   publishableKey: SALABLE_PUBLISHABLE_KEY,
   liveKey: SALABLE_LIVE_KEY,
   baseURL: SALABLE_BASE_URL,
-  baseCDN: CDN_DOMAIN,
-  assert: ENVIRONMENT === 'dev' ? '../../../dist' : CDN_DOMAIN,
+  baseCDN: CDNBase,
+  assert: ENVIRONMENT === 'dev' ? '../../../dist' : `${CDNBase}/latest`,
 };
