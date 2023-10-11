@@ -11,7 +11,7 @@ if (!CDN_DOMAIN) throw new Error('Missing CDN_DOMAIN');
 if (!ENVIRONMENT) throw new Error('Missing ENVIRONMENT');
 
 // eslint-disable-next-line prettier/prettier, no-console
-console.log('PRO B ->', SALABLE_BASE_URL, 'PRO CDN >', CDN_DOMAIN, 'PRO ENV >', ENVIRONMENT);
+console.log('PRO B ->', SALABLE_BASE_URL, 'PRO CDN ->', CDN_DOMAIN, 'PRO ENV ->', ENVIRONMENT);
 
 export const environment = {
   publishableKey: SALABLE_PUBLISHABLE_KEY,
