@@ -39,6 +39,7 @@ const config = {
       targets: [
         { src: 'packages/pricing-table/src/css', dest: 'dist' },
         { src: 'packages/pricing-table/src/lottie', dest: 'dist' },
+        { src: 'packages/fonts', dest: 'dist' },
       ],
     }),
   ],
