@@ -446,6 +446,7 @@ class CheckoutConfig {
   marketingConsent;
   promoCode;
   allowPromoCode;
+  changeQuantity;
 
   constructor(config) {
     this.customerId = config.customer.id;
@@ -463,6 +464,7 @@ class CheckoutConfig {
     this.marketingConsent = config.marketingConsent;
     this.promoCode = config.promoCode;
     this.allowPromoCode = config.allowPromoCode;
+    this.changeQuantity = config.changeQuantity;
   }
 
   get customerEmail() {
@@ -520,6 +522,10 @@ class CheckoutConfig {
   get allowPromoCode() {
     return this.allowPromoCode;
   }
+
+  get changeQuantity() {
+    return this.changeQuantity;
+  }
 }
 
 class Initialisers {
@@ -560,36 +566,84 @@ class Initialisers {
 
   createPlanPrice(classPrefix, plan, planEl, defaultCurrency) {
     const planPriceEl = this.createElWithClass('div', `${classPrefix}-plan-price`);
-    if (plan.pricingType === 'free') {
-      planPriceEl.innerText = 'Free';
-    } else {
-      if (plan.currencies?.length) {
-        const matchedCurrency = plan.currencies.find((c) => {
-          if (this.envConfig.currency) return c.currency.shortName === this.envConfig.currency;
-          return c.currency.uuid === defaultCurrency.currencyUuid;
-        });
-        if (this.envConfig.currency && !matchedCurrency)
-          throw Error('Salable pricing table - currency provided does not exist on product');
-        if (matchedCurrency) {
-          const price = (matchedCurrency.price / 100).toFixed(2);
-          planPriceEl.innerText = `${matchedCurrency.currency.symbol}${
-            price.toString().includes('.00') ? price.replace('.00', '') : price
-          }`;
+    const matchedCurrency = plan.currencies.find((c) => {
+      if (this.envConfig.currency) return c.currency.shortName === this.envConfig.currency;
+      return c.currency.uuid === defaultCurrency.currencyUuid;
+    });
+    switch (true) {
+      case plan.pricingType !== 'free':
+        if (!plan.currencies?.length) {
+          throw Error('Salable pricing table - no currencies found on Product');
         }
+        if (this.envConfig.currency && !matchedCurrency) {
+          throw Error('Salable pricing table - currency provided does not exist on product');
+        }
+        const price = (
+          (matchedCurrency.price * (this.checkoutConfig.changeQuantity ? 1 : plan.perSeatAmount)) /
+          100
+        ).toFixed(2);
+        planPriceEl.innerText = `${matchedCurrency.currency.symbol}${this.formatPrice(price)}`;
         const planPriceIntervalEl = this.createElWithClass(
           'span',
           `${classPrefix}-plan-price-interval`
         );
-        planPriceIntervalEl.innerText = `per ${
-          plan.licenseType !== 'metered' ? plan.interval : 'unit'
-        }`;
+        planPriceIntervalEl.innerText = `per ${this.planUnitValue(
+          plan.licenseType,
+          plan.interval
+        )}`;
         planPriceEl.appendChild(planPriceIntervalEl);
-      }
+        break;
+      case plan.pricingType === 'free':
+        planPriceEl.innerText = 'Free';
+        break;
+      case plan.planType === 'Coming soon':
+        planPriceEl.innerText = 'Coming soon';
+        break;
     }
-    if (plan.planType === 'Coming soon') {
-      planPriceEl.innerText = 'Coming soon';
+    if (plan.licenseType === 'perSeat') {
+      const planPerSeatDetailsEl = this.createPlanPerSeatDetails(
+        classPrefix,
+        plan,
+        matchedCurrency
+      );
+      planPriceEl.appendChild(planPerSeatDetailsEl);
     }
     planEl.appendChild(planPriceEl);
+  }
+
+  createPlanPerSeatDetails(classPrefix, plan, currency) {
+    const perSeatDetailsEl = this.createElWithClass('div', `${classPrefix}-plan-per-seat-details`);
+    if (plan.pricingType === 'free') {
+      perSeatDetailsEl.innerText = `${plan.perSeatAmount} seat${plan.perSeatAmount > 1 ? 's' : ''}`;
+      return perSeatDetailsEl;
+    }
+    const price = (currency.price / 100).toFixed(2);
+    perSeatDetailsEl.innerText = this.checkoutConfig.changeQuantity
+      ? `per ${plan.interval}`
+      : `${plan.perSeatAmount} seats`;
+    const perSeatPriceEl = this.createElWithClass('span', `${classPrefix}-plan-per-seat-price`);
+    perSeatPriceEl.innerText = !this.checkoutConfig.changeQuantity
+      ? ` (${currency.currency.symbol}${this.formatPrice(price)} each)`
+      : ` (min ${plan.perSeatAmount} seats)`;
+    perSeatDetailsEl.appendChild(perSeatPriceEl);
+    return perSeatDetailsEl;
+  }
+
+  planUnitValue(licenseType, interval) {
+    switch (licenseType) {
+      case 'licensed':
+        return interval;
+      case 'metered':
+        return 'unit';
+      case 'perSeat':
+        return this.checkoutConfig.changeQuantity ? 'seat' : interval;
+      default:
+        return null;
+    }
+  }
+
+  formatPrice(price) {
+    return price.toString().includes('.00') ? price.replace('.00', '') : price;
   }
 
   createPlanHeading(classPrefix, plan) {
@@ -788,21 +842,23 @@ class Initialisers {
             pricingTableContainerEl,
             `SalableLottie${planCtaElId}LoadingAnimation`
           );
+          const licenseBody = Array.from({ length: plan.perSeatAmount }, () => ({
+            planUuid: plan.uuid,
+            member: this.checkoutConfig.member,
+            granteeId: null,
+            ...(this.checkoutConfig.customer.email && {
+              email: this.checkoutConfig.customer.email,
+            }),
+          }));
+          licenseBody[0].granteeId =
+            this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
+            this.envConfig.globalPlanOptions.granteeId;
           const licensesResponse = await fetch(`${this.getApiDomain()}/licenses`, {
             method: 'POST',
             headers: {
               'x-api-key': this.envConfig.apiKey,
             },
-            body: JSON.stringify({
-              planUuid: plan.uuid,
-              member: this.checkoutConfig.member,
-              granteeId:
-                this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
-                this.envConfig.globalPlanOptions.granteeId,
-              ...(this.checkoutConfig.customer.email && {
-                email: this.checkoutConfig.customer.email,
-              }),
-            }),
+            body: JSON.stringify(licenseBody),
           }).catch(() => {
             // eslint-disable-next-line no-console
             console.error('Salable pricing table - error creating license');
@@ -976,6 +1032,7 @@ class Initialisers {
       'vatPostcode',
       'vatState',
       'vatStreet',
+      'changeQuantity',
     ];
 
     for (const key of Object.keys(queryParams)) {

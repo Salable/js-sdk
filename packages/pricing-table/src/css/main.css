@@ -208,6 +208,14 @@ body {
   font-weight: normal;
   margin-left: 7px;
 }
+.salable-plan-per-seat-details {
+  font-weight: normal;
+  text-align: center;
+  font-size: 15px;
+}
+.salable-plan-per-seat-price {
+  font-size: 13px;
+}
 .salable-tooltip-holder {
   position: relative;
 }
