@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Salable Checkout library</title>
+    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="../../../dist/css/checkout.css" />
+  </head>
+  <body>
+    <div class="success_container">
+      <div class="card index_card">
+        <button id="provide-email-btn" class="another-payment-btn">
+          Checkout - <strong>Provide Email</strong>
+        </button>
+        <button id="prefill-email-btn" class="another-payment-btn">
+          Checkout - <strong>PreFill Email</strong>
+        </button>
+        <button id="test-mode-plan-btn" class="another-payment-btn">
+          Checkout - <strong>Test Mode Plan</strong>
+        </button>
+        <button id="live-mode-plan-btn" class="another-payment-btn">
+          Checkout - <strong>Live Mode Plan</strong>
+        </button>
+        <button id="customize-btn" class="another-payment-btn">
+          Checkout - <strong>Customization</strong>
+        </button>
+      </div>
+    </div>
+    <script type="text/javascript">
+      document.getElementById('provide-email-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/provide-email.html`;
+        location.href = newURL;
+      };
+      document.getElementById('prefill-email-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/prefill-email.html`;
+        location.href = newURL;
+      };
+      document.getElementById('test-mode-plan-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/test-mode-plan.html`;
+        location.href = newURL;
+      };
+      document.getElementById('live-mode-plan-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/live-mode-plan.html`;
+        location.href = newURL;
+      };
+      document.getElementById('customize-btn').onclick = function () {
+        const newURL = `${location.origin}/packages/checkout/example/customize.html`;
+        location.href = newURL;
+      };
+    </script>
+  </body>
+</html>

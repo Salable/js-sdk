@@ -17,6 +17,7 @@
     "prepare": "husky install",
     "commit": "cz",
     "build": "rollup -c",
+    "start:dev": "rollup -c -w",
     "build:cdn": "cd cdn && npm run build && cd ..",
     "preversion": "npm run build",
     "postversion": "./scripts/post-version-handler.sh",

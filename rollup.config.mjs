@@ -7,6 +7,7 @@ import json from 'rollup-plugin-json';
 import dotenv from 'dotenv';
 import packageJson from './package.json' assert { type: 'json' };
 import copy from 'rollup-plugin-copy';
+import replace from '@rollup/plugin-replace';
 
 dotenv.config();
 
@@ -19,11 +20,21 @@ const config = {
       sourcemap: true,
     },
   ],
+  external: ['@stripe/stripe-js', 'crypto-js'],
   plugins: [
     json(),
     peerDepsExternal(),
     cleaner({
       targets: ['./dist'],
+    }),
+    replace({
+      preventAssignment: true,
+      'process.env.SALABLE_PUBLISHABLE_KEY': `"${process.env.SALABLE_PUBLISHABLE_KEY}"`,
+      'process.env.SALABLE_LIVE_KEY': `"${process.env.SALABLE_LIVE_KEY}"`,
+      'process.env.SALABLE_BASE_URL': `"${process.env.SALABLE_BASE_URL}"`,
+      'process.env.SALABLE_BASE_CDN': `"${process.env.SALABLE_BASE_CDN}"`,
+      'process.env.ENVIRONMENT': `"${process.env.ENVIRONMENT}"`,
+      'process.env.CDN_DOMAIN': `"${process.env.CDN_DOMAIN}"`,
     }),
     resolve({
       moduleDirectories: ['packages'],
@@ -39,6 +50,7 @@ const config = {
       targets: [
         { src: 'packages/pricing-table/src/css', dest: 'dist' },
         { src: 'packages/pricing-table/src/lottie', dest: 'dist' },
+        { src: 'packages/checkout/src/css', dest: 'dist' },
       ],
     }),
   ],
