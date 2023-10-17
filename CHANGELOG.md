@@ -1,3 +1,17 @@
+# [1.10.0](https://github.com/Salable/js-sdk/compare/v1.9.0...v1.10.0) (2023-10-17)
+
+
+### Bug Fixes
+
+* further improvements to if condition on showing plans per interval ([2e1dc28](https://github.com/Salable/js-sdk/commit/2e1dc281753b9a6106ddbd31f96317cd968df04e))
+* if not plans in createPlansPerInterval return null ([c3986a5](https://github.com/Salable/js-sdk/commit/c3986a51f42fd73453df7d77cbda46e7d44570b4))
+* improved if conditions for plans per interval ([c548df3](https://github.com/Salable/js-sdk/commit/c548df3d9d31288adea01078ba4e358c3ccf5263))
+
+
+### Features
+
+* force push to main ([1ae12f5](https://github.com/Salable/js-sdk/commit/1ae12f544ad257eb7a201be22b685929be266352))
+
 # [1.9.0](https://github.com/Salable/js-sdk/compare/v1.8.0...v1.9.0) (2023-10-05)
 
 ### Features
