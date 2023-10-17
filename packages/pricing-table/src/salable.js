@@ -212,76 +212,77 @@ export class SalablePricingTable {
         }
         const defaultCurrency = data?.currencies?.find((c) => c.defaultCurrency);
 
-        let plans = data.plans
-          .filter((p) => p.active && p.planType !== 'bespoke' && p.status === 'ACTIVE')
-          .sort((a, b) => {
-            if (this.envConfig.pricingTableUuid) {
-              return a.sortOrder - b.sortOrder;
-            }
-            if (a.pricingType === 'free' && a.planType !== 'Coming soon') {
-              return -1;
-            }
-            if (a.planType === 'Coming soon' || b.planType === 'Coming soon') {
-              return 1;
-            }
-            return (
-              a.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price -
-              b.currencies.find((c) => c.currencyUuid === defaultCurrency.currencyUuid)?.price
-            );
-          })
-          .map((p) => {
-            for (const f of p.features) {
-              f.sortOrder = data.features.find((feat) => feat.uuid === f.featureUuid)?.sortOrder;
-            }
-            return p;
-          });
+        const plans = data.plans.filter((p) => p.status === 'ACTIVE' && p.planType !== 'bespoke');
 
-        if (plans.filter((p) => p.interval === 'month').length) {
-          this.initialisers.createPlansPerInterval({
-            interval: 'month',
-            plans: plans.filter(
-              (p) =>
-                p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
-            ),
-            pricingTableContainerEl,
-            classPrefix,
-            envConfig: this.envConfig,
-            checkoutConfig: this.checkoutConfig,
-            plansContainerEl: this.initialisers.createElWithClass(
-              'div',
-              `${classPrefix}-plans-container ${classPrefix}-plans-container-month`
-            ),
-            defaultCurrency,
-            featuredPlanUuid: data.featuredPlanUuid,
-            customTheme: data.customTheme,
-          });
-        }
+        const hasFreeYearlyPlans = plans.filter(
+          (p) => p.interval === 'year' && p.pricingType === 'free'
+        ).length;
+        const hasPaidYearlyPlans = plans.filter(
+          (p) => p.interval === 'year' && p.pricingType === 'paid'
+        ).length;
 
-        if (plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length) {
-          this.initialisers.createPlansPerInterval({
-            interval: 'year',
-            plans: plans.filter(
-              (p) =>
-                p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
-            ),
-            pricingTableContainerEl,
-            classPrefix,
-            envConfig: this.envConfig,
-            checkoutConfig: this.checkoutConfig,
-            plansContainerEl: this.initialisers.createElWithClass(
-              'div',
-              `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
-            ),
-            defaultCurrency,
-            featuredPlanUuid: data.featuredPlanUuid,
-            customTheme: data.customTheme,
-          });
-        }
+        const hasFreeMonthlyPlans = plans.filter(
+          (p) => p.interval === 'month' && p.pricingType === 'free'
+        ).length;
+        const hasPaidMonthlyPlans = plans.filter(
+          (p) => p.interval === 'month' && p.pricingType === 'paid'
+        ).length;
+        const hasYearlyPlans = plans.filter((p) => p.interval === 'year').length;
+        const hasMonthlyPlans = plans.filter((p) => p.interval === 'month').length;
 
-        if (
-          plans.filter((p) => p.interval === 'year' && p.pricingType === 'paid').length &&
-          plans.filter((p) => p.interval === 'month').length
-        ) {
+        const monthlyPlans =
+          (hasPaidMonthlyPlans && hasFreeYearlyPlans && !hasPaidYearlyPlans) ||
+          (hasPaidMonthlyPlans && hasPaidYearlyPlans) ||
+          !hasPaidYearlyPlans
+            ? plans.filter(
+                (p) =>
+                  p.interval === 'month' || (p.pricingType === 'free' && p.planType === 'Standard')
+              )
+            : [];
+
+        const yearlyPlans =
+          (hasPaidYearlyPlans && hasFreeMonthlyPlans && !hasPaidMonthlyPlans) ||
+          (hasPaidMonthlyPlans && hasPaidYearlyPlans) ||
+          (hasYearlyPlans && !hasMonthlyPlans)
+            ? plans.filter(
+                (p) =>
+                  p.interval === 'year' || (p.pricingType === 'free' && p.planType === 'Standard')
+              )
+            : [];
+
+        this.initialisers.createPlansPerInterval({
+          interval: 'month',
+          plans: monthlyPlans,
+          pricingTableContainerEl,
+          classPrefix,
+          envConfig: this.envConfig,
+          checkoutConfig: this.checkoutConfig,
+          plansContainerEl: this.initialisers.createElWithClass(
+            'div',
+            `${classPrefix}-plans-container ${classPrefix}-plans-container-month`
+          ),
+          defaultCurrency,
+          featuredPlanUuid: data.featuredPlanUuid,
+          customTheme: data.customTheme,
+        });
+
+        this.initialisers.createPlansPerInterval({
+          interval: 'year',
+          plans: yearlyPlans,
+          pricingTableContainerEl,
+          classPrefix,
+          envConfig: this.envConfig,
+          checkoutConfig: this.checkoutConfig,
+          plansContainerEl: this.initialisers.createElWithClass(
+            'div',
+            `${classPrefix}-plans-container ${classPrefix}-plans-container-year`
+          ),
+          defaultCurrency,
+          featuredPlanUuid: data.featuredPlanUuid,
+          customTheme: data.customTheme,
+        });
+
+        if (monthlyPlans.length && yearlyPlans.length) {
           const monthlyEl = document.querySelector(`.${classPrefix}-plans-container-month`);
           const yearEl = document.querySelector(`.${classPrefix}-plans-container-year`);
           const plansIntervalToggleEl =
@@ -867,6 +868,7 @@ class Initialisers {
     featuredPlanUuid,
     customTheme,
   }) {
+    if (!plans.length) return null;
     const buttonTextDefaults = {
       Standard: {
         free: 'Create license',
