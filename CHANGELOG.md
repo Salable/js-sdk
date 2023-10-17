@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Salable/js-sdk/compare/v1.10.0...v1.11.0) (2023-10-17)
+
+
+### Features
+
+* change quantity in checkout ([8ea2a7a](https://github.com/Salable/js-sdk/commit/8ea2a7a3df51e114ffbd039d4536f5a86921d139))
+
 # [1.10.0](https://github.com/Salable/js-sdk/compare/v1.9.0...v1.10.0) (2023-10-17)
 
 
