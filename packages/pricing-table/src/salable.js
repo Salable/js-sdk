@@ -729,11 +729,28 @@ class Initialisers {
       }
     };
 
-    const planCtaEl = this.createElWithClass('a', `${classPrefix}-plan-button`);
+    const planCtaUrl = (plan) => {
+      switch (plan.planType) {
+        case 'Standard':
+          return plan.pricingType === 'paid' ? plan.checkoutUrl : `${this.getApiDomain()}/licenses`;
+        case 'Coming soon':
+          const comingSoonUrl =
+            this.envConfig?.individualPlanOptions?.[plan.uuid]?.contactUsLink ??
+            this.envConfig?.globalPlanOptions?.contactUsLink;
+          if (!comingSoonUrl)
+            throw Error(`Salable pricing table - missing contact us link on ${plan.uuid}`);
+          return comingSoonUrl;
+      }
+    };
 
-    // if (plan.planType === 'Coming soon') {
-    //   planCtaEl.classList.add('salable-plan-button-coming-soon');
-    // }
+    const url = planCtaUrl(plan);
+
+    const planCtaEl = this.createElWithClass(
+      'a',
+      `${classPrefix}-plan-button${
+        !url ? ` ${classPrefix}-plan-button-disabled` : ` ${classPrefix}-plan-button-active`
+      }`
+    );
 
     if (featuredPlanUuid === plan.uuid && this.envConfig.pricingTableUuid) {
       planCtaEl.classList.add('salable-plan-button-featured');
@@ -782,32 +799,24 @@ class Initialisers {
         case envConfig.globalPlanOptions?.cta?.text?.[plan.planType.toLowerCase()] !== undefined:
           return envConfig.globalPlanOptions.cta.text[plan.planType.toLowerCase()];
         case buttonTextDefaults?.[plan?.planType] !== undefined:
-          if (plan?.planType === 'Standard')
+          if (plan?.planType === 'Standard') {
+            if (!url) return '&#10004; Subscribed';
             return buttonTextDefaults?.[plan?.planType]?.[plan?.pricingType];
+          }
           return buttonTextDefaults?.[plan.planType];
         default:
           return 'Buy';
       }
     };
 
-    const planCtaUrl = (plan) => {
-      switch (plan.planType) {
-        case 'Standard':
-          return plan.pricingType === 'paid' ? plan.checkoutUrl : `${this.getApiDomain()}/licenses`;
-        case 'Coming soon':
-          const comingSoonUrl =
-            this.envConfig?.individualPlanOptions?.[plan.uuid]?.contactUsLink ??
-            this.envConfig?.globalPlanOptions?.contactUsLink;
-          if (!comingSoonUrl)
-            throw Error(`Salable pricing table - missing contact us link on ${plan.uuid}`);
-          return comingSoonUrl;
-      }
-    };
-
-    planCtaEl.setAttribute('href', planCtaUrl(plan));
+    if (url) {
+      planCtaEl.setAttribute('href', url);
+    } else {
+      planCtaEl.setAttribute('disabled', 'disabled');
+    }
     planCtaEl.setAttribute('target', '_top');
     const planCtaElText = planCtaText(plan, envConfig, buttonTextDefaults);
-    planCtaEl.innerText = planCtaElText;
+    planCtaEl.innerHTML = planCtaElText;
 
     if (plan.pricingType === 'free' && plan.planType !== 'Coming soon') {
       planCtaEl.innerText = '';
