@@ -64,14 +64,14 @@
   background-color: var(--salable-button-featured-button-background-colour);
   color: var(--salable-button-featured-button-text-colour);
 }
-.salable-plan-button-featured:hover {
+.salable-plan-button-featured:not(.salable-plan-button-disabled):hover {
   background-color: var(--salable-button-featured-button-hover-background-colour);
 }
-.salable-plan-button-coming-soon:not(.salable-disabled) {
+.salable-plan-button-coming-soon:not(.salable-plan-button-disabled) {
   background-color: var(--salable-button-coming-soon-background-colour);
   color: var(--salable-button-coming-soon-colour);
 }
-.salable-plan-button-coming-soon:not(.salable-disabled):hover {
+.salable-plan-button-coming-soon:not(.salable-plan-button-disabled):hover {
   background-color: var(--salable-button-coming-soon-hover-background-colour);
   border-color: var(--salable-button-coming-soon-hover-border-colour);
   color: var(--salable-button-coming-soon-hover-colour);

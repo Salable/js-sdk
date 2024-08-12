@@ -6,7 +6,7 @@ export class SalablePricingTable {
   constructor(envConfig, checkoutConfig) {
     this.envConfig = new EnvConfig(envConfig);
     this.checkoutConfig = new CheckoutConfig(checkoutConfig);
-    this.initialisers = new Initialisers(envConfig, checkoutConfig);
+    this.initialisers = new Initialisers(envConfig, this.checkoutConfig);
   }
 
   get envConfig() {
@@ -129,21 +129,9 @@ export class SalablePricingTable {
           })
         : [];
 
-      const currency = this.envConfig.currency ?? '';
-
       let response = {};
       let encoded = null;
-      const queryParams = `?globalGranteeId=${
-        this.envConfig.globalPlanOptions.granteeId
-      }&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${
-        this.envConfig.globalPlanOptions.successUrl
-      }&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${
-        this.envConfig.globalPlanOptions.cancelUrl
-      }&cancelUrls=[${cancelUrlsWithHashes}]&member=${
-        this.checkoutConfig.member
-      }${this.initialisers.queryParametersFactory(this.checkoutConfig)}${
-        currency && `&currency=${currency}`
-      }`;
+      const queryParams = `?globalGranteeId=${this.envConfig.globalPlanOptions.granteeId}&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${this.envConfig.globalPlanOptions.successUrl}&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${this.envConfig.globalPlanOptions.cancelUrl}&cancelUrls=[${cancelUrlsWithHashes}]&member=${this.checkoutConfig.member}`;
 
       if (this.envConfig.pricingTableUuid) {
         encoded = encodeURI(
@@ -163,7 +151,7 @@ export class SalablePricingTable {
           method: 'GET',
           headers: {
             'x-api-key': this.envConfig.apiKey,
-            version: 'v1',
+            version: 'v2',
           },
         });
       } catch (error) {
@@ -373,7 +361,7 @@ class EnvConfig {
   apiKey;
   stylingOptions;
   theme;
-  contactUsLink;
+  contactUsUrl;
   currency;
   globalPlanOptions;
   individualPlanOptions;
@@ -389,7 +377,7 @@ class EnvConfig {
     this.authToken = config.authToken;
     this.stylingOptions = config.stylingOptions;
     this.theme = config.theme;
-    this.contactUsLink = config.contactUsLink;
+    this.contactUsUrl = config.contactUsUrl;
     this.currency = config.currency;
     this.globalPlanOptions = config.globalPlanOptions;
     this.individualPlanOptions = config.individualPlanOptions;
@@ -425,8 +413,8 @@ class EnvConfig {
     return this.environment;
   }
 
-  get contactUsLink() {
-    return this.contactUsLink;
+  get contactUsUrl() {
+    return this.contactUsUrl;
   }
 }
 
@@ -435,13 +423,6 @@ class CheckoutConfig {
   customerEmail;
   customerPostcode;
   customerCountry;
-  vatNumber;
-  vatCompanyName;
-  vatStreet;
-  vatCity;
-  vatState;
-  vatCountry;
-  vatPostcode;
   member;
   marketingConsent;
   promoCode;
@@ -453,13 +434,6 @@ class CheckoutConfig {
     this.customerEmail = config.customer.email;
     this.customerPostcode = config.customer.postcode;
     this.customerCountry = config.customer.country;
-    this.vatNumber = config.vat?.number;
-    this.vatCompanyName = config.vat?.companyName;
-    this.vatStreet = config.vat?.street;
-    this.vatState = config.vat?.state;
-    this.vatCity = config.vat?.city;
-    this.vatCountry = config.vat?.country;
-    this.vatPostcode = config.vat?.postcode;
     this.member = config.member;
     this.marketingConsent = config.marketingConsent;
     this.promoCode = config.promoCode;
@@ -477,34 +451,6 @@ class CheckoutConfig {
 
   get customerCountry() {
     return this.customerCountry;
-  }
-
-  get vatNumber() {
-    return this.vatNumber;
-  }
-
-  get vatCompanyName() {
-    return this.vatCompanyName;
-  }
-
-  get vatStreet() {
-    return this.vatStreet;
-  }
-
-  get vatState() {
-    return this.vatState;
-  }
-
-  get vatCity() {
-    return this.vatCity;
-  }
-
-  get vatCountry() {
-    return this.vatCountry;
-  }
-
-  get vatPostcode() {
-    return this.vatPostcode;
   }
 
   get member() {
@@ -729,26 +675,12 @@ class Initialisers {
       }
     };
 
-    const planCtaUrl = (plan) => {
-      switch (plan.planType) {
-        case 'Standard':
-          return plan.pricingType === 'paid' ? plan.checkoutUrl : `${this.getApiDomain()}/licenses`;
-        case 'Coming soon':
-          const comingSoonUrl =
-            this.envConfig?.individualPlanOptions?.[plan.uuid]?.contactUsLink ??
-            this.envConfig?.globalPlanOptions?.contactUsLink;
-          if (!comingSoonUrl)
-            throw Error(`Salable pricing table - missing contact us link on ${plan.uuid}`);
-          return comingSoonUrl;
-      }
-    };
-
-    const url = planCtaUrl(plan);
-
     const planCtaEl = this.createElWithClass(
       'a',
       `${classPrefix}-plan-button${
-        !url ? ` ${classPrefix}-plan-button-disabled` : ` ${classPrefix}-plan-button-active`
+        plan.isSubscribed
+          ? ` ${classPrefix}-plan-button-disabled`
+          : ` ${classPrefix}-plan-button-active`
       }`
     );
 
@@ -770,26 +702,6 @@ class Initialisers {
             customTheme.elements.buttons.featured.color,
         }),
       });
-      // if (plan.planType === 'Coming soon') {
-      //   this.setCssVariables({
-      //     ...(customTheme.elements.buttons.featured.color && {
-      //       '--salable-button-featured-button-text-colour':
-      //         customTheme.elements.buttons.featured.color,
-      //     }),
-      //     ...(customTheme.elements.buttons.featured.backgroundColor && {
-      //       '--salable-button-featured-button-border-colour':
-      //         customTheme.elements.buttons.featured.backgroundColor,
-      //       '--salable-button-featured-colour':
-      //         customTheme.elements.buttons.featured.backgroundColor,
-      //       '--salable-button-featured-button-hover-border-colour':
-      //         customTheme.elements.buttons.featured.backgroundColor,
-      //     }),
-      //     ...(customTheme.elements.buttons.featured.hover.backgroundColor && {
-      //       '--salable-button-coming-soon-hover-background-colour':
-      //         customTheme.elements.buttons.featured.hover.backgroundColor + 15,
-      //     }),
-      //   });
-      // }
     }
 
     const planCtaText = (plan, envConfig, buttonTextDefaults) => {
@@ -800,7 +712,7 @@ class Initialisers {
           return envConfig.globalPlanOptions.cta.text[plan.planType.toLowerCase()];
         case buttonTextDefaults?.[plan?.planType] !== undefined:
           if (plan?.planType === 'Standard') {
-            if (!url) return '&#10004; Subscribed';
+            if (plan.isSubscribed) return '&#10004; Subscribed';
             return buttonTextDefaults?.[plan?.planType]?.[plan?.pricingType];
           }
           return buttonTextDefaults?.[plan.planType];
@@ -809,83 +721,159 @@ class Initialisers {
       }
     };
 
-    if (url) {
-      planCtaEl.setAttribute('href', url);
-    } else {
-      planCtaEl.setAttribute('disabled', 'disabled');
-    }
-    planCtaEl.setAttribute('target', '_top');
-    const planCtaElText = planCtaText(plan, envConfig, buttonTextDefaults);
-    planCtaEl.innerHTML = planCtaElText;
-
-    if (plan.pricingType === 'free' && plan.planType !== 'Coming soon') {
-      planCtaEl.innerText = '';
-      const planCtaElId = `${interval === 'year' ? 'year' : plan.interval}${planIndex}Cta`;
+    const planCtaElId = `${interval === 'year' ? 'year' : plan.interval}${planIndex}Cta`;
+    if (plan.planType !== 'Coming soon') {
       const planCtaElInnerSpan = this.createElWithClass('span', 'salable-plan-button-span');
-      planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
+      planCtaElInnerSpan.innerHTML = planCtaText(plan, envConfig, buttonTextDefaults);
       planCtaEl.appendChild(planCtaElInnerSpan);
-      planCtaEl.classList.add('salable-plan-button-free');
       planCtaEl.id = planCtaElId;
+      if (plan.pricingType === 'free') planCtaEl.classList.add('salable-plan-button-free');
+    } else {
+      planCtaEl.innerHTML = planCtaText(plan, envConfig, buttonTextDefaults);
+    }
 
+    if (plan.isSubscribed) {
+      planCtaEl.setAttribute('disabled', 'disabled');
+      return planCtaEl;
+    }
+
+    if (plan.planType === 'Coming soon') {
+      const contactUsUrl =
+        this.envConfig?.individualPlanOptions?.[plan.uuid]?.contactUsUrl ??
+        this.envConfig?.globalPlanOptions?.contactUsUrl;
+      if (!contactUsUrl)
+        throw Error(`Salable pricing table - missing contact us url on ${plan.uuid}`);
+      planCtaEl.setAttribute('href', contactUsUrl);
+      return planCtaEl;
+    }
+
+    if (plan.pricingType === 'paid' && plan.planType !== 'Coming soon') {
       planCtaEl.addEventListener('click', async (event) => {
         event.preventDefault();
-        if (this.envConfig.state !== 'preview') {
-          if (planCtaEl.getAttribute('disabled')) return null;
-          planCtaEl.classList.add('salable-disabled');
+        if (planCtaEl.getAttribute('disabled')) return null;
+        planCtaEl.classList.add('salable-disabled');
 
-          const otherCtas = Array.from(document.querySelectorAll('.salable-plan-button')).filter(
-            (b) => b.id !== planCtaElId
-          );
-          for (const cta of otherCtas) {
-            cta.classList.add('salable-plan-button-disabled');
-            cta.classList.add('salable-disabled');
-            cta.setAttribute('disabled', 'disabled');
-          }
-          planCtaElInnerSpan.innerText = '';
-          planCtaEl.setAttribute('disabled', 'disabled');
-          this.createInlineScript(
-            this.createLottieAnimation(
-              `document.querySelector('#${planCtaElId} .salable-plan-button-span')`,
-              `${this.getCdnDomain()}/latest/lottie/dots-left-white.json`
-            ),
-            pricingTableContainerEl,
-            `SalableLottie${planCtaElId}LoadingAnimation`
-          );
-          const licenseBody = Array.from({ length: plan.perSeatAmount }, () => ({
-            planUuid: plan.uuid,
-            member: this.checkoutConfig.member,
-            granteeId: null,
-            ...(this.checkoutConfig.customer.email && {
-              email: this.checkoutConfig.customer.email,
-            }),
-          }));
-          licenseBody[0].granteeId =
-            this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
-            this.envConfig.globalPlanOptions.granteeId;
-          const licensesResponse = await fetch(`${this.getApiDomain()}/licenses`, {
-            method: 'POST',
+        const otherCtas = Array.from(document.querySelectorAll('.salable-plan-button')).filter(
+          (b) => b.id !== planCtaElId
+        );
+        for (const cta of otherCtas) {
+          cta.classList.add('salable-plan-button-disabled');
+          cta.classList.add('salable-disabled');
+          cta.setAttribute('disabled', 'disabled');
+        }
+        const planCtaElInnerSpan = document.getElementById(planCtaElId).children[0];
+        planCtaElInnerSpan.innerText = '';
+        planCtaEl.setAttribute('disabled', 'disabled');
+        this.createInlineScript(
+          this.createLottieAnimation(
+            `document.querySelector('#${planCtaElId} .salable-plan-button-span')`,
+            `${this.getCdnDomain()}/latest/lottie/dots-left-white.json`
+          ),
+          pricingTableContainerEl,
+          `SalableLottie${planCtaElId}LoadingAnimation`
+        );
+        const successUrl =
+          this.envConfig?.individualPlanOptions?.[plan.uuid]?.successUrl ??
+          this.envConfig.globalPlanOptions.successUrl;
+        const cancelUrl =
+          this.envConfig?.individualPlanOptions?.[plan.uuid]?.cancelUrl ??
+          this.envConfig.globalPlanOptions.cancelUrl;
+        const granteeId =
+          this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
+          this.envConfig.globalPlanOptions.granteeId;
+
+        const params = `${this.queryParametersFactory(this.checkoutConfig)}${
+          this.envConfig.currency ? `&currency=${this.envConfig.currency}` : ''
+        }`;
+
+        const checkoutLinkResponse = await fetch(
+          `${this.getApiDomain()}/plans/${plan.uuid}/checkoutlink?granteeId=${granteeId}&member=${
+            this.envConfig.member
+          }&successUrl=${successUrl}&cancelUrl=${cancelUrl}&${params}`,
+          {
             headers: {
               'x-api-key': this.envConfig.apiKey,
+              version: 'v2',
             },
-            body: JSON.stringify(licenseBody),
-          }).catch(() => {
-            // eslint-disable-next-line no-console
-            console.error('Salable pricing table - error creating license');
-          });
-          if (licensesResponse.status === 200) {
-            const planSuccessUrl =
-              this.envConfig?.individualPlanOptions?.[plan.uuid]?.successUrl ??
-              this.envConfig.globalPlanOptions.successUrl;
-            location.href = planSuccessUrl;
           }
-          planCtaEl.removeAttribute('disabled');
-          for (const cta of otherCtas) {
-            cta.classList.remove('salable-plan-button-disabled');
-            cta.classList.remove('salable-disabled');
-            cta.removeAttribute('disabled', true);
-          }
-          planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
+        ).catch(() => {
+          // eslint-disable-next-line no-console
+          console.error('Salable pricing table - error creating license');
+        });
+        if (checkoutLinkResponse.status === 200) {
+          const data = await checkoutLinkResponse.json();
+          location.href = data.checkoutUrl;
         }
+        planCtaEl.removeAttribute('disabled');
+        for (const cta of otherCtas) {
+          cta.classList.remove('salable-plan-button-disabled');
+          cta.classList.remove('salable-disabled');
+          cta.removeAttribute('disabled', true);
+        }
+        planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
+      });
+    }
+
+    if (plan.pricingType === 'free' && plan.planType !== 'Coming soon') {
+      planCtaEl.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (this.envConfig.state === 'preview') return;
+        if (planCtaEl.getAttribute('disabled')) return null;
+        planCtaEl.classList.add('salable-disabled');
+
+        const planCtaElInnerSpan = document.getElementById(planCtaElId).children[0];
+        const otherCtas = Array.from(document.querySelectorAll('.salable-plan-button')).filter(
+          (b) => b.id !== planCtaElId
+        );
+        for (const cta of otherCtas) {
+          cta.classList.add('salable-plan-button-disabled');
+          cta.classList.add('salable-disabled');
+          cta.setAttribute('disabled', 'disabled');
+        }
+        planCtaElInnerSpan.innerText = '';
+        planCtaEl.setAttribute('disabled', 'disabled');
+        this.createInlineScript(
+          this.createLottieAnimation(
+            `document.querySelector('#${planCtaElId} .salable-plan-button-span')`,
+            `${this.getCdnDomain()}/latest/lottie/dots-left-white.json`
+          ),
+          pricingTableContainerEl,
+          `SalableLottie${planCtaElId}LoadingAnimation`
+        );
+        const licenseBody = Array.from({ length: plan.perSeatAmount }, () => ({
+          planUuid: plan.uuid,
+          member: this.checkoutConfig.member,
+          granteeId: null,
+          ...(this.checkoutConfig.customer.email && {
+            email: this.checkoutConfig.customer.email,
+          }),
+        }));
+        licenseBody[0].granteeId =
+          this.envConfig?.individualPlanOptions?.[plan.uuid]?.granteeId ??
+          this.envConfig.globalPlanOptions.granteeId;
+        const licensesResponse = await fetch(`${this.getApiDomain()}/licenses`, {
+          method: 'POST',
+          headers: {
+            'x-api-key': this.envConfig.apiKey,
+            version: 'v2',
+          },
+          body: JSON.stringify(licenseBody),
+        }).catch(() => {
+          // eslint-disable-next-line no-console
+          console.error('Salable pricing table - error creating license');
+        });
+        if (licensesResponse.status === 200) {
+          location.href =
+            this.envConfig?.individualPlanOptions?.[plan.uuid]?.successUrl ??
+            this.envConfig.globalPlanOptions.successUrl;
+        }
+        planCtaEl.removeAttribute('disabled');
+        for (const cta of otherCtas) {
+          cta.classList.remove('salable-plan-button-disabled');
+          cta.classList.remove('salable-disabled');
+          cta.removeAttribute('disabled', true);
+        }
+        planCtaElInnerSpan.innerText = planCtaText(plan, envConfig, buttonTextDefaults);
       });
     }
 
@@ -918,8 +906,7 @@ class Initialisers {
   }
 
   createPlan(classPrefix) {
-    const planEl = this.createElWithClass('div', `${classPrefix}-plan`);
-    return planEl;
+    return this.createElWithClass('div', `${classPrefix}-plan`);
   }
 
   createPlansPerInterval({
@@ -1034,13 +1021,6 @@ class Initialisers {
       'promoCode',
       'allowPromoCode',
       'marketingConsent',
-      'vatCity',
-      'vatCompanyName',
-      'vatCountry',
-      'vatNumber',
-      'vatPostcode',
-      'vatState',
-      'vatStreet',
       'changeQuantity',
     ];
 

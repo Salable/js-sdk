@@ -154,10 +154,6 @@ body {
 .salable-plan-button-active {
   cursor: pointer;
 }
-
-.salable-plan-button-free svg {
-  height: 17px !important;
-}
 .salable-plan-button-span {
   min-height: 17px;
 }
