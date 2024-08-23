@@ -103,12 +103,11 @@ export class SalablePricingTable {
         this.envConfig.globalPlanOptions.successUrl = document.URL;
 
       const granteeIdsWithHashes = this.envConfig.individualPlanOptions
-        ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
-            const granteeId =
+        ? Object.keys(this.envConfig.individualPlanOptions)?.map(
+            (key) =>
               this.envConfig.individualPlanOptions[key].granteeId ??
-              this.envConfig.globalPlanOptions.granteeId;
-            return `${key},${granteeId}`;
-          })
+              this.envConfig.globalPlanOptions.granteeId
+          )
         : [];
 
       const successUrlsWithHashes = this.envConfig.individualPlanOptions
@@ -131,7 +130,13 @@ export class SalablePricingTable {
 
       let response = {};
       let encoded = null;
-      const queryParams = `?globalGranteeId=${this.envConfig.globalPlanOptions.granteeId}&granteeIds=[${granteeIdsWithHashes}]&globalSuccessUrl=${this.envConfig.globalPlanOptions.successUrl}&successUrls=[${successUrlsWithHashes}]&globalCancelUrl=${this.envConfig.globalPlanOptions.cancelUrl}&cancelUrls=[${cancelUrlsWithHashes}]&member=${this.checkoutConfig.member}`;
+      const queryParams = `?granteeIds=${this.envConfig.globalPlanOptions.granteeId}${
+        granteeIdsWithHashes ? ',' : ''
+      }${granteeIdsWithHashes}&globalSuccessUrl=${
+        this.envConfig.globalPlanOptions.successUrl
+      }&successUrls=${successUrlsWithHashes}&globalCancelUrl=${
+        this.envConfig.globalPlanOptions.cancelUrl
+      }&cancelUrls=${cancelUrlsWithHashes}&member=${this.checkoutConfig.member}`;
 
       if (this.envConfig.pricingTableUuid) {
         encoded = encodeURI(
@@ -678,7 +683,7 @@ class Initialisers {
     const planCtaEl = this.createElWithClass(
       'a',
       `${classPrefix}-plan-button${
-        plan.isSubscribed
+        plan.isSubscribed && plan.licenseType === 'metered'
           ? ` ${classPrefix}-plan-button-disabled`
           : ` ${classPrefix}-plan-button-active`
       }`
@@ -712,7 +717,7 @@ class Initialisers {
           return envConfig.globalPlanOptions.cta.text[plan.planType.toLowerCase()];
         case buttonTextDefaults?.[plan?.planType] !== undefined:
           if (plan?.planType === 'Standard') {
-            if (plan.isSubscribed) return '&#10004; Subscribed';
+            if (plan.isSubscribed && plan.licenseType === 'metered') return '&#10004; Subscribed';
             return buttonTextDefaults?.[plan?.planType]?.[plan?.pricingType];
           }
           return buttonTextDefaults?.[plan.planType];
@@ -732,7 +737,7 @@ class Initialisers {
       planCtaEl.innerHTML = planCtaText(plan, envConfig, buttonTextDefaults);
     }
 
-    if (plan.isSubscribed) {
+    if (plan.isSubscribed && plan.licenseType === 'metered') {
       planCtaEl.setAttribute('disabled', 'disabled');
       return planCtaEl;
     }
@@ -844,8 +849,8 @@ class Initialisers {
           planUuid: plan.uuid,
           member: this.checkoutConfig.member,
           granteeId: null,
-          ...(this.checkoutConfig.customer.email && {
-            email: this.checkoutConfig.customer.email,
+          ...(this.checkoutConfig.customerEmail && {
+            email: this.checkoutConfig.customerEmail,
           }),
         }));
         licenseBody[0].granteeId =
