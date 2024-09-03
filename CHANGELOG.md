@@ -1,3 +1,11 @@
+# [1.12.0](https://github.com/Salable/js-sdk/compare/v1.11.0...v1.12.0) (2024-09-03)
+
+
+### Features
+
+* added error alert for the UI if api fetch fails ([7ac5986](https://github.com/Salable/js-sdk/commit/7ac59867adeff999cbb0aab6581ff75592322535))
+* disable usage plan button if the grantee is already subscribed to it ([fbabde9](https://github.com/Salable/js-sdk/commit/fbabde9fcd43b28c5528db74da3a17c2155cd98d))
+
 # [1.11.0](https://github.com/Salable/js-sdk/compare/v1.10.0...v1.11.0) (2023-10-17)
 
 
