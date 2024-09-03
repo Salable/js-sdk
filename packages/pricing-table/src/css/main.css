@@ -251,6 +251,25 @@ body {
 a.salable-disabled {
   pointer-events: none;
 }
+.salable-error {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #fef2f2;
+  color: #ef4444;
+  border-color: #ef4444;
+}
+.salable-error svg {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+}
+.salable-error svg path {
+  fill: #ef4444;
+}
 @media only screen and (min-width: 700px) {
   .salable-plan {
     padding: 40px 0;
