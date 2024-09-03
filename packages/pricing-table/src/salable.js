@@ -102,14 +102,6 @@ export class SalablePricingTable {
       if (!this.envConfig.globalPlanOptions.successUrl)
         this.envConfig.globalPlanOptions.successUrl = document.URL;
 
-      const granteeIdsWithHashes = this.envConfig.individualPlanOptions
-        ? Object.keys(this.envConfig.individualPlanOptions)?.map(
-            (key) =>
-              this.envConfig.individualPlanOptions[key].granteeId ??
-              this.envConfig.globalPlanOptions.granteeId
-          )
-        : [];
-
       const successUrlsWithHashes = this.envConfig.individualPlanOptions
         ? Object.keys(this.envConfig.individualPlanOptions)?.map((key) => {
             const successUrl =
@@ -130,13 +122,7 @@ export class SalablePricingTable {
 
       let response = {};
       let encoded = null;
-      const queryParams = `?granteeIds=${this.envConfig.globalPlanOptions.granteeId}${
-        granteeIdsWithHashes ? ',' : ''
-      }${granteeIdsWithHashes}&globalSuccessUrl=${
-        this.envConfig.globalPlanOptions.successUrl
-      }&successUrls=${successUrlsWithHashes}&globalCancelUrl=${
-        this.envConfig.globalPlanOptions.cancelUrl
-      }&cancelUrls=${cancelUrlsWithHashes}&member=${this.checkoutConfig.member}`;
+      const queryParams = `?granteeId=${this.envConfig.globalPlanOptions.granteeId}&globalSuccessUrl=${this.envConfig.globalPlanOptions.successUrl}&successUrls=${successUrlsWithHashes}&globalCancelUrl=${this.envConfig.globalPlanOptions.cancelUrl}&cancelUrls=${cancelUrlsWithHashes}&member=${this.checkoutConfig.member}`;
 
       if (this.envConfig.pricingTableUuid) {
         encoded = encodeURI(
@@ -680,10 +666,15 @@ class Initialisers {
       }
     };
 
+    const disableButton =
+      plan.licenseType === 'metered' &&
+      ((plan.pricingType === 'paid' && plan.grantee?.isSubscribed) ||
+        (plan.pricingType === 'free' && plan.grantee?.isLicensed));
+
     const planCtaEl = this.createElWithClass(
       'a',
       `${classPrefix}-plan-button${
-        plan.isSubscribed && plan.licenseType === 'metered'
+        disableButton
           ? ` ${classPrefix}-plan-button-disabled`
           : ` ${classPrefix}-plan-button-active`
       }`
@@ -717,7 +708,7 @@ class Initialisers {
           return envConfig.globalPlanOptions.cta.text[plan.planType.toLowerCase()];
         case buttonTextDefaults?.[plan?.planType] !== undefined:
           if (plan?.planType === 'Standard') {
-            if (plan.isSubscribed && plan.licenseType === 'metered') return '&#10004; Subscribed';
+            if (disableButton) return '&#10004; Subscribed';
             return buttonTextDefaults?.[plan?.planType]?.[plan?.pricingType];
           }
           return buttonTextDefaults?.[plan.planType];
@@ -737,7 +728,7 @@ class Initialisers {
       planCtaEl.innerHTML = planCtaText(plan, envConfig, buttonTextDefaults);
     }
 
-    if (plan.isSubscribed && plan.licenseType === 'metered') {
+    if (disableButton) {
       planCtaEl.setAttribute('disabled', 'disabled');
       return planCtaEl;
     }
@@ -928,7 +919,7 @@ class Initialisers {
     if (!plans.length) return null;
     const buttonTextDefaults = {
       Standard: {
-        free: 'Create license',
+        free: 'Subscribe',
         paid: 'Subscribe',
       },
       'Coming soon': 'Contact us',
