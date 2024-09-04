@@ -1,31 +1,20 @@
-# [1.12.0](https://github.com/Salable/js-sdk/compare/v1.11.0...v1.12.0) (2024-09-03)
-
-
-### Features
-
-* added error alert for the UI if api fetch fails ([7ac5986](https://github.com/Salable/js-sdk/commit/7ac59867adeff999cbb0aab6581ff75592322535))
-* disable usage plan button if the grantee is already subscribed to it ([fbabde9](https://github.com/Salable/js-sdk/commit/fbabde9fcd43b28c5528db74da3a17c2155cd98d))
-
 # [1.11.0](https://github.com/Salable/js-sdk/compare/v1.10.0...v1.11.0) (2023-10-17)
 
-
 ### Features
 
-* change quantity in checkout ([8ea2a7a](https://github.com/Salable/js-sdk/commit/8ea2a7a3df51e114ffbd039d4536f5a86921d139))
+- change quantity in checkout ([8ea2a7a](https://github.com/Salable/js-sdk/commit/8ea2a7a3df51e114ffbd039d4536f5a86921d139))
 
 # [1.10.0](https://github.com/Salable/js-sdk/compare/v1.9.0...v1.10.0) (2023-10-17)
 
-
 ### Bug Fixes
 
-* further improvements to if condition on showing plans per interval ([2e1dc28](https://github.com/Salable/js-sdk/commit/2e1dc281753b9a6106ddbd31f96317cd968df04e))
-* if not plans in createPlansPerInterval return null ([c3986a5](https://github.com/Salable/js-sdk/commit/c3986a51f42fd73453df7d77cbda46e7d44570b4))
-* improved if conditions for plans per interval ([c548df3](https://github.com/Salable/js-sdk/commit/c548df3d9d31288adea01078ba4e358c3ccf5263))
-
+- further improvements to if condition on showing plans per interval ([2e1dc28](https://github.com/Salable/js-sdk/commit/2e1dc281753b9a6106ddbd31f96317cd968df04e))
+- if not plans in createPlansPerInterval return null ([c3986a5](https://github.com/Salable/js-sdk/commit/c3986a51f42fd73453df7d77cbda46e7d44570b4))
+- improved if conditions for plans per interval ([c548df3](https://github.com/Salable/js-sdk/commit/c548df3d9d31288adea01078ba4e358c3ccf5263))
 
 ### Features
 
-* force push to main ([1ae12f5](https://github.com/Salable/js-sdk/commit/1ae12f544ad257eb7a201be22b685929be266352))
+- force push to main ([1ae12f5](https://github.com/Salable/js-sdk/commit/1ae12f544ad257eb7a201be22b685929be266352))
 
 # [1.9.0](https://github.com/Salable/js-sdk/compare/v1.8.0...v1.9.0) (2023-10-05)
 
