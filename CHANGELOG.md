@@ -1,3 +1,18 @@
+# [2.0.0](https://github.com/Salable/js-sdk/compare/v1.11.0...v2.0.0) (2024-09-04)
+
+
+### Features
+
+* 2.0.0 release ([bd06e06](https://github.com/Salable/js-sdk/commit/bd06e06ea65a2ea81dd0456228719022576d001f))
+* added error alert for the UI if api fetch fails ([7ac5986](https://github.com/Salable/js-sdk/commit/7ac59867adeff999cbb0aab6581ff75592322535))
+* disable usage plan button if the grantee is already subscribed to it ([fbabde9](https://github.com/Salable/js-sdk/commit/fbabde9fcd43b28c5528db74da3a17c2155cd98d))
+
+
+### BREAKING CHANGES
+
+* Moved api to version "v2".
+Metered plans in pricing tables will not work in version "v1".
+
 # [1.11.0](https://github.com/Salable/js-sdk/compare/v1.10.0...v1.11.0) (2023-10-17)
 
 ### Features
